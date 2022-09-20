@@ -153,34 +153,52 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           Home
         </HeaderLink>
       </div>
-      <div className="App-header-link-container">
-        <HeaderLink to="/dashboard">Dashboard</HeaderLink>
-      </div>
-      <div className="App-header-link-container">
-        <HeaderLink to="/staking">Staking</HeaderLink>
-      </div>
-      <div className="App-header-link-container">
-        <HeaderLink to="/buy">Buy</HeaderLink>
-      </div>
-      <div className="App-header-link-container">
-        <HeaderLink to="/ecosystem">Ecosystem</HeaderLink>
-      </div>
-      <div className="App-header-link-container">
-        <a
-          href="https://phamousio.gitbook.io/phamous/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          About
-        </a>
-      </div>
+      {!small && (
+        <>
+          <div className="App-header-link-container">
+            <HeaderLink to="/dashboard">Dashboard</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/staking">Staking</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/buy">Buy</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/ecosystem">Ecosystem</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <a
+              href="https://phamousio.gitbook.io/phamous/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              About
+            </a>
+          </div>
+        </>
+      )}
       {small && (
-        <div className="App-header-link-container">
-          {/* eslint-disable-next-line */}
-          <a href="#" onClick={openSettings}>
-            Settings
-          </a>
-        </div>
+        <>
+          <div className="App-header-link-container">
+            {/* eslint-disable-next-line */}
+            <a href="http://phiat.io">
+              Phiat
+            </a>
+          </div>
+          <div className="App-header-link-container">
+            {/* eslint-disable-next-line */}
+            <a href="http://phatty.io">
+              Phatty
+            </a>
+          </div>
+          <div className="App-header-link-container">
+            {/* eslint-disable-next-line */}
+            <a href="#" onClick={openSettings}>
+              Links
+            </a>
+          </div>
+        </>
       )}
     </div>
   );
@@ -688,7 +706,7 @@ function FullApp() {
           )}
           <header>
             <div className="App-header large">
-              <div className="App-header-container-left">
+              {/* <div className="App-header-container-left">
                 <HeaderLink
                   isHomeLink={true}
                   exact={true}
@@ -703,7 +721,32 @@ function FullApp() {
                   />
                 </HeaderLink>
                 <AppHeaderLinks HeaderLink={HeaderLink} />
-              </div>
+              </div> */}
+              <div className="App-header-container-left">
+                  <div
+                    className="App-header-menu-icon-block"
+                    onClick={() => setIsDrawerVisible(!isDrawerVisible)}
+                  >
+                    {!isDrawerVisible && (
+                      <RiMenuLine className="App-header-menu-icon" />
+                    )}
+                    {isDrawerVisible && (
+                      <FaTimes className="App-header-menu-icon" />
+                    )}
+                  </div>
+                  <div
+                    className="App-header-link-main clickable"
+                    onClick={() => setIsDrawerVisible(!isDrawerVisible)}
+                  >
+                    <img src={logoImg} className="big" alt="Phamous Logo" />
+                    <img
+                      src={logoSmallImg}
+                      className="small"
+                      alt="Phamous Logo"
+                    />
+                  </div>
+                  <AppHeaderLinks HeaderLink={HeaderLink} />
+                </div>
               <div className="App-header-container-right">
                 <AppHeaderUser
                   HeaderLink={HeaderLink}
@@ -719,7 +762,7 @@ function FullApp() {
               </div>
             </div>
             <div
-              className={cx("App-header", "small", { active: isDrawerVisible })}
+              className={cx("App-header", "small", { active: true })}
             >
               <div
                 className={cx("App-header-link-container", "App-header-top", {
