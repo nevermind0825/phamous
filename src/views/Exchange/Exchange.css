@@ -732,14 +732,14 @@ input.Exchange-swap-input.small {
   border-radius: 3.1rem;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%);
+  background: linear-gradient(90deg, rgba(147, 112, 219, 1) 0%, rgba(255, 192, 203, 1) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .Exchange-swap-ball:hover {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
+  background: linear-gradient(90deg, rgb(163, 134, 222) 0%, rgb(253, 199, 208) 100%);
 }
 
 .Exchange-swap-ball:hover .Exchange-swap-ball-icon {

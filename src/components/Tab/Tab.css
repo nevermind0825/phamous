@@ -25,13 +25,14 @@
 
 .Tab.block .Tab-option:hover {
   color: rgba(255, 255, 255, 1);
-  background: linear-gradient(90deg, rgba(35, 57, 172, 1) 0%, rgba(43, 59, 147, 1) 100%);
+  background: linear-gradient(90deg, rgb(153, 120, 220) 0%, rgb(162, 131, 223) 100%);
 }
 
 .Tab.block .Tab-option.active {
   opacity: 1;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%);
+  background: linear-gradient(90deg, rgba(147, 112, 219, 1) 0%, rgba(255, 192, 203, 1) 100%);
+  /* background: linear-gradient(45deg, rgb(173, 39, 169) 0%, rgb(103, 19, 183) 24%, rgb(29, 192, 106) 82%); */
   color: rgba(255, 255, 255, 1);
 }
 
