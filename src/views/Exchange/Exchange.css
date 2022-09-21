@@ -672,12 +672,12 @@ table.Exchange-list th {
   z-index: 1;
   cursor: pointer;
   font-size: 1.5rem;
-  background: linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%);
+  background: linear-gradient(90deg, rgba(147, 112, 219, 1) 0%, rgba(255, 192, 203, 1) 100%);
 }
 
 .Exchange-swap-max:hover {
   color: rgba(255, 255, 255, 1);
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
+  background: linear-gradient(90deg, rgb(157, 124, 223) 0%, rgb(250, 203, 211) 100%);
 }
 
 .Exchange-swap-section-bottom .TokenSelector-box {

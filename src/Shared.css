@@ -212,7 +212,7 @@ a.plain {
 } */
 
 .default-btn:active {
-  background: #5f6ffd;
+  background: rgb(168, 142, 221);
   border: none;
   padding-left: 1.6rem;
   padding-right: 1.6rem;

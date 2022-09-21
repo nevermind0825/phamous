@@ -1,104 +1,77 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { SWRConfig } from "swr";
 import { ethers } from "ethers";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { SWRConfig } from "swr";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
+import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
 
 import {
-  Switch,
-  Route,
-  NavLink,
-  HashRouter as Router,
-  // Redirect,
-  // useLocation,
-  // useHistory
+  HashRouter as Router, NavLink, Route, Switch
 } from "react-router-dom";
 
 import { PLS_TESTNET_V2 } from "./Constants";
 import {
-  DEFAULT_SLIPPAGE_AMOUNT,
-  SLIPPAGE_BPS_KEY,
-  IS_PNL_IN_LEVERAGE_KEY,
-  SHOW_PNL_AFTER_FEES_KEY,
-  BASIS_POINTS_DIVISOR,
-  SHOULD_SHOW_POSITION_LINES_KEY,
-  getHomeUrl,
+  activateInjectedProvider, BASIS_POINTS_DIVISOR,
   // getAppBaseUrl,
   // isHomeSite,
-  clearWalletConnectData,
-  switchNetwork,
-  helperToast,
-  getChainName,
-  useChainId,
-  getAccountUrl,
-  getInjectedHandler,
-  useEagerConnect,
-  useLocalStorageSerializeKey,
-  useInactiveListener,
-  getExplorerUrl,
-  getWalletConnectHandler,
-  activateInjectedProvider,
-  hasMetaMaskWalletExtension,
+  clearWalletConnectData, clearWalletLinkData, CURRENT_PROVIDER_LOCALSTORAGE_KEY, DEFAULT_SLIPPAGE_AMOUNT, DISABLE_ORDER_VALIDATION_KEY, getAccountUrl, getChainName, getExplorerUrl, getHomeUrl, getInjectedHandler, getWalletConnectHandler, hasMetaMaskWalletExtension, helperToast, isDevelopment,
   // hasCoinBaseWalletExtension,
-  isMobileDevice,
-  clearWalletLinkData,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
-  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-  isDevelopment,
-  DISABLE_ORDER_VALIDATION_KEY,
+  isMobileDevice, IS_PNL_IN_LEVERAGE_KEY, SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY, switchNetwork, useChainId, useEagerConnect, useInactiveListener, useLocalStorageSerializeKey
 } from "./Helpers";
 
-import Home from "./views/Home/Home";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Ecosystem from "./views/Ecosystem/Ecosystem";
-import Stake from "./views/Stake/Stake";
 import { Exchange } from "./views/Exchange/Exchange";
+import Home from "./views/Home/Home";
+import Stake from "./views/Stake/Stake";
 // import Actions from "./views/Actions/Actions";
 // import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 // import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyPhlp from "./views/BuyPhlp/BuyPhlp";
 import Buy from "./views/Buy/Buy";
+import BuyPhlp from "./views/BuyPhlp/BuyPhlp";
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
-import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
+import Modal from "./components/Modal/Modal";
+import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 
-import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
+import { RiMenuLine } from "react-icons/ri";
 
-import "./Font.css";
-import "./Shared.css";
 import "./App.css";
-import "./Input.css";
 import "./AppOrder.css";
+import "./Font.css";
+import "./Input.css";
+import "./Shared.css";
 
-import logoImg from "./img/logo_phamous.svg";
-import logoSmallImg from "./img/logo_phamous_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 import metamaskImg from "./img/metamask.png";
 // import coinbaseImg from "./img/coinbaseWallet.png";
-import walletConnectImg from "./img/walletconnect-circle-blue.svg";
 import AddressDropdown from "./components/AddressDropdown/AddressDropdown";
 import { ConnectWalletButton } from "./components/Common/Button";
-import useEventToast from "./components/EventToast/useEventToast";
-import EventToastContainer from "./components/EventToast/EventToastContainer";
 import SEO from "./components/Common/SEO";
+import EventToastContainer from "./components/EventToast/EventToastContainer";
+import useEventToast from "./components/EventToast/useEventToast";
+import walletConnectImg from "./img/walletconnect-circle-blue.svg";
 // import useRouteQuery from "./hooks/useRouteQuery";
 
-import { getContract } from "./Addresses";
-import Vault from "./abis/Vault.json";
 import PositionRouter from "./abis/PositionRouter.json";
+import Vault from "./abis/Vault.json";
+import { getContract } from "./Addresses";
+import useScrollToTop from "./hooks/useScrollToTop";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import TermsAndConditions from "./views/TermsAndConditions/TermsAndConditions";
-import useScrollToTop from "./hooks/useScrollToTop";
+
+import logo from './assets/logo.png';
+import linkLogo from './assets/svg/link.svg';
+import phattyLogo from './assets/svg/phatty.svg';
+import phiatLogo from './assets/svg/phiat.svg';
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -144,7 +117,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <FiX className="App-header-menu-icon" />
           </div>
           <HeaderLink isHomeLink={true} className="App-header-link-main" to="/">
-            <img src={logoImg} alt="Phamous Logo" />
+            <img src={logo} alt="Phamous Logo" />
           </HeaderLink>
         </div>
       )}
@@ -183,18 +156,21 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
             <a href="http://phiat.io">
+              <img src={phiatLogo} alt="Phiat" width="24px"></img>
               Phiat
             </a>
           </div>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
             <a href="http://phatty.io">
+              <img src={phattyLogo} alt="Phatty" width="24px"></img>
               Phatty
             </a>
           </div>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
             <a href="#" onClick={openSettings}>
+              <img src={linkLogo} alt="Links" width="24px"></img>
               Links
             </a>
           </div>
@@ -738,9 +714,9 @@ function FullApp() {
                     className="App-header-link-main clickable"
                     onClick={() => setIsDrawerVisible(!isDrawerVisible)}
                   >
-                    <img src={logoImg} className="big" alt="Phamous Logo" />
+                    <img src={logo} className="big" alt="Phamous Logo" />
                     <img
-                      src={logoSmallImg}
+                      src={logo}
                       className="small"
                       alt="Phamous Logo"
                     />
@@ -785,9 +761,9 @@ function FullApp() {
                     className="App-header-link-main clickable"
                     onClick={() => setIsDrawerVisible(!isDrawerVisible)}
                   >
-                    <img src={logoImg} className="big" alt="Phamous Logo" />
+                    <img src={logo} className="big" alt="Phamous Logo" />
                     <img
-                      src={logoSmallImg}
+                      src={logo}
                       className="small"
                       alt="Phamous Logo"
                     />

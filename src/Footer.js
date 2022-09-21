@@ -2,13 +2,13 @@ import React from "react";
 
 import "./Footer.css";
 
-import logoImg from "./img/ic_phamous_footer.svg";
-import twitterIcon from "./img/ic_twitter.svg";
+import { NavLink } from "react-router-dom";
+import logo from './assets/logo.png';
 import discordIcon from "./img/ic_discord.svg";
-import telegramIcon from "./img/ic_telegram.svg";
 import githubIcon from "./img/ic_github.svg";
 import mediumIcon from "./img/ic_medium.svg";
-import { NavLink } from "react-router-dom";
+import telegramIcon from "./img/ic_telegram.svg";
+import twitterIcon from "./img/ic_twitter.svg";
 // import { isHomeSite } from "./Helpers";
 
 export default function Footer() {
@@ -19,7 +19,7 @@ export default function Footer() {
     <div className="Footer">
       <div className="Footer-wrapper">
         <div className="Footer-logo">
-          <img src={logoImg} alt="MetaMask" />
+          <img src={logo} alt="MetaMask" />
         </div>
         <div className="Footer-social-link-block">
           <a
