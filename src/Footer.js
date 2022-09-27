@@ -4,9 +4,9 @@ import "./Footer.css";
 
 import { NavLink } from "react-router-dom";
 import logo from './assets/logo.png';
-import discordIcon from "./img/ic_discord.svg";
-import githubIcon from "./img/ic_github.svg";
-import mediumIcon from "./img/ic_medium.svg";
+// import discordIcon from "./img/ic_discord.svg";
+// import githubIcon from "./img/ic_github.svg";
+// import mediumIcon from "./img/ic_medium.svg";
 import telegramIcon from "./img/ic_telegram.svg";
 import twitterIcon from "./img/ic_twitter.svg";
 // import { isHomeSite } from "./Helpers";
