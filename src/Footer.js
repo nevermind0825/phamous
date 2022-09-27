@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="Footer-social-link-block">
           <a
             className="App-social-link"
-            href="https://twitter.com/PHAMOUS_IO"
+            href="https://twitter.com/Phamouscrypto"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -32,35 +32,11 @@ export default function Footer() {
           </a>
           <a
             className="App-social-link"
-            href="https://medium.com/@phamous.io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={mediumIcon} alt="Medium" />
-          </a>
-          <a
-            className="App-social-link"
-            href="https://github.com/phamous-io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={githubIcon} alt="Github" />
-          </a>
-          <a
-            className="App-social-link"
-            href="https://t.me/PHAMOUS_IO"
+            href="https://t.me/phamousX"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img src={telegramIcon} alt="Telegram" />
-          </a>
-          <a
-            className="App-social-link"
-            href="https://discord.gg/cxjZYR4gQK"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={discordIcon} alt="Discord" />
           </a>
         </div>
         {isHome && (

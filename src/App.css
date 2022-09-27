@@ -49,6 +49,7 @@
 
 .App-header.large .App-header-links {
   display: flex;
+  padding-left: 66px;
 }
 
 .App-header.small {

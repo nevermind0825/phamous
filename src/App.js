@@ -142,7 +142,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           </div>
           <div className="App-header-link-container">
             <a
-              href="https://phamousio.gitbook.io/phamous/"
+              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
               target="_blank"
               rel="noopener noreferrer"
             >
