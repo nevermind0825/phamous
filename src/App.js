@@ -99,6 +99,7 @@ import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import TermsAndConditions from "./views/TermsAndConditions/TermsAndConditions";
 import useScrollToTop from "./hooks/useScrollToTop";
+import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -182,19 +183,19 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
         <>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
-            <a href="http://phiat.io">
+            <a href="http://phiat.io" target="_blank">
               Phiat
             </a>
           </div>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
-            <a href="http://phatty.io">
+            <a href="http://phatty.io" target="_blank">
               Phatty
             </a>
           </div>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
-            <a href="#" onClick={openSettings}>
+            <a href="http://phiat-io.gitbook.io/phiat/phamous-protocol" target="_blank">
               Links
             </a>
           </div>
@@ -834,7 +835,8 @@ function FullApp() {
             // isHome && (
             <Switch>
               <Route exact path="/">
-                <Home showRedirectModal={undefined} />
+                <Redirect to="/trade" />
+                {/* <Home showRedirectModal={undefined} /> */}
                 {/* <Home showRedirectModal={showRedirectModal} /> */}
               </Route>
               <Route exact path="/terms-and-conditions">
