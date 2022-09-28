@@ -2,13 +2,13 @@ import React from "react";
 
 import "./Footer.css";
 
-import logoImg from "./img/ic_phamous_footer.svg";
-import twitterIcon from "./img/ic_twitter.svg";
-import discordIcon from "./img/ic_discord.svg";
-import telegramIcon from "./img/ic_telegram.svg";
-import githubIcon from "./img/ic_github.svg";
-import mediumIcon from "./img/ic_medium.svg";
 import { NavLink } from "react-router-dom";
+import logo from './assets/logo.png';
+// import discordIcon from "./img/ic_discord.svg";
+// import githubIcon from "./img/ic_github.svg";
+// import mediumIcon from "./img/ic_medium.svg";
+import telegramIcon from "./img/ic_telegram.svg";
+import twitterIcon from "./img/ic_twitter.svg";
 // import { isHomeSite } from "./Helpers";
 
 export default function Footer() {
@@ -19,12 +19,12 @@ export default function Footer() {
     <div className="Footer">
       <div className="Footer-wrapper">
         <div className="Footer-logo">
-          <img src={logoImg} alt="MetaMask" />
+          <img src={logo} alt="MetaMask" />
         </div>
         <div className="Footer-social-link-block">
           <a
             className="App-social-link"
-            href="https://twitter.com/PHAMOUS_IO"
+            href="https://twitter.com/Phamouscrypto"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -32,35 +32,11 @@ export default function Footer() {
           </a>
           <a
             className="App-social-link"
-            href="https://medium.com/@phamous.io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={mediumIcon} alt="Medium" />
-          </a>
-          <a
-            className="App-social-link"
-            href="https://github.com/phamous-io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={githubIcon} alt="Github" />
-          </a>
-          <a
-            className="App-social-link"
-            href="https://t.me/PHAMOUS_IO"
+            href="https://t.me/phamousX"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img src={telegramIcon} alt="Telegram" />
-          </a>
-          <a
-            className="App-social-link"
-            href="https://discord.gg/cxjZYR4gQK"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={discordIcon} alt="Discord" />
           </a>
         </div>
         {isHome && (

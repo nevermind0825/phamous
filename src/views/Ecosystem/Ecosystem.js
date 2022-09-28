@@ -22,10 +22,20 @@ import "./Ecosystem.css";
 export default function Ecosystem() {
   const telegramGroups = [
     {
-      title: "PHAMOUS",
-      link: "https://t.me/PHAMOUS_IO",
-      about: "Telegram Group",
+      title: "Phatty",
+      link: "https://phatty.io",
+      about: "DeFi and Web3 Dashboard",
     },
+    {
+      title: "Phiat",
+      link: "https://phiat.io",
+      about: "Decentralized Lending Protocol",
+    },    
+    {
+      title: "Phamous Telegram",
+      link: "https://t.me/phamousX",
+      about: "Telegram Group",
+    }
   ];
 
   return (
@@ -34,11 +44,7 @@ export default function Ecosystem() {
         <div>
           <div className="section-title-block">
             <div className="section-title-icon"></div>
-            <div className="section-title-content">
-              <div className="Page-title">Official Pages</div>
-              <div className="Page-description">
-                Official Phamous ecosystem pages.
-              </div>
+            <div className="section-title-content">             
             </div>
           </div>
           {/* <div className="DashboardV2-projects">
@@ -162,9 +168,9 @@ export default function Ecosystem() {
             })}
           </div> */}
           <div className="Tab-title-section">
-            <div className="Page-title">Telegram Groups</div>
+            <div className="Page-title">Ecosystem Groups</div>
             <div className="Page-description">
-              Community-led Telegram groups.
+              A true DeFi ecosystem for Hexicans
             </div>
           </div>
           <div className="DashboardV2-projects">
