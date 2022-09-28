@@ -117,7 +117,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           >
             <FiX className="App-header-menu-icon" />
           </div>
-          <HeaderLink isHomeLink={true} className="App-header-link-main" to="/">
+          <HeaderLink to="/" className="App-header-link-main">
             <img src={logo} alt="Phamous Logo" />
           </HeaderLink>
         </div>
@@ -154,6 +154,27 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
       )}
       {small && (
         <>
+          <div className="App-header-link-container">
+            <HeaderLink to="/dashboard">Dashboard</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/staking">Staking</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/buy">Buy</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/ecosystem">Ecosystem</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <a
+              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              About
+            </a>
+          </div>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
             <a href="http://phiat.io" target="_blank">
@@ -711,9 +732,9 @@ function FullApp() {
                       <FaTimes className="App-header-menu-icon" />
                     )}
                   </div>
-                  <div
+                  <a
                     className="App-header-link-main clickable"
-                    onClick={() => setIsDrawerVisible(!isDrawerVisible)}
+                    href="/"
                   >
                     <img src={logo} className="big" alt="Phamous Logo" />
                     <img
@@ -721,7 +742,7 @@ function FullApp() {
                       className="small"
                       alt="Phamous Logo"
                     />
-                  </div>
+                  </a>
                   <AppHeaderLinks HeaderLink={HeaderLink} />
                 </div>
               <div className="App-header-container-right">
