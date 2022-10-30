@@ -69,7 +69,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import TermsAndConditions from "./views/TermsAndConditions/TermsAndConditions";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 
-import logo from './assets/logo.png';
+import logo from './assets/buck.png';
 import linkLogo from './assets/svg/link.svg';
 import phattyLogo from './assets/svg/phatty.svg';
 import phiatLogo from './assets/svg/phiat.svg';
@@ -118,7 +118,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <FiX className="App-header-menu-icon" />
           </div>
           <HeaderLink to="/" className="App-header-link-main">
-            <img src={logo} alt="Phamous Logo" />
+            <img src={logo} alt="Phamous Logo" />         
           </HeaderLink>
         </div>
       )}
@@ -716,7 +716,7 @@ function FullApp() {
                     src={logoSmallImg}
                     className="small"
                     alt="Phamous Logo"
-                  />
+                  />                  
                 </HeaderLink>
                 <AppHeaderLinks HeaderLink={HeaderLink} />
               </div> */}
@@ -742,6 +742,7 @@ function FullApp() {
                       className="small"
                       alt="Phamous Logo"
                     />
+                    <span color="white" id="logo-text" >PHAMOUS</span>
                   </a>
                   <AppHeaderLinks HeaderLink={HeaderLink} />
                 </div>

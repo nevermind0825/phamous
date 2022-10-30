@@ -333,9 +333,9 @@ export const TRIGGER_PREFIX_BELOW = "<";
 export const MIN_PROFIT_BIPS = 0;
 
 export const PHLPPOOLCOLORS = {
-  tPLS: "#6062a6",
-  HEX: "#F7931A",
-  USDC: "#2775CA",
+  tPLS: "#9370db",
+  HEX: "#f0f",
+  USDC: "#a1a4a6",
 };
 
 export const ICONLINKS = {

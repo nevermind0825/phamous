@@ -1426,3 +1426,9 @@ button.App-button {
     transform: rotate(360deg);
   }
 }
+
+#logo-text {
+  color: white;
+  margin: auto;
+  padding: 5px;
+}
