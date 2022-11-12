@@ -32,6 +32,15 @@ export function bigNumberify(n) {
   }
 }
 
+export function toBigNumber(n) {
+  try {
+    return new BigNumber(n.toString());
+  } catch (e) {
+    console.error("bnToBigNumber error", e);
+    return undefined;
+  }
+}
+
 export function expandDecimals(n, decimals) {
   return bigNumberify(n).mul(bigNumberify(10).pow(decimals));
 }
@@ -254,7 +263,7 @@ export const MIN_PROFIT_TIME = 0;
 const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
-  [PLS_TESTNET_V2]: "PulseChain Testnet v2",
+  [PLS_TESTNET_V2]: "PulseChain Testnet v2b",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
@@ -290,7 +299,7 @@ export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
 export const PHLP_DECIMALS = 18;
 export const PHAME_DECIMALS = 18;
-export const DEFAULT_MAX_USDPH_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
+export const DEFAULT_MAX_USDPH_AMOUNT = expandDecimals(20 * 1000 * 1000, 18);
 
 export const TAX_BASIS_POINTS = 50;
 export const STABLE_TAX_BASIS_POINTS = 5;
@@ -314,8 +323,10 @@ export const SHORT = "Short";
 export const MARKET = "Market";
 export const LIMIT = "Limit";
 export const STOP = "Stop";
-export const LEVERAGE_ORDER_OPTIONS = [MARKET, LIMIT];
-export const SWAP_ORDER_OPTIONS = [MARKET, LIMIT];
+// export const LEVERAGE_ORDER_OPTIONS = [MARKET, LIMIT];
+export const LEVERAGE_ORDER_OPTIONS = [MARKET];
+// export const SWAP_ORDER_OPTIONS = [MARKET, LIMIT];
+export const SWAP_ORDER_OPTIONS = [MARKET];
 export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
@@ -335,18 +346,19 @@ export const MIN_PROFIT_BIPS = 0;
 export const PHLPPOOLCOLORS = {
   tPLS: "#9370db",
   HEX: "#f0f",
+  HDRN: "#745cf9",
   USDC: "#a1a4a6",
 };
 
 export const ICONLINKS = {
   [PLS_TESTNET_V2]: {
-    // PHAME: {
-    //   plstestv2:
-    //     "https://scan.v2b.testnet.pulsechain.com/token/0x00041578ffa0d2D5939b6A8B50283737cFF89654",
-    // },
+    PHAME: {
+      plstestv2:
+        "https://scan.v2b.testnet.pulsechain.com/token/0xA6Cac6290681Ba0e2582746D76947670D2aBD28B",
+    },
     PHLP: {
       plstestv2:
-        "https://scan.v2b.testnet.pulsechain.com/token/0x00041578ffa0d2D5939b6A8B50283737cFF89654",
+        "https://scan.v2b.testnet.pulsechain.com/token/0xf091D570377Cf90dB66Cd0251a66a7a51D5D1065",
     },
     tPLS: {
       plstestv2:
@@ -362,25 +374,31 @@ export const ICONLINKS = {
       plstestv2:
         "https://scan.v2b.testnet.pulsechain.com/token/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     },
+    HDRN: {
+      coingecko: "https://www.coingecko.com/en/coins/hedron",
+      plstestv2:
+        "https://scan.v2b.testnet.pulsechain.com/token/0x3819f64f282bf135d62168C1e513280dAF905e06",
+    },
   },
 };
 
 export const platformTokens = {
   [PLS_TESTNET_V2]: {
-    // PHAME: {
-    //   name: "Phame",
-    //   symbol: "PHAME",
-    //   decimals: 18,
-    //   address: getContract(PLS_TESTNET_V2, "PHAME"),
-    //   imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
-    // },
+    PHAME: {
+      name: "PHAME",
+      symbol: "PHAME",
+      decimals: 18,
+      address: getContract(PLS_TESTNET_V2, "PHAME"),
+      // imageUrl:
+      //   "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
+    },
     PHLP: {
       name: "Phamous LP",
       symbol: "PHLP",
       decimals: 18,
       address: getContract(PLS_TESTNET_V2, "PHLP"),
-      imageUrl:
-        "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
+      // imageUrl:
+      //   "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
   },
 };
@@ -1531,7 +1549,7 @@ const RPC_PROVIDERS = {
 };
 
 const FALLBACK_PROVIDERS = {
-  [PLS_TESTNET_V2]: ["https://rpc.v2b.testnet.pulsechain.com"], // "https://pulsechain-testnet-v2b.blockfaction.io"
+  [PLS_TESTNET_V2]: undefined, // "https://pulsechain-testnet-v2b.blockfaction.io"
 };
 
 export function shortenAddress(address, length) {

@@ -307,7 +307,7 @@
   margin-left: 0.31rem;
   margin-right: 0.8rem;
 }
-.length-5 .ExchangeChart-bottom-stats-value {
+/* .length-5 .ExchangeChart-bottom-stats-value {
   width: 8.2rem;
 }
 .length-4 .ExchangeChart-bottom-stats-value {
@@ -321,7 +321,7 @@
 }
 .length-1 .ExchangeChart-bottom-stats-value {
   width: 4.48rem;
-}
+} */
 
 .ExchangeChart.tv .ExchangeChart-bottom-content {
   position: absolute;

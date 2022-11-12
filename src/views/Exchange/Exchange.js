@@ -456,6 +456,7 @@ export const Exchange = forwardRef((props, ref) => {
   const currentAccount = account;
 
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
+  const addressesProviderAddress = getContract(chainId, "AddressesProvider");
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
   const uiDataProviderAddress = getContract(chainId, "PhamousUiDataProvider");
@@ -562,7 +563,7 @@ export const Exchange = forwardRef((props, ref) => {
       chainId,
       uiDataProviderAddress,
       "getPositions",
-      vaultAddress,
+      addressesProviderAddress,
       account,
     ],
     {
@@ -580,7 +581,7 @@ export const Exchange = forwardRef((props, ref) => {
     [active, chainId, uiDataProviderAddress, "getFundingRates"],
     {
       fetcher: fetcher(library, PhamousUiDataProvider, [
-        vaultAddress,
+        addressesProviderAddress,
         nativeTokenAddress,
         whitelistedTokenAddresses,
       ]),

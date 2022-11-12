@@ -2,7 +2,6 @@ import { ethers } from "ethers";
 
 const { parseEther } = ethers.utils;
 
-// export const PLS_TESTNET_V2 = 42161;
 export const PLS_TESTNET_V2 = 941;
 
 const constants = {
@@ -14,10 +13,10 @@ const constants = {
     positionReaderPropsLength: 9,
     v2: true,
 
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
+    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("50"),
+    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("50"),
     // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
+    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("50.1"),
   },
 };
 

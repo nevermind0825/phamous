@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import cx from "classnames";
 
-// import phameBigIcon from "../../img/ic_phame_custom.svg";
+import phameBigIcon from "../../img/ic_phame_custom.svg";
 import phlpBigIcon from "../../img/ic_phlp_custom.svg";
 
 import { PLS_TESTNET_V2 } from "../../Constants";
@@ -63,25 +63,32 @@ export default function TokenCard({ showRedirectModal }) {
 
   return (
     <div className="Home-token-card-options">
-      {/* <div className="Home-token-card-option">
+      <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
           <img src={phameBigIcon} alt="phameBigIcon" /> PHAME
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            PHAME is the utility and governance token. Accrues 70% of the platform's generated fees.
+            PHAME is the staking token. Accrues 70% of the platform's generated
+            fees.
           </div>
-          <div className="Home-token-card-option-apr">
-            PulseChain Testnet v2 APR: <APRLabel chainId={PLS_TESTNET_V2} label="phameAprTotal" />
-          </div>
+          {/* <div className="Home-token-card-option-apr">
+            PulseChain Testnet v2 APR:{" "}
+            <APRLabel chainId={PLS_TESTNET_V2} label="phameAprTotal" />
+          </div> */}
           <div className="Home-token-card-option-action">
             <div className="buy">
-              <BuyLink to="/buy_phame" className="default-btn" network={PLS_TESTNET_V2}>
-                Buy on PulseChain Testnet v2
-              </BuyLink>
+              <a
+                href="https://app.v2b.testnet.pulsex.com/swap?inputCurrency=0x8a810ea8b121d08342e9e7696f4a9915cbe494b7&outputCurrency=0xA6Cac6290681Ba0e2582746D76947670D2aBD28B"
+                target="_blank"
+                rel="noreferrer"
+                className="default-btn"
+              >
+                Buy on PulseX
+              </a>
             </div>
             <a
-              href="https://phamousio.gitbook.io/phamous/tokenomics"
+              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
@@ -90,7 +97,7 @@ export default function TokenCard({ showRedirectModal }) {
             </a>
           </div>
         </div>
-      </div> */}
+      </div>
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
           <img src={phlpBigIcon} alt="phlpBigIcon" /> PHLP
@@ -110,7 +117,7 @@ export default function TokenCard({ showRedirectModal }) {
                 className="default-btn"
                 network={PLS_TESTNET_V2}
               >
-                Buy on PulseChain Testnet v2
+                Buy on Phamous
               </BuyLink>
             </div>
             {/* <a

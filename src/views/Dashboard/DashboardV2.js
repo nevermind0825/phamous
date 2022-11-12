@@ -66,6 +66,7 @@ export default function DashboardV2() {
 
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
   const uiDataProviderAddress = getContract(chainId, "PhamousUiDataProvider");
+  const addressesProviderAddress = getContract(chainId, "AddressesProvider");
   const vaultAddress = getContract(chainId, "Vault");
   const phlpManagerAddress = getContract(chainId, "PhlpManager");
   const phlpAddress = getContract(chainId, "PHLP");
@@ -81,7 +82,7 @@ export default function DashboardV2() {
     ],
     {
       fetcher: fetcher(library, PhamousUiDataProvider, [
-        vaultAddress,
+        addressesProviderAddress,
         nativeTokenAddress,
         tokenAddresses,
       ]),

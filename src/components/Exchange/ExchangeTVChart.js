@@ -21,6 +21,7 @@ import {
   usePrevious,
   getLiquidationPrice,
   useLocalStorageSerializeKey,
+  toBigNumber,
 } from "../../Helpers";
 import { useChartPrices } from "../../Api";
 import Tab from "../Tab/Tab";
@@ -378,14 +379,26 @@ export default function ExchangeTVChart(props) {
       return null;
     }
 
+    const smartClose = formatAmount(
+      toBigNumber(candlestick.close)
+        .multipliedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS))
+        .toFixed(0),
+      USD_DECIMALS,
+      4,
+      true,
+      undefined,
+      3
+    );
+    const fullLength = smartClose.length;
     const className = cx({
       "ExchangeChart-bottom-stats": true,
       positive: candlestick.open <= candlestick.close,
       negative: candlestick.open > candlestick.close,
-      [`length-${String(parseInt(candlestick.close)).length}`]: true,
+      // [`length-${fullLength}`]: true,
     });
 
-    const toFixedNumbers = 4;
+    const toFixedNumbers =
+      fullLength - String(parseInt(candlestick.close)).length - 1;
 
     return (
       <div className={className}>

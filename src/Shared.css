@@ -158,6 +158,10 @@ td {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.label.sublabel {
+  margin-left: 2rem;
+}
+
 ul {
   padding-left: 2.325rem;
   margin-bottom: 0;

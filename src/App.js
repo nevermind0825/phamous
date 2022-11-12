@@ -7,24 +7,47 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
 
-import {
-  HashRouter as Router, NavLink, Route, Switch
-} from "react-router-dom";
+import { HashRouter as Router, NavLink, Route, Switch } from "react-router-dom";
 
 import { PLS_TESTNET_V2 } from "./Constants";
 import {
-  activateInjectedProvider, BASIS_POINTS_DIVISOR,
+  activateInjectedProvider,
+  BASIS_POINTS_DIVISOR,
   // getAppBaseUrl,
   // isHomeSite,
-  clearWalletConnectData, clearWalletLinkData, CURRENT_PROVIDER_LOCALSTORAGE_KEY, DEFAULT_SLIPPAGE_AMOUNT, DISABLE_ORDER_VALIDATION_KEY, getAccountUrl, getChainName, getExplorerUrl, getHomeUrl, getInjectedHandler, getWalletConnectHandler, hasMetaMaskWalletExtension, helperToast, isDevelopment,
+  clearWalletConnectData,
+  clearWalletLinkData,
+  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+  DEFAULT_SLIPPAGE_AMOUNT,
+  DISABLE_ORDER_VALIDATION_KEY,
+  getAccountUrl,
+  getChainName,
+  getExplorerUrl,
+  getHomeUrl,
+  getInjectedHandler,
+  getWalletConnectHandler,
+  hasMetaMaskWalletExtension,
+  helperToast,
+  isDevelopment,
   // hasCoinBaseWalletExtension,
-  isMobileDevice, IS_PNL_IN_LEVERAGE_KEY, SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY, switchNetwork, useChainId, useEagerConnect, useInactiveListener, useLocalStorageSerializeKey
+  isMobileDevice,
+  IS_PNL_IN_LEVERAGE_KEY,
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
+  SHOULD_SHOW_POSITION_LINES_KEY,
+  SHOW_PNL_AFTER_FEES_KEY,
+  SLIPPAGE_BPS_KEY,
+  switchNetwork,
+  useChainId,
+  useEagerConnect,
+  useInactiveListener,
+  useLocalStorageSerializeKey,
 } from "./Helpers";
 
 import Dashboard from "./views/Dashboard/Dashboard";
 import Ecosystem from "./views/Ecosystem/Ecosystem";
 import { Exchange } from "./views/Exchange/Exchange";
-import Home from "./views/Home/Home";
+// eslint-disable-next-line no-unused-vars
+import Home from "./views/Home/Home"; // need its css
 import Stake from "./views/Stake/Stake";
 // import Actions from "./views/Actions/Actions";
 // import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
@@ -69,10 +92,10 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import TermsAndConditions from "./views/TermsAndConditions/TermsAndConditions";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 
-import logo from './assets/buck.png';
-import linkLogo from './assets/svg/link.svg';
-import phattyLogo from './assets/svg/phatty.svg';
-import phiatLogo from './assets/svg/phiat.svg';
+import logo from "./assets/buck.png";
+import linkLogo from "./assets/svg/link.svg";
+import phattyLogo from "./assets/svg/phatty.svg";
+import phiatLogo from "./assets/svg/phiat.svg";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -93,9 +116,8 @@ const Zoom = cssTransition({
 });
 
 // const plsWsProvider = new ethers.providers.WebSocketProvider(
-//   "wss://arb-mainnet.g.alchemy.com/v2/ha7CFsr1bx5ZItuR6VZBbhKozcKDY4LZ"
+//   "wss://rpc.v2b.testnet.pulsechain.com"
 // );
-// https://rpc.v2b.testnet.pulsechain.com
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -103,6 +125,7 @@ function getWsProvider(active, chainId) {
   }
   if (chainId === PLS_TESTNET_V2) {
     // return plsWsProvider;
+    return;
   }
 }
 
@@ -118,7 +141,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <FiX className="App-header-menu-icon" />
           </div>
           <HeaderLink to="/" className="App-header-link-main">
-            <img src={logo} alt="Phamous Logo" />         
+            <img src={logo} alt="Phamous Logo" />
           </HeaderLink>
         </div>
       )}
@@ -191,7 +214,10 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           </div>
           <div className="App-header-link-container">
             {/* eslint-disable-next-line */}
-            <a href="http://phiat-io.gitbook.io/phiat/phamous-protocol" target="_blank">
+            <a
+              href="http://phiat-io.gitbook.io/phiat/phamous-protocol"
+              target="_blank"
+            >
               <img src={linkLogo} alt="Links" width="24px"></img>
               Links
             </a>
@@ -217,7 +243,7 @@ function AppHeaderUser({
 
   const networkOptions = [
     {
-      label: "PulseChain Testnet v2",
+      label: "PulseChain Testnet v2b",
       value: PLS_TESTNET_V2,
       icon: "ic_pulsechain_24.svg",
       color: "#264f79",
@@ -721,31 +747,26 @@ function FullApp() {
                 <AppHeaderLinks HeaderLink={HeaderLink} />
               </div> */}
               <div className="App-header-container-left">
-                  <div
-                    className="App-header-menu-icon-block"
-                    onClick={() => setIsDrawerVisible(!isDrawerVisible)}
-                  >
-                    {!isDrawerVisible && (
-                      <RiMenuLine className="App-header-menu-icon" />
-                    )}
-                    {isDrawerVisible && (
-                      <FaTimes className="App-header-menu-icon" />
-                    )}
-                  </div>
-                  <a
-                    className="App-header-link-main clickable"
-                    href="/"
-                  >
-                    <img src={logo} className="big" alt="Phamous Logo" />
-                    <img
-                      src={logo}
-                      className="small"
-                      alt="Phamous Logo"
-                    />
-                    <span color="white" id="logo-text" >PHAMOUS</span>
-                  </a>
-                  <AppHeaderLinks HeaderLink={HeaderLink} />
+                <div
+                  className="App-header-menu-icon-block"
+                  onClick={() => setIsDrawerVisible(!isDrawerVisible)}
+                >
+                  {!isDrawerVisible && (
+                    <RiMenuLine className="App-header-menu-icon" />
+                  )}
+                  {isDrawerVisible && (
+                    <FaTimes className="App-header-menu-icon" />
+                  )}
                 </div>
+                <a className="App-header-link-main clickable" href="/">
+                  <img src={logo} className="big" alt="Phamous Logo" />
+                  <img src={logo} className="small" alt="Phamous Logo" />
+                  <span color="white" id="logo-text">
+                    PHAMOUS
+                  </span>
+                </a>
+                <AppHeaderLinks HeaderLink={HeaderLink} />
+              </div>
               <div className="App-header-container-right">
                 <AppHeaderUser
                   HeaderLink={HeaderLink}
@@ -760,9 +781,7 @@ function FullApp() {
                 />
               </div>
             </div>
-            <div
-              className={cx("App-header", "small", { active: true })}
-            >
+            <div className={cx("App-header", "small", { active: true })}>
               <div
                 className={cx("App-header-link-container", "App-header-top", {
                   active: isDrawerVisible,
@@ -785,11 +804,7 @@ function FullApp() {
                     onClick={() => setIsDrawerVisible(!isDrawerVisible)}
                   >
                     <img src={logo} className="big" alt="Phamous Logo" />
-                    <img
-                      src={logo}
-                      className="small"
-                      alt="Phamous Logo"
-                    />
+                    <img src={logo} className="small" alt="Phamous Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">

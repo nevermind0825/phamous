@@ -676,6 +676,7 @@ export default function PhlpSwap(props) {
   const selectToken = (token) => {
     setAnchorOnSwapAmount(false);
     setSwapTokenAddress(token.address);
+    setIsWaitingForApproval(false);
     helperToast.success(`${token.symbol} selected in order form`);
   };
 

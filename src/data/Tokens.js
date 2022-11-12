@@ -34,6 +34,15 @@ export const TOKENS = {
         "https://assets.coingecko.com/coins/images/7598/thumb/wrapped_bitcoin_wbtc.png?1548822744",
     },
     {
+      name: "Hedron",
+      symbol: "HDRN",
+      decimals: 9,
+      address: "0x3819f64f282bf135d62168C1e513280dAF905e06",
+      isShortable: true,
+      imageUrl:
+        "https://assets.coingecko.com/coins/images/24208/small/hdrn.png?1647079428",
+    },
+    {
       name: "USD Coin",
       symbol: "USDC",
       decimals: 6,
@@ -47,12 +56,12 @@ export const TOKENS = {
 
 const ADDITIONAL_TOKENS = {
   [PLS_TESTNET_V2]: [
-    // {
-    //   name: "Phame",
-    //   symbol: "PHAME",
-    //   address: getContract(PLS_TESTNET_V2, "Phame"),
-    //   decimals: 18,
-    // },
+    {
+      name: "PHAME",
+      symbol: "PHAME",
+      address: getContract(PLS_TESTNET_V2, "PHAME"),
+      decimals: 18,
+    },
     {
       name: "Phamous LP",
       symbol: "PHLP",

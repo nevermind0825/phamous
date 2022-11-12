@@ -30,12 +30,12 @@ export default function Ecosystem() {
       title: "Phiat",
       link: "https://phiat.io",
       about: "Decentralized Lending Protocol",
-    },    
+    },
     {
       title: "Phamous Telegram",
       link: "https://t.me/phamousX",
       about: "Telegram Group",
-    }
+    },
   ];
 
   return (
@@ -44,8 +44,7 @@ export default function Ecosystem() {
         <div>
           <div className="section-title-block">
             <div className="section-title-icon"></div>
-            <div className="section-title-content">             
-            </div>
+            <div className="section-title-content"></div>
           </div>
           {/* <div className="DashboardV2-projects">
             {officialPages.map((item) => {
@@ -177,7 +176,7 @@ export default function Ecosystem() {
             {telegramGroups.map((item) => {
               const linkLabel = item.linkLabel ? item.linkLabel : item.link;
               return (
-                <div className="App-card">
+                <div className="App-card" key={item.link}>
                   <div className="App-card-title">{item.title}</div>
                   <div className="App-card-divider"></div>
                   <div className="App-card-content">

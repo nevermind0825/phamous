@@ -80,8 +80,7 @@ export function useInfoTokens(
 ) {
   const tokens = getTokens(chainId);
   const uiDataProviderAddress = getContract(chainId, "PhamousUiDataProvider");
-  const vaultAddress = getContract(chainId, "Vault");
-  const positionRouterAddress = getContract(chainId, "PositionRouter");
+  const addressesProviderAddress = getContract(chainId, "AddressesProvider");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
@@ -98,8 +97,7 @@ export function useInfoTokens(
     ],
     {
       fetcher: fetcher(library, PhamousUiDataProvider, [
-        vaultAddress,
-        positionRouterAddress,
+        addressesProviderAddress,
         nativeTokenAddress,
         expandDecimals(1, 18),
         whitelistedTokenAddresses,

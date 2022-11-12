@@ -3,7 +3,7 @@ import React from "react";
 import "./Footer.css";
 
 import { NavLink } from "react-router-dom";
-import logo from './assets/logo.png';
+import logo from "./assets/logo.png";
 // import discordIcon from "./img/ic_discord.svg";
 // import githubIcon from "./img/ic_github.svg";
 // import mediumIcon from "./img/ic_medium.svg";
@@ -12,7 +12,7 @@ import twitterIcon from "./img/ic_twitter.svg";
 // import { isHomeSite } from "./Helpers";
 
 export default function Footer() {
-  const isHome = true;
+  const isHome = false;
   // const isHome = isHomeSite();
 
   return (
