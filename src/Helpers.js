@@ -345,9 +345,10 @@ export const MIN_PROFIT_BIPS = 0;
 
 export const PHLPPOOLCOLORS = {
   tPLS: "#9370db",
-  HEX: "#f0f",
-  HDRN: "#745cf9",
+  HEX: "#df5656",
+  HDRN: "#708ac6",
   USDC: "#a1a4a6",
+  LOAN: "#733bad",
 };
 
 export const ICONLINKS = {
@@ -378,6 +379,10 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/hedron",
       plstestv2:
         "https://scan.v2b.testnet.pulsechain.com/token/0x3819f64f282bf135d62168C1e513280dAF905e06",
+    },
+    LOAN: {
+      plstestv2:
+        "https://scan.v2b.testnet.pulsechain.com/token/0x4F7fCdb511a25099F870EE57c77f7DB2561EC9B6",
     },
   },
 };

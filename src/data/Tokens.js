@@ -43,6 +43,14 @@ export const TOKENS = {
         "https://assets.coingecko.com/coins/images/24208/small/hdrn.png?1647079428",
     },
     {
+      name: "LOAN",
+      symbol: "LOAN",
+      decimals: 18,
+      address: "0x4F7fCdb511a25099F870EE57c77f7DB2561EC9B6",
+      imageUrl:
+        "https://llprod-resource.s3.ap-southeast-2.amazonaws.com/loan-token-assets/loan.svg",
+    },
+    {
       name: "USD Coin",
       symbol: "USDC",
       decimals: 6,
