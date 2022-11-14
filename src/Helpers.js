@@ -345,6 +345,7 @@ export const MIN_PROFIT_BIPS = 0;
 
 export const PHLPPOOLCOLORS = {
   tPLS: "#9370db",
+  PLSX: "#00ff86",
   HEX: "#df5656",
   HDRN: "#708ac6",
   USDC: "#a1a4a6",
@@ -364,6 +365,10 @@ export const ICONLINKS = {
     tPLS: {
       plstestv2:
         "https://scan.v2b.testnet.pulsechain.com/token/0x8a810ea8B121d08342E9e7696f4a9915cBE494B7",
+    },
+    PLSX: {
+      plstestv2:
+        "https://scan.v2b.testnet.pulsechain.com/token/0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942",
     },
     HEX: {
       coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",

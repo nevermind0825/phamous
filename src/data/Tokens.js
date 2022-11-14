@@ -25,6 +25,14 @@ export const TOKENS = {
         "https://assets.coingecko.com/coins/images/2518/thumb/weth.png?1628852295",
     },
     {
+      name: "PulseX",
+      symbol: "PLSX",
+      decimals: 18,
+      address: "0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942",
+      isShortable: true,
+      imageUrl: "https://pulsex.com/brand/downloads/logo/PulseX_X.png",
+    },
+    {
       name: "HEX",
       symbol: "HEX",
       decimals: 8,
