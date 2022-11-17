@@ -48,11 +48,10 @@ import Ecosystem from "./views/Ecosystem/Ecosystem";
 import { Exchange } from "./views/Exchange/Exchange";
 // eslint-disable-next-line no-unused-vars
 import Home from "./views/Home/Home"; // need its css
-import Stake from "./views/Stake/Stake";
+import Earn from "./views/Earn/Earn";
 // import Actions from "./views/Actions/Actions";
 // import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 // import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import Buy from "./views/Buy/Buy";
 import BuyPhlp from "./views/BuyPhlp/BuyPhlp";
 
 import cx from "classnames";
@@ -156,10 +155,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <HeaderLink to="/dashboard">Dashboard</HeaderLink>
           </div>
           <div className="App-header-link-container">
-            <HeaderLink to="/staking">Staking</HeaderLink>
-          </div>
-          <div className="App-header-link-container">
-            <HeaderLink to="/buy">Buy</HeaderLink>
+            <HeaderLink to="/earn">Earn</HeaderLink>
           </div>
           <div className="App-header-link-container">
             <HeaderLink to="/ecosystem">Ecosystem</HeaderLink>
@@ -730,22 +726,6 @@ function FullApp() {
           )}
           <header>
             <div className="App-header large">
-              {/* <div className="App-header-container-left">
-                <HeaderLink
-                  isHomeLink={true}
-                  exact={true}
-                  className="App-header-link-main"
-                  to="/"
-                >
-                  <img src={logoImg} className="big" alt="Phamous Logo" />
-                  <img
-                    src={logoSmallImg}
-                    className="small"
-                    alt="Phamous Logo"
-                  />                  
-                </HeaderLink>
-                <AppHeaderLinks HeaderLink={HeaderLink} />
-              </div> */}
               <div className="App-header-container-left">
                 <div
                   className="App-header-menu-icon-block"
@@ -844,86 +824,64 @@ function FullApp() {
               </motion.div>
             )}
           </AnimatePresence>
-          {
-            // isHome && (
-            <Switch>
-              <Route exact path="/">
-                <Redirect to="/trade" />
-                {/* <Home showRedirectModal={undefined} /> */}
-                {/* <Home showRedirectModal={showRedirectModal} /> */}
-              </Route>
-              <Route exact path="/terms-and-conditions">
-                <TermsAndConditions />
-              </Route>
-              {/* <Route path="*">
-                <PageNotFound />
-              </Route>
-            </Switch>
-          )}
-          {!isHome && (
-            <Switch>
-              <Route exact path="/">
-                <Redirect to="/dashboard" />
-              </Route> */}
-              <Route exact path="/trade">
-                <Exchange
-                  ref={exchangeRef}
-                  savedShowPnlAfterFees={savedShowPnlAfterFees}
-                  savedIsPnlInLeverage={savedIsPnlInLeverage}
-                  setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
-                  savedSlippageAmount={savedSlippageAmount}
-                  setPendingTxns={setPendingTxns}
-                  pendingTxns={pendingTxns}
-                  savedShouldShowPositionLines={savedShouldShowPositionLines}
-                  setSavedShouldShowPositionLines={
-                    setSavedShouldShowPositionLines
-                  }
-                  connectWallet={connectWallet}
-                  savedShouldDisableOrderValidation={
-                    savedShouldDisableOrderValidation
-                  }
-                />
-              </Route>
-              <Route exact path="/dashboard">
-                <Dashboard />
-              </Route>
-              <Route exact path="/staking">
-                <Stake
-                  setPendingTxns={setPendingTxns}
-                  connectWallet={connectWallet}
-                />
-              </Route>
-              <Route exact path="/buy">
-                <Buy
-                  savedSlippageAmount={savedSlippageAmount}
-                  setPendingTxns={setPendingTxns}
-                  connectWallet={connectWallet}
-                />
-              </Route>
-              <Route exact path="/buy_phlp">
-                <BuyPhlp
-                  savedSlippageAmount={savedSlippageAmount}
-                  setPendingTxns={setPendingTxns}
-                  connectWallet={connectWallet}
-                />
-              </Route>
-              {/* <Route exact path="/buy_phame">
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/trade" />
+            </Route>
+            <Route exact path="/terms-and-conditions">
+              <TermsAndConditions />
+            </Route>
+            <Route exact path="/trade">
+              <Exchange
+                ref={exchangeRef}
+                savedShowPnlAfterFees={savedShowPnlAfterFees}
+                savedIsPnlInLeverage={savedIsPnlInLeverage}
+                setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
+                savedSlippageAmount={savedSlippageAmount}
+                setPendingTxns={setPendingTxns}
+                pendingTxns={pendingTxns}
+                savedShouldShowPositionLines={savedShouldShowPositionLines}
+                setSavedShouldShowPositionLines={
+                  setSavedShouldShowPositionLines
+                }
+                connectWallet={connectWallet}
+                savedShouldDisableOrderValidation={
+                  savedShouldDisableOrderValidation
+                }
+              />
+            </Route>
+            <Route exact path="/dashboard">
+              <Dashboard />
+            </Route>
+            <Route exact path="/earn">
+              <Earn
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+              />
+            </Route>
+            <Route exact path="/buy_phlp">
+              <BuyPhlp
+                savedSlippageAmount={savedSlippageAmount}
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+              />
+            </Route>
+            {/* <Route exact path="/buy_phame">
                 <BuyPHAME />
               </Route> */}
-              <Route exact path="/ecosystem">
-                <Ecosystem />
-              </Route>
-              {/* <Route exact path="/orders_overview">
+            <Route exact path="/ecosystem">
+              <Ecosystem />
+            </Route>
+            {/* <Route exact path="/orders_overview">
                 <OrdersOverview />
               </Route>
               <Route exact path="/positions_overview">
                 <PositionsOverview />
               </Route> */}
-              <Route path="*">
-                <PageNotFound />
-              </Route>
-            </Switch>
-          }
+            <Route path="*">
+              <PageNotFound />
+            </Route>
+          </Switch>
         </div>
       </div>
       <ToastContainer

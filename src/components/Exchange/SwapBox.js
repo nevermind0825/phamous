@@ -426,23 +426,31 @@ export default function SwapBox(props) {
             renderContent={() => {
               return (
                 <>
-                  Max {toTokenInfo.symbol} long capacity: $
-                  {formatAmount(
-                    toTokenInfo.maxLongCapacity,
-                    USD_DECIMALS,
-                    2,
-                    true
-                  )}
+                  <div className="Tooltip-row">
+                    <span className="label">
+                      Max {toTokenInfo.symbol} long capacity:
+                    </span>
+                    $
+                    {formatAmount(
+                      toTokenInfo.maxLongCapacity,
+                      USD_DECIMALS,
+                      2,
+                      true
+                    )}
+                  </div>
                   <br />
-                  <br />
-                  Current {toTokenInfo.symbol} long: $
-                  {formatAmount(
-                    toTokenInfo.guaranteedUsd,
-                    USD_DECIMALS,
-                    2,
-                    true
-                  )}
-                  <br />
+                  <div className="Tooltip-row">
+                    <span className="label">
+                      Current {toTokenInfo.symbol} long:
+                    </span>
+                    $
+                    {formatAmount(
+                      toTokenInfo.guaranteedUsd,
+                      USD_DECIMALS,
+                      2,
+                      true
+                    )}
+                  </div>
                 </>
               );
             }}
@@ -2696,8 +2704,10 @@ export default function SwapBox(props) {
                 renderContent={() => {
                   return (
                     <div>
-                      <div>
-                        Max {fromTokenInfo.symbol} in:{" "}
+                      <div className="Tooltip-row">
+                        <span className="label">
+                          Max {fromTokenInfo.symbol} in:
+                        </span>
                         {formatAmount(
                           maxFromTokenIn,
                           fromTokenInfo.decimals,
@@ -2709,8 +2719,10 @@ export default function SwapBox(props) {
                         )
                       </div>
                       <br />
-                      <div>
-                        Max {toTokenInfo.symbol} out:{" "}
+                      <div className="Tooltip-row">
+                        <span className="label">
+                          Max {toTokenInfo.symbol} out:
+                        </span>
                         {formatAmount(
                           maxToTokenOut,
                           toTokenInfo.decimals,
@@ -2876,23 +2888,31 @@ export default function SwapBox(props) {
                   renderContent={() => {
                     return (
                       <>
-                        Max {toTokenInfo.symbol} short capacity: $
-                        {formatAmount(
-                          toTokenInfo.maxGlobalShortSize,
-                          USD_DECIMALS,
-                          2,
-                          true
-                        )}
+                        <div className="Tooltip-row">
+                          <span className="label">
+                            Max {toTokenInfo.symbol} short capacity:
+                          </span>
+                          $
+                          {formatAmount(
+                            toTokenInfo.maxGlobalShortSize,
+                            USD_DECIMALS,
+                            2,
+                            true
+                          )}
+                        </div>
                         <br />
-                        <br />
-                        Current {toTokenInfo.symbol} shorts: $
-                        {formatAmount(
-                          toTokenInfo.globalShortSize,
-                          USD_DECIMALS,
-                          2,
-                          true
-                        )}
-                        <br />
+                        <div className="Tooltip-row">
+                          <span className="label">
+                            Current {toTokenInfo.symbol} shorts:
+                          </span>
+                          $
+                          {formatAmount(
+                            toTokenInfo.globalShortSize,
+                            USD_DECIMALS,
+                            2,
+                            true
+                          )}
+                        </div>
                       </>
                     );
                   }}

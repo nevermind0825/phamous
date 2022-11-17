@@ -22,7 +22,7 @@ const CONTRACTS = {
     PhamousFeeDistribution: "0x0914C4Be2b2cBdaBA944E667d3c5244f4dd6b8bd",
 
     PhamousUiDataProvider: "0x005F821405fe84f8053417f9Af5a8E51e7f35CB1",
-    PhamousUiStakeDataProvider: "0xAf9fCE684103a653D6e8A3B709Caee6CC62940DB",
+    PhamousUiStakeDataProvider: "0x9AB4531c0460dC8Ca3F8bef2342c5193c863BA3F",
   },
 };
 

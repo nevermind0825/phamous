@@ -8,11 +8,7 @@ import TooltipComponent from "../../components/Tooltip/Tooltip";
 import hexToRgba from "hex-to-rgba";
 import { ethers } from "ethers";
 
-import {
-  getWhitelistedTokens,
-  // getTokenBySymbol
-} from "../../data/Tokens";
-// import { getFeeHistory } from "../../data/Fees";
+import { getWhitelistedTokens } from "../../data/Tokens";
 
 import { PLS_TESTNET_V2 } from "../../Constants";
 import {
@@ -21,15 +17,10 @@ import {
   formatKeyAmount,
   expandDecimals,
   bigNumberify,
-  // numberWithCommas,
-  // formatDate,
-  // getServerUrl,
-  getChainName,
   useChainId,
   USD_DECIMALS,
   PHLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
-  // getTotalVolumeSum,
   PHLPPOOLCOLORS,
   DEFAULT_MAX_USDPH_AMOUNT,
   getPageTitle,
@@ -59,7 +50,6 @@ export default function DashboardV2() {
   const { active, library } = useWeb3React();
   const { chainId } = useChainId();
 
-  const chainName = getChainName(chainId);
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const tokens = whitelistedTokens.filter((t) => !t.isWrapped);
   const tokenAddresses = tokens.map((token) => token.address);
@@ -197,9 +187,14 @@ export default function DashboardV2() {
         renderContent={() => {
           return (
             <>
-              Current Weight: {formatAmount(currentWeightBps, 2, 2, false)}%
-              <br />
-              Target Weight: {formatAmount(targetWeightBps, 2, 2, false)}%<br />
+              <div className="Tooltip-row">
+                <span className="label">Current Weight:</span>
+                {formatAmount(currentWeightBps, 2, 2, false)}%
+              </div>
+              <div className="Tooltip-row">
+                <span className="label">Target Weight:</span>
+                {formatAmount(targetWeightBps, 2, 2, false)}%
+              </div>
               <br />
               {currentWeightBps.lt(targetWeightBps) && (
                 <div>
@@ -339,13 +334,14 @@ export default function DashboardV2() {
                 <div className="App-card-row">
                   <div className="label">PHLP Pool</div>
                   <div>
-                    <TooltipComponent
+                    ${formatAmount(aum, USD_DECIMALS, 0, true)}
+                    {/* <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
                       renderContent={() =>
                         `Total value of tokens in PHLP pool (${chainName})`
                       }
-                    />
+                    /> */}
                   </div>
                 </div>
                 {/* <div className="App-card-row">
@@ -573,6 +569,7 @@ export default function DashboardV2() {
                                   src={tokenImage}
                                   alt={token.symbol}
                                   width="40px"
+                                  height="40px"
                                 />
                               </div>
                               <div className="App-card-title-info-text">
@@ -615,30 +612,36 @@ export default function DashboardV2() {
                             renderContent={() => {
                               return (
                                 <>
-                                  Pool Amount:{" "}
-                                  {formatKeyAmount(
-                                    tokenInfo,
-                                    "managedAmount",
-                                    token.decimals,
-                                    2,
-                                    true
-                                  )}{" "}
-                                  {token.symbol}
-                                  <br />
-                                  <br />
-                                  Target Min Amount:{" "}
-                                  {formatKeyAmount(
-                                    tokenInfo,
-                                    "bufferAmount",
-                                    token.decimals,
-                                    2,
-                                    true
-                                  )}{" "}
-                                  {token.symbol}
-                                  <br />
-                                  <br />
-                                  Max {tokenInfo.symbol} Capacity: $
-                                  {formatAmount(maxUsdphAmount, 18, 0, true)}
+                                  <div className="Tooltip-row">
+                                    <span className="label">Pool Amount:</span>
+                                    {formatKeyAmount(
+                                      tokenInfo,
+                                      "managedAmount",
+                                      token.decimals,
+                                      2,
+                                      true
+                                    )}{" "}
+                                    {token.symbol}
+                                  </div>
+                                  <div className="Tooltip-row">
+                                    <span className="label">
+                                      Target Min Amount:
+                                    </span>
+                                    {formatKeyAmount(
+                                      tokenInfo,
+                                      "bufferAmount",
+                                      token.decimals,
+                                      2,
+                                      true
+                                    )}{" "}
+                                    {token.symbol}
+                                  </div>
+                                  <div className="Tooltip-row">
+                                    <span className="label">
+                                      Max {tokenInfo.symbol} Capacity:
+                                    </span>
+                                    ${formatAmount(maxUsdphAmount, 18, 0, true)}
+                                  </div>
                                 </>
                               );
                             }}
@@ -681,7 +684,12 @@ export default function DashboardV2() {
                   <div className="App-card" key={token.symbol}>
                     <div className="App-card-title">
                       <div className="mobile-token-card">
-                        <img src={tokenImage} alt={token.symbol} width="20px" />
+                        <img
+                          src={tokenImage}
+                          alt={token.symbol}
+                          width="20px"
+                          height="20px"
+                        />
                         <div className="token-symbol-text">{token.symbol}</div>
                         <div>
                           <AssetDropdown
@@ -721,30 +729,36 @@ export default function DashboardV2() {
                             renderContent={() => {
                               return (
                                 <>
-                                  Pool Amount:{" "}
-                                  {formatKeyAmount(
-                                    tokenInfo,
-                                    "managedAmount",
-                                    token.decimals,
-                                    2,
-                                    true
-                                  )}{" "}
-                                  {token.symbol}
-                                  <br />
-                                  <br />
-                                  Target Min Amount:{" "}
-                                  {formatKeyAmount(
-                                    tokenInfo,
-                                    "bufferAmount",
-                                    token.decimals,
-                                    2,
-                                    true
-                                  )}{" "}
-                                  {token.symbol}
-                                  <br />
-                                  <br />
-                                  Max {tokenInfo.symbol} Capacity: $
-                                  {formatAmount(maxUsdphAmount, 18, 0, true)}
+                                  <div className="Tooltip-row">
+                                    <span className="label">Pool Amount:</span>
+                                    {formatKeyAmount(
+                                      tokenInfo,
+                                      "managedAmount",
+                                      token.decimals,
+                                      2,
+                                      true
+                                    )}{" "}
+                                    {token.symbol}
+                                  </div>
+                                  <div className="Tooltip-row">
+                                    <span className="label">
+                                      Target Min Amount:
+                                    </span>
+                                    {formatKeyAmount(
+                                      tokenInfo,
+                                      "bufferAmount",
+                                      token.decimals,
+                                      2,
+                                      true
+                                    )}{" "}
+                                    {token.symbol}
+                                  </div>
+                                  <div className="Tooltip-row">
+                                    <span className="label">
+                                      Max {tokenInfo.symbol} Capacity:
+                                    </span>
+                                    ${formatAmount(maxUsdphAmount, 18, 0, true)}
+                                  </div>
                                 </>
                               );
                             }}

@@ -69,7 +69,7 @@ export default function TokenCard({ showRedirectModal }) {
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            PHAME is the staking token. Accrues 70% of the platform's generated
+            PHAME is the staking token. Accrues 40% of the platform's generated
             fees.
           </div>
           {/* <div className="Home-token-card-option-apr">
@@ -104,7 +104,7 @@ export default function TokenCard({ showRedirectModal }) {
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            PHLP is the liquidity provider token. Accrues 30% of the platform's
+            PHLP is the liquidity provider token. Accrues 60% of the platform's
             generated fees.
           </div>
           {/* <div className="Home-token-card-option-apr">
@@ -117,17 +117,17 @@ export default function TokenCard({ showRedirectModal }) {
                 className="default-btn"
                 network={PLS_TESTNET_V2}
               >
-                Buy on Phamous
+                Provide Liquidity on Phamous
               </BuyLink>
             </div>
-            {/* <a
-              href="https://phamousio.gitbook.io/phamous/phlp"
+            <a
+              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
             >
               Read more
-            </a> */}
+            </a>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 function SEO(props) {
   const { children, ...customMeta } = props;
@@ -10,7 +10,7 @@ function SEO(props) {
     ...customMeta,
   };
   return (
-    <>
+    <HelmetProvider>
       <Helmet>
         <title>{meta.title}</title>
         <meta name="robots" content="follow, index" />
@@ -27,7 +27,7 @@ function SEO(props) {
         <meta name="twitter:image" content={meta.image} />
       </Helmet>
       {children}
-    </>
+    </HelmetProvider>
   );
 }
 

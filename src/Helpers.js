@@ -36,7 +36,7 @@ export function toBigNumber(n) {
   try {
     return new BigNumber(n.toString());
   } catch (e) {
-    console.error("bnToBigNumber error", e);
+    console.error("toBigNumber error", e);
     return undefined;
   }
 }

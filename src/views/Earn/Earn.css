@@ -1,0 +1,117 @@
+.BuyPHAMEPHLP-container {
+  width: 100%;
+}
+
+.BuyPHAMEPHLP-container .PHAMEPHLP-Assets {
+  font-size: 3rem;
+  font-weight: 400;
+  font-family: "Relative Bold";
+  margin-top: 1rem !important;
+}
+
+.Stake-note {
+  text-align: center;
+  margin-bottom: 0.465rem;
+}
+
+.Stake-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3.1rem;
+  grid-gap: 1.5rem;
+  margin-top: 0.8rem;
+}
+
+.StakeModal .Modal-content {
+  width: 31rem;
+}
+.StakeModal .Modal-body {
+  font-size: 1.5rem;
+}
+
+.Stake-warning {
+  text-align: center;
+  margin-top: 0.465rem;
+}
+
+.Stake .Page-title-section {
+  position: relative;
+  z-index: 2;
+}
+
+.VesterDepositModal-info-rows {
+  margin-bottom: 0.8rem;
+}
+
+.CompoundModal-menu {
+  margin-bottom: 0.8rem;
+}
+
+.CompoundModal-menu .Checkbox {
+  margin-bottom: 0.465rem;
+}
+
+.Stake-address-input {
+  padding: 1.5rem 3.41rem;
+  padding-bottom: 0;
+}
+
+.Stake-buy-gmx-modal .Modal-content {
+  max-width: 46.5rem;
+}
+
+.Stake-address-input input {
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 1.7rem;
+}
+
+.Stake-boost-bar {
+  overflow: hidden;
+  vertical-align: middle;
+  margin-left: 0.31rem;
+  border-radius: 2px;
+  width: 1.5rem;
+  height: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  display: inline-block;
+  position: relative;
+}
+
+.Stake-boost-icon {
+  font-size: 1.085rem;
+  z-index: 2;
+}
+
+.Stake-boost-bar-fill {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.default-btn.staking-btn {
+  margin-right: 1rem !important;
+}
+
+@media (max-width: 800px) {
+  .BuyPHAMEPHLP-container {
+    padding-left: 1.6rem !important;
+    padding-right: 1.6rem !important;
+  }
+
+  .StakeModal .Modal-content {
+    width: auto;
+  }
+  .Stake-cards {
+    grid-template-columns: 1fr;
+  }
+  .Stake-content {
+    min-height: 100vh;
+  }
+  .Stake-total-rewards-card {
+    grid-row: 2;
+  }
+}

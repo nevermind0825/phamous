@@ -1092,8 +1092,10 @@ export default function PhlpSwap(props) {
               const tokenImage = importImage(
                 "ic_" + token.symbol.toLowerCase() + "_40.svg"
               );
-              const isCapReached = tokenInfo.managedAmount?.gt(
-                tokenInfo.maxUsdphAmount
+              const isCapReached = tokenInfo.managedUsd?.gt(
+                tokenInfo.maxUsdphAmount.mul(
+                  expandDecimals(1, USD_DECIMALS - USDPH_DECIMALS)
+                )
               );
 
               let amountLeftToDeposit;
@@ -1137,7 +1139,12 @@ export default function PhlpSwap(props) {
                   <td>
                     <div className="App-card-title-info">
                       <div className="App-card-title-info-icon">
-                        <img src={tokenImage} alt={token.symbol} width="40px" />
+                        <img
+                          src={tokenImage}
+                          alt={token.symbol}
+                          width="40px"
+                          height="40px"
+                        />
                       </div>
                       <div className="App-card-title-info-text">
                         <div className="App-card-info-title">{token.name}</div>
@@ -1182,31 +1189,39 @@ export default function PhlpSwap(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Current Pool Amount: $
-                                {formatAmount(
-                                  managedUsd,
-                                  USD_DECIMALS,
-                                  2,
-                                  true
-                                )}{" "}
-                                (
-                                {formatKeyAmount(
-                                  tokenInfo,
-                                  "poolAmount",
-                                  token.decimals,
-                                  2,
-                                  true
-                                )}{" "}
-                                {token.symbol})
-                                <br />
-                                <br />
-                                Max Pool Capacity: $
-                                {formatAmount(
-                                  tokenInfo.maxUsdphAmount,
-                                  18,
-                                  0,
-                                  true
-                                )}
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Current Pool Amount:
+                                  </span>
+                                  $
+                                  {formatAmount(
+                                    managedUsd,
+                                    USD_DECIMALS,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  (
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "poolAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  {token.symbol})
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Max Pool Capacity:
+                                  </span>
+                                  $
+                                  {formatAmount(
+                                    tokenInfo.maxUsdphAmount,
+                                    18,
+                                    0,
+                                    true
+                                  )}
+                                </div>
                               </>
                             );
                           }}
@@ -1231,24 +1246,31 @@ export default function PhlpSwap(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Current Pool Amount:{" "}
-                                {formatKeyAmount(
-                                  tokenInfo,
-                                  "poolAmount",
-                                  token.decimals,
-                                  2,
-                                  true
-                                )}
-                                {token.symbol}
-                                <br />
-                                <br />
-                                Max Pool Capacity: $
-                                {formatAmount(
-                                  tokenInfo.maxUsdphAmount,
-                                  18,
-                                  0,
-                                  true
-                                )}
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Current Pool Amount:
+                                  </span>
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "poolAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}
+                                  {token.symbol}
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Max Pool Capacity:
+                                  </span>
+                                  $
+                                  {formatAmount(
+                                    tokenInfo.maxUsdphAmount,
+                                    18,
+                                    0,
+                                    true
+                                  )}
+                                </div>
                               </>
                             );
                           }}
@@ -1371,7 +1393,12 @@ export default function PhlpSwap(props) {
             return (
               <div className="App-card" key={token.symbol}>
                 <div className="mobile-token-card">
-                  <img src={tokenImage} alt={token.symbol} width="20px" />
+                  <img
+                    src={tokenImage}
+                    alt={token.symbol}
+                    width="20px"
+                    height="20px"
+                  />
                   <div className="token-symbol-text">{token.symbol}</div>
                   <div>
                     <AssetDropdown
@@ -1421,31 +1448,39 @@ export default function PhlpSwap(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Current Pool Amount: $
-                                {formatAmount(
-                                  managedUsd,
-                                  USD_DECIMALS,
-                                  2,
-                                  true
-                                )}{" "}
-                                (
-                                {formatKeyAmount(
-                                  tokenInfo,
-                                  "poolAmount",
-                                  token.decimals,
-                                  2,
-                                  true
-                                )}{" "}
-                                {token.symbol})
-                                <br />
-                                <br />
-                                Max Pool Capacity: $
-                                {formatAmount(
-                                  tokenInfo.maxUsdphAmount,
-                                  18,
-                                  0,
-                                  true
-                                )}
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Current Pool Amount:
+                                  </span>
+                                  $
+                                  {formatAmount(
+                                    managedUsd,
+                                    USD_DECIMALS,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  (
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "poolAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  {token.symbol})
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Max Pool Capacity:
+                                  </span>
+                                  $
+                                  {formatAmount(
+                                    tokenInfo.maxUsdphAmount,
+                                    18,
+                                    0,
+                                    true
+                                  )}
+                                </div>
                               </>
                             );
                           }}
@@ -1490,24 +1525,31 @@ export default function PhlpSwap(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Current Pool Amount:{" "}
-                                {formatKeyAmount(
-                                  tokenInfo,
-                                  "poolAmount",
-                                  token.decimals,
-                                  2,
-                                  true
-                                )}
-                                {token.symbol}
-                                <br />
-                                <br />
-                                Max Pool Capacity: $
-                                {formatAmount(
-                                  tokenInfo.maxUsdphAmount,
-                                  18,
-                                  0,
-                                  true
-                                )}
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Current Pool Amount:
+                                  </span>
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "poolAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}
+                                  {token.symbol}
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Max Pool Capacity:
+                                  </span>
+                                  $
+                                  {formatAmount(
+                                    tokenInfo.maxUsdphAmount,
+                                    18,
+                                    0,
+                                    true
+                                  )}
+                                </div>
                               </>
                             );
                           }}
