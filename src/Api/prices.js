@@ -90,6 +90,10 @@ function getChartPricesFromGraph(tokenSymbol, chainId, period) {
   if (chainId === PLS_TESTNET_V2 && tokenSymbol === "tPLS") {
     tokenSymbol = "PLS";
   }
+  let network;
+  if (chainId === PLS_TESTNET_V2) {
+    network = "plstestv2";
+  }
   let tokenAddress;
   if (TOKENS[chainId]) {
     for (const token of TOKENS[chainId]) {
@@ -114,6 +118,9 @@ function getChartPricesFromGraph(tokenSymbol, chainId, period) {
         where: {
           token: {
             equalTo: "${tokenAddress}"
+          },
+          network: {
+            equalTo: "${network}"
           }
         }
       ) {

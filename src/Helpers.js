@@ -350,17 +350,19 @@ export const PHLPPOOLCOLORS = {
   HDRN: "#708ac6",
   USDC: "#a1a4a6",
   LOAN: "#733bad",
+  MAXI: "#0f00b3",
+  XEN: "#404040",
 };
 
 export const ICONLINKS = {
   [PLS_TESTNET_V2]: {
     PHAME: {
       plstestv2:
-        "https://scan.v2b.testnet.pulsechain.com/token/0xA6Cac6290681Ba0e2582746D76947670D2aBD28B",
+        "https://scan.v2b.testnet.pulsechain.com/token/0xf120Dc7395FE6dDe218d72C9F5188FE280F6c458",
     },
     PHLP: {
       plstestv2:
-        "https://scan.v2b.testnet.pulsechain.com/token/0xf091D570377Cf90dB66Cd0251a66a7a51D5D1065",
+        "https://scan.v2b.testnet.pulsechain.com/token/0xbB5F9DC3454b02fE5eaF5070C62ad4C055e05F1f",
     },
     tPLS: {
       plstestv2:
@@ -388,6 +390,15 @@ export const ICONLINKS = {
     LOAN: {
       plstestv2:
         "https://scan.v2b.testnet.pulsechain.com/token/0x4F7fCdb511a25099F870EE57c77f7DB2561EC9B6",
+    },
+    MAXI: {
+      plstestv2:
+        "https://scan.v2b.testnet.pulsechain.com/token/0xE0d1bd019665956945043c96499c6414Cfc300a9",
+    },
+    XEN: {
+      coingecko: "https://www.coingecko.com/en/coins/xen-crypto",
+      plstestv2:
+        "https://scan.v2b.testnet.pulsechain.com/token/0xca41f293A32d25c2216bC4B30f5b0Ab61b6ed2CB",
     },
   },
 };
@@ -2770,10 +2781,10 @@ export function getHomeUrl() {
 
 export function getAppBaseUrl() {
   if (isLocal()) {
-    return "http://localhost:3011/#";
+    return "http://localhost:3010/#";
   }
 
-  return "https://app.phamous.io/#";
+  return "https://testnet.phamous.io/#";
 }
 
 export function getTradePageUrl() {
@@ -2781,7 +2792,7 @@ export function getTradePageUrl() {
     return "http://localhost:3011/#/trade";
   }
 
-  return "https://app.phamous.io/#/trade";
+  return "https://testnet.phamous.io/#/trade";
 }
 
 export function importImage(name) {
@@ -2793,4 +2804,20 @@ export function importImage(name) {
     console.error(error);
   }
   return tokenImage && tokenImage.default;
+}
+
+export function getTwitterIntentURL(text, url = "", hashtag = "") {
+  let finalURL = "https://twitter.com/intent/tweet?text=";
+  if (text.length > 0) {
+    finalURL += Array.isArray(text)
+      ? text.map((t) => encodeURIComponent(t)).join("%0a%0a")
+      : encodeURIComponent(text);
+    if (hashtag.length > 0) {
+      finalURL += "&hashtags=" + encodeURIComponent(hashtag.replace(/#/g, ""));
+    }
+    if (url.length > 0) {
+      finalURL += "&url=" + encodeURIComponent(url);
+    }
+  }
+  return finalURL;
 }

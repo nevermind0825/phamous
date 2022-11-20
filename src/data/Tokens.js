@@ -51,6 +51,24 @@ export const TOKENS = {
         "https://assets.coingecko.com/coins/images/24208/small/hdrn.png?1647079428",
     },
     {
+      name: "Maximus",
+      symbol: "MAXI",
+      decimals: 8,
+      address: "0xE0d1bd019665956945043c96499c6414Cfc300a9",
+      isShortable: true,
+      imageUrl:
+        "https://nomics.com/imgpr/https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FMAXI5.jpg?width=48",
+    },
+    {
+      name: "XEN Crypto",
+      symbol: "XEN",
+      decimals: 18,
+      address: "0xca41f293A32d25c2216bC4B30f5b0Ab61b6ed2CB",
+      isShortable: true,
+      imageUrl:
+        "https://assets.coingecko.com/coins/images/27713/small/Xen.jpeg?1665453190",
+    },
+    {
       name: "LOAN",
       symbol: "LOAN",
       decimals: 18,

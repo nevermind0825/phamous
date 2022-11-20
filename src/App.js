@@ -45,6 +45,7 @@ import {
 
 import Dashboard from "./views/Dashboard/Dashboard";
 import Ecosystem from "./views/Ecosystem/Ecosystem";
+import Share from "./views/Share/Share";
 import { Exchange } from "./views/Exchange/Exchange";
 // eslint-disable-next-line no-unused-vars
 import Home from "./views/Home/Home"; // need its css
@@ -162,7 +163,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           </div>
           <div className="App-header-link-container">
             <a
-              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
+              href="https://ph-defi.gitbook.io/home/phamous-protocol-tokenomics"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -187,7 +188,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
           </div>
           <div className="App-header-link-container">
             <a
-              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
+              href="https://ph-defi.gitbook.io/home/phamous-protocol-tokenomics"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -206,16 +207,6 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <a href="http://phatty.io" target="_blank">
               <img src={phattyLogo} alt="Phatty" width="24px"></img>
               Phatty
-            </a>
-          </div>
-          <div className="App-header-link-container">
-            {/* eslint-disable-next-line */}
-            <a
-              href="http://phiat-io.gitbook.io/phiat/phamous-protocol"
-              target="_blank"
-            >
-              <img src={linkLogo} alt="Links" width="24px"></img>
-              Links
             </a>
           </div>
         </>
@@ -866,11 +857,11 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            {/* <Route exact path="/buy_phame">
-                <BuyPHAME />
-              </Route> */}
             <Route exact path="/ecosystem">
               <Ecosystem />
+            </Route>
+            <Route exact path="/share/:id">
+              <Share />
             </Route>
             {/* <Route exact path="/orders_overview">
                 <OrdersOverview />

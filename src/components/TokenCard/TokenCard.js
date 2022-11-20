@@ -6,6 +6,7 @@ import cx from "classnames";
 import phameBigIcon from "../../img/ic_phame_custom.svg";
 import phlpBigIcon from "../../img/ic_phlp_custom.svg";
 
+import { getContract } from "../../Addresses";
 import { PLS_TESTNET_V2 } from "../../Constants";
 import {
   switchNetwork,
@@ -79,7 +80,10 @@ export default function TokenCard({ showRedirectModal }) {
           <div className="Home-token-card-option-action">
             <div className="buy">
               <a
-                href="https://app.v2b.testnet.pulsex.com/swap?inputCurrency=0x8a810ea8b121d08342e9e7696f4a9915cbe494b7&outputCurrency=0xA6Cac6290681Ba0e2582746D76947670D2aBD28B"
+                href={`https://app.v2b.testnet.pulsex.com/swap?inputCurrency=0x8a810ea8b121d08342e9e7696f4a9915cbe494b7&outputCurrency=${getContract(
+                  chainId,
+                  "PHAME"
+                )}`}
                 target="_blank"
                 rel="noreferrer"
                 className="default-btn"
@@ -88,7 +92,7 @@ export default function TokenCard({ showRedirectModal }) {
               </a>
             </div>
             <a
-              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
+              href="https://ph-defi.gitbook.io/home/phamous-protocol-tokenomics"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
@@ -121,7 +125,7 @@ export default function TokenCard({ showRedirectModal }) {
               </BuyLink>
             </div>
             <a
-              href="https://phiat-io.gitbook.io/phiat/phamous-protocol"
+              href="https://ph-defi.gitbook.io/home/phamous-protocol-tokenomics"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
