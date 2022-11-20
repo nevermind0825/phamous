@@ -2775,7 +2775,9 @@ export function getHomeUrl() {
   if (isLocal()) {
     return "http://localhost:3010";
   }
-
+  if (isDevelopment()) {
+    return "https://icy-tooth-7729.on.fleek.co/#";
+  }
   return "https://phamous.io";
 }
 
@@ -2783,15 +2785,19 @@ export function getAppBaseUrl() {
   if (isLocal()) {
     return "http://localhost:3010/#";
   }
-
+  if (isDevelopment()) {
+    return "https://icy-tooth-7729.on.fleek.co/#";
+  }
   return "https://testnet.phamous.io/#";
 }
 
 export function getTradePageUrl() {
   if (isLocal()) {
-    return "http://localhost:3011/#/trade";
+    return "http://localhost:3010/#/trade";
   }
-
+  if (isDevelopment()) {
+    return "https://icy-tooth-7729.on.fleek.co/#/trade";
+  }
   return "https://testnet.phamous.io/#/trade";
 }
 
