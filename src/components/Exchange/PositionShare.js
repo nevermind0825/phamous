@@ -174,7 +174,7 @@ function PositionShareCard({
         }}
       >
         <div>
-          <img className="logo" src={logo} alt="Phamous Logo" />
+          <img className="logo" src={logo} alt="Phamous" />
           <ul className="info">
             <li
               className={cx("side", {

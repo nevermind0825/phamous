@@ -23,7 +23,7 @@ export default function BuyPhlp(props) {
     <div className="default-container page-layout">
       <div className="section-title-block">
         <div className="section-title-icon">
-          <img src={buyPHLPIcon} alt="buyPHLPIcon" />
+          <img src={buyPHLPIcon} alt="Buy PHLP" />
         </div>
         <div className="section-title-content">
           <div className="Page-title">Buy / Sell PHLP</div>

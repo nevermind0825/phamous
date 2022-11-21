@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Title } from "react-head";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -24,7 +25,7 @@ import {
   PHLPPOOLCOLORS,
   DEFAULT_MAX_USDPH_AMOUNT,
   getPageTitle,
-  importImage,
+  importTokenImage,
 } from "../../Helpers";
 import { useInfoTokens } from "../../Api";
 
@@ -42,7 +43,6 @@ import pls16Icon from "../../img/ic_pulsechain_16.svg";
 import pls24Icon from "../../img/ic_pulsechain_24.svg";
 
 import AssetDropdown from "./AssetDropdown";
-import SEO from "../../components/Common/SEO";
 
 const { AddressZero } = ethers.constants;
 
@@ -302,26 +302,24 @@ export default function DashboardV2() {
   };
 
   return (
-    <SEO title={getPageTitle("Dashboard")}>
-      <div className="default-container DashboardV2 page-layout">
-        <div className="section-title-block">
-          <div className="section-title-icon"></div>
-          <div className="section-title-content">
-            <div className="Page-title">
-              Stats{" "}
-              {chainId === PLS_TESTNET_V2 && (
-                <img src={pls24Icon} alt="pls24Icon" />
-              )}
-            </div>
+    <div className="default-container DashboardV2 page-layout">
+      <Title>{getPageTitle("Dashboard")}</Title>
+      <div className="section-title-block">
+        <div className="section-title-icon"></div>
+        <div className="section-title-content">
+          <div className="Page-title">
+            Stats{" "}
+            {chainId === PLS_TESTNET_V2 && <img src={pls24Icon} alt="PLS" />}
           </div>
         </div>
-        <div className="DashboardV2-content">
-          <div className="DashboardV2-cards">
-            <div className="App-card">
-              <div className="App-card-title">Overview</div>
-              <div className="App-card-divider"></div>
-              <div className="App-card-content">
-                {/* <div className="App-card-row">
+      </div>
+      <div className="DashboardV2-content">
+        <div className="DashboardV2-cards">
+          <div className="App-card">
+            <div className="App-card-title">Overview</div>
+            <div className="App-card-divider"></div>
+            <div className="App-card-content">
+              {/* <div className="App-card-row">
                   <div className="label">AUM</div>
                   <div>
                     <TooltipComponent
@@ -331,56 +329,45 @@ export default function DashboardV2() {
                     />
                   </div>
                 </div> */}
-                <div className="App-card-row">
-                  <div className="label">PHLP Pool</div>
-                  <div>
-                    ${formatAmount(aum, USD_DECIMALS, 0, true)}
-                    {/* <TooltipComponent
+              <div className="App-card-row">
+                <div className="label">PHLP Pool</div>
+                <div>
+                  ${formatAmount(aum, USD_DECIMALS, 0, true)}
+                  {/* <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
                       renderContent={() =>
                         `Total value of tokens in PHLP pool (${chainName})`
                       }
                     /> */}
-                  </div>
                 </div>
-                {/* <div className="App-card-row">
+              </div>
+              {/* <div className="App-card-row">
                   <div className="label">24h Volume</div>
                   <div>${formatAmount(volumeInfo.totalVolume, USD_DECIMALS, 0, true)}</div>
                 </div> */}
-                <div className="App-card-row">
-                  <div className="label">Long Positions</div>
-                  <div>
-                    $
-                    {formatAmount(
-                      totalLongPositionSizes,
-                      USD_DECIMALS,
-                      0,
-                      true
-                    )}
-                  </div>
+              <div className="App-card-row">
+                <div className="label">Long Positions</div>
+                <div>
+                  ${formatAmount(totalLongPositionSizes, USD_DECIMALS, 0, true)}
                 </div>
-                <div className="App-card-row">
-                  <div className="label">Short Positions</div>
-                  <div>
-                    $
-                    {formatAmount(
-                      totalShortPositionSizes,
-                      USD_DECIMALS,
-                      0,
-                      true
-                    )}
-                  </div>
+              </div>
+              <div className="App-card-row">
+                <div className="label">Short Positions</div>
+                <div>
+                  $
+                  {formatAmount(totalShortPositionSizes, USD_DECIMALS, 0, true)}
                 </div>
-                {/* {feeHistory.length ? (
+              </div>
+              {/* {feeHistory.length ? (
                   <div className="App-card-row">
                     <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
                     <div>${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}</div>
                   </div>
                 ) : null} */}
-              </div>
             </div>
-            {/* <div className="App-card">
+          </div>
+          {/* <div className="App-card">
               <div className="App-card-title">Total Stats</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
@@ -394,44 +381,292 @@ export default function DashboardV2() {
                 </div>
               </div>
             </div> */}
+        </div>
+        <div className="Tab-title-section">
+          <div className="Page-title">
+            Tokens{" "}
+            {chainId === PLS_TESTNET_V2 && <img src={pls24Icon} alt="PLS" />}
           </div>
-          <div className="Tab-title-section">
-            <div className="Page-title">
-              Tokens{" "}
-              {chainId === PLS_TESTNET_V2 && (
-                <img src={pls24Icon} alt="pls24Icon" />
-              )}
+          <div className="Page-description">PHLP index tokens.</div>
+        </div>
+        <div className="DashboardV2-token-cards">
+          <div className="stats-wrapper stats-wrapper--phamous">
+            <div className="App-card">
+              <div className="stats-block">
+                <div className="App-card-title">
+                  <div className="App-card-title-mark">
+                    <div className="App-card-title-mark-icon">
+                      <img src={phlp40Icon} alt="PHLP" />
+                      {chainId === PLS_TESTNET_V2 ? (
+                        <img
+                          src={pls16Icon}
+                          alt="PLS"
+                          className="selected-network-symbol"
+                        />
+                      ) : (
+                        <img
+                          src={pls16Icon}
+                          alt="PLS"
+                          className="selected-network-symbol"
+                        />
+                      )}
+                    </div>
+                    <div className="App-card-title-mark-info">
+                      <div className="App-card-title-mark-title">PHLP</div>
+                      <div className="App-card-title-mark-subtitle">PHLP</div>
+                    </div>
+                    <div>
+                      <AssetDropdown assetSymbol="PHLP" />
+                    </div>
+                  </div>
+                </div>
+                <div className="App-card-divider"></div>
+                <div className="App-card-content">
+                  <div className="App-card-row">
+                    <div className="label">Price</div>
+                    <div>${formatAmount(phlpPrice, USD_DECIMALS, 3, true)}</div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Supply</div>
+                    <div>
+                      {formatAmount(phlpSupply, PHLP_DECIMALS, 0, true)} PHLP
+                    </div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Market Cap</div>
+                    <div>
+                      ${formatAmount(phlpMarketCap, USD_DECIMALS, 0, true)}
+                    </div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Stablecoin Percentage</div>
+                    <div>{stablePercentage}%</div>
+                  </div>
+                </div>
+              </div>
+              <div className="stats-piechart" onMouseOut={onPHLPPoolChartLeave}>
+                {phlpPool.length > 0 && (
+                  <PieChart width={210} height={210}>
+                    <Pie
+                      data={phlpPool}
+                      cx={100}
+                      cy={100}
+                      innerRadius={73}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                      onMouseEnter={onPHLPPoolChartEnter}
+                      onMouseOut={onPHLPPoolChartLeave}
+                      onMouseLeave={onPHLPPoolChartLeave}
+                      paddingAngle={2}
+                    >
+                      {phlpPool.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={PHLPPOOLCOLORS[entry.name]}
+                          style={{
+                            filter:
+                              phlpActiveIndex === index
+                                ? `drop-shadow(0px 0px 6px ${hexToRgba(
+                                    PHLPPOOLCOLORS[entry.name],
+                                    0.7
+                                  )})`
+                                : "none",
+                            cursor: "pointer",
+                          }}
+                          stroke={PHLPPOOLCOLORS[entry.name]}
+                          strokeWidth={phlpActiveIndex === index ? 1 : 1}
+                        />
+                      ))}
+                    </Pie>
+                    <text
+                      x={"50%"}
+                      y={"50%"}
+                      fill="white"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      PHLP Pool
+                    </text>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                )}
+              </div>
             </div>
-            <div className="Page-description">PHLP index tokens.</div>
           </div>
-          <div className="DashboardV2-token-cards">
-            <div className="stats-wrapper stats-wrapper--phamous">
-              <div className="App-card">
-                <div className="stats-block">
-                  <div className="App-card-title">
-                    <div className="App-card-title-mark">
-                      <div className="App-card-title-mark-icon">
-                        <img src={phlp40Icon} alt="phlp40Icon" />
-                        {chainId === PLS_TESTNET_V2 ? (
-                          <img
-                            src={pls16Icon}
-                            alt="pls16Icon"
-                            className="selected-network-symbol"
-                          />
-                        ) : (
-                          <img
-                            src={pls16Icon}
-                            alt="pls16Icon"
-                            className="selected-network-symbol"
-                          />
+          <div className="token-table-wrapper App-card">
+            <div className="App-card-title">
+              PHLP Index Composition{" "}
+              {chainId === PLS_TESTNET_V2 && <img src={pls16Icon} alt="PLS" />}
+            </div>
+            <div className="App-card-divider"></div>
+            <table className="token-table">
+              <thead>
+                <tr>
+                  <th>TOKEN</th>
+                  <th>PRICE</th>
+                  <th>POOL</th>
+                  <th>WEIGHT</th>
+                  <th>UTILIZATION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tokens.map((token) => {
+                  const tokenInfo = infoTokens[token.address];
+                  let utilization = bigNumberify(0);
+                  if (
+                    tokenInfo &&
+                    tokenInfo.reservedAmount &&
+                    tokenInfo.poolAmount &&
+                    tokenInfo.poolAmount.gt(0)
+                  ) {
+                    utilization = tokenInfo.reservedAmount
+                      .mul(BASIS_POINTS_DIVISOR)
+                      .div(tokenInfo.poolAmount);
+                  }
+                  let maxUsdphAmount = DEFAULT_MAX_USDPH_AMOUNT;
+                  if (
+                    tokenInfo.maxUsdphAmount &&
+                    tokenInfo.maxUsdphAmount.gt(0)
+                  ) {
+                    maxUsdphAmount = tokenInfo.maxUsdphAmount;
+                  }
+                  const tokenImage = importTokenImage(token.symbol);
+
+                  return (
+                    <tr key={token.symbol}>
+                      <td>
+                        <div className="token-symbol-wrapper">
+                          <div className="App-card-title-info">
+                            <div className="App-card-title-info-icon">
+                              <img
+                                src={tokenImage}
+                                alt={token.symbol}
+                                width="40px"
+                                height="40px"
+                              />
+                            </div>
+                            <div className="App-card-title-info-text">
+                              <div className="App-card-info-title">
+                                {token.name}
+                              </div>
+                              <div className="App-card-info-subtitle">
+                                {token.symbol}
+                              </div>
+                            </div>
+                            <div>
+                              <AssetDropdown
+                                assetSymbol={token.symbol}
+                                assetInfo={token}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        $
+                        {formatKeyAmount(
+                          tokenInfo,
+                          "minPrice",
+                          USD_DECIMALS,
+                          2,
+                          true
                         )}
-                      </div>
-                      <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">PHLP</div>
-                        <div className="App-card-title-mark-subtitle">PHLP</div>
-                      </div>
+                      </td>
+                      <td>
+                        <TooltipComponent
+                          handle={`$${formatKeyAmount(
+                            tokenInfo,
+                            "managedUsd",
+                            USD_DECIMALS,
+                            0,
+                            true
+                          )}`}
+                          position="right-bottom"
+                          renderContent={() => {
+                            return (
+                              <>
+                                <div className="Tooltip-row">
+                                  <span className="label">Pool Amount:</span>
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "managedAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  {token.symbol}
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Target Min Amount:
+                                  </span>
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "bufferAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  {token.symbol}
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Max {tokenInfo.symbol} Capacity:
+                                  </span>
+                                  ${formatAmount(maxUsdphAmount, 18, 0, true)}
+                                </div>
+                              </>
+                            );
+                          }}
+                        />
+                      </td>
+                      <td>{getWeightText(tokenInfo)}</td>
+                      <td>{formatAmount(utilization, 2, 2, false)}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="token-grid">
+            {tokens.map((token) => {
+              const tokenInfo = infoTokens[token.address];
+              let utilization = bigNumberify(0);
+              if (
+                tokenInfo &&
+                tokenInfo.reservedAmount &&
+                tokenInfo.poolAmount &&
+                tokenInfo.poolAmount.gt(0)
+              ) {
+                utilization = tokenInfo.reservedAmount
+                  .mul(BASIS_POINTS_DIVISOR)
+                  .div(tokenInfo.poolAmount);
+              }
+              let maxUsdphAmount = DEFAULT_MAX_USDPH_AMOUNT;
+              if (tokenInfo.maxUsdphAmount && tokenInfo.maxUsdphAmount.gt(0)) {
+                maxUsdphAmount = tokenInfo.maxUsdphAmount;
+              }
+
+              const tokenImage = importTokenImage(token.symbol);
+              return (
+                <div className="App-card" key={token.symbol}>
+                  <div className="App-card-title">
+                    <div className="mobile-token-card">
+                      <img
+                        src={tokenImage}
+                        alt={token.symbol}
+                        width="20px"
+                        height="20px"
+                      />
+                      <div className="token-symbol-text">{token.symbol}</div>
                       <div>
-                        <AssetDropdown assetSymbol="PHLP" />
+                        <AssetDropdown
+                          assetSymbol={token.symbol}
+                          assetInfo={token}
+                        />
                       </div>
                     </div>
                   </div>
@@ -440,348 +675,83 @@ export default function DashboardV2() {
                     <div className="App-card-row">
                       <div className="label">Price</div>
                       <div>
-                        ${formatAmount(phlpPrice, USD_DECIMALS, 3, true)}
+                        $
+                        {formatKeyAmount(
+                          tokenInfo,
+                          "minPrice",
+                          USD_DECIMALS,
+                          2,
+                          true
+                        )}
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Supply</div>
+                      <div className="label">Pool</div>
                       <div>
-                        {formatAmount(phlpSupply, PHLP_DECIMALS, 0, true)} PHLP
-                      </div>
-                    </div>
-                    <div className="App-card-row">
-                      <div className="label">Market Cap</div>
-                      <div>
-                        ${formatAmount(phlpMarketCap, USD_DECIMALS, 0, true)}
-                      </div>
-                    </div>
-                    <div className="App-card-row">
-                      <div className="label">Stablecoin Percentage</div>
-                      <div>{stablePercentage}%</div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="stats-piechart"
-                  onMouseOut={onPHLPPoolChartLeave}
-                >
-                  {phlpPool.length > 0 && (
-                    <PieChart width={210} height={210}>
-                      <Pie
-                        data={phlpPool}
-                        cx={100}
-                        cy={100}
-                        innerRadius={73}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                        startAngle={90}
-                        endAngle={-270}
-                        onMouseEnter={onPHLPPoolChartEnter}
-                        onMouseOut={onPHLPPoolChartLeave}
-                        onMouseLeave={onPHLPPoolChartLeave}
-                        paddingAngle={2}
-                      >
-                        {phlpPool.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={PHLPPOOLCOLORS[entry.name]}
-                            style={{
-                              filter:
-                                phlpActiveIndex === index
-                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(
-                                      PHLPPOOLCOLORS[entry.name],
-                                      0.7
-                                    )})`
-                                  : "none",
-                              cursor: "pointer",
-                            }}
-                            stroke={PHLPPOOLCOLORS[entry.name]}
-                            strokeWidth={phlpActiveIndex === index ? 1 : 1}
-                          />
-                        ))}
-                      </Pie>
-                      <text
-                        x={"50%"}
-                        y={"50%"}
-                        fill="white"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        PHLP Pool
-                      </text>
-                      <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="token-table-wrapper App-card">
-              <div className="App-card-title">
-                PHLP Index Composition{" "}
-                {chainId === PLS_TESTNET_V2 && (
-                  <img src={pls16Icon} alt="pls16Icon" />
-                )}
-              </div>
-              <div className="App-card-divider"></div>
-              <table className="token-table">
-                <thead>
-                  <tr>
-                    <th>TOKEN</th>
-                    <th>PRICE</th>
-                    <th>POOL</th>
-                    <th>WEIGHT</th>
-                    <th>UTILIZATION</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tokens.map((token) => {
-                    const tokenInfo = infoTokens[token.address];
-                    let utilization = bigNumberify(0);
-                    if (
-                      tokenInfo &&
-                      tokenInfo.reservedAmount &&
-                      tokenInfo.poolAmount &&
-                      tokenInfo.poolAmount.gt(0)
-                    ) {
-                      utilization = tokenInfo.reservedAmount
-                        .mul(BASIS_POINTS_DIVISOR)
-                        .div(tokenInfo.poolAmount);
-                    }
-                    let maxUsdphAmount = DEFAULT_MAX_USDPH_AMOUNT;
-                    if (
-                      tokenInfo.maxUsdphAmount &&
-                      tokenInfo.maxUsdphAmount.gt(0)
-                    ) {
-                      maxUsdphAmount = tokenInfo.maxUsdphAmount;
-                    }
-                    const tokenImage = importImage(
-                      "ic_" + token.symbol.toLowerCase() + "_40.svg"
-                    );
-
-                    return (
-                      <tr key={token.symbol}>
-                        <td>
-                          <div className="token-symbol-wrapper">
-                            <div className="App-card-title-info">
-                              <div className="App-card-title-info-icon">
-                                <img
-                                  src={tokenImage}
-                                  alt={token.symbol}
-                                  width="40px"
-                                  height="40px"
-                                />
-                              </div>
-                              <div className="App-card-title-info-text">
-                                <div className="App-card-info-title">
-                                  {token.name}
-                                </div>
-                                <div className="App-card-info-subtitle">
+                        <TooltipComponent
+                          handle={`$${formatKeyAmount(
+                            tokenInfo,
+                            "managedUsd",
+                            USD_DECIMALS,
+                            0,
+                            true
+                          )}`}
+                          position="right-bottom"
+                          renderContent={() => {
+                            return (
+                              <>
+                                <div className="Tooltip-row">
+                                  <span className="label">Pool Amount:</span>
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "managedAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}{" "}
                                   {token.symbol}
                                 </div>
-                              </div>
-                              <div>
-                                <AssetDropdown
-                                  assetSymbol={token.symbol}
-                                  assetInfo={token}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          $
-                          {formatKeyAmount(
-                            tokenInfo,
-                            "minPrice",
-                            USD_DECIMALS,
-                            2,
-                            true
-                          )}
-                        </td>
-                        <td>
-                          <TooltipComponent
-                            handle={`$${formatKeyAmount(
-                              tokenInfo,
-                              "managedUsd",
-                              USD_DECIMALS,
-                              0,
-                              true
-                            )}`}
-                            position="right-bottom"
-                            renderContent={() => {
-                              return (
-                                <>
-                                  <div className="Tooltip-row">
-                                    <span className="label">Pool Amount:</span>
-                                    {formatKeyAmount(
-                                      tokenInfo,
-                                      "managedAmount",
-                                      token.decimals,
-                                      2,
-                                      true
-                                    )}{" "}
-                                    {token.symbol}
-                                  </div>
-                                  <div className="Tooltip-row">
-                                    <span className="label">
-                                      Target Min Amount:
-                                    </span>
-                                    {formatKeyAmount(
-                                      tokenInfo,
-                                      "bufferAmount",
-                                      token.decimals,
-                                      2,
-                                      true
-                                    )}{" "}
-                                    {token.symbol}
-                                  </div>
-                                  <div className="Tooltip-row">
-                                    <span className="label">
-                                      Max {tokenInfo.symbol} Capacity:
-                                    </span>
-                                    ${formatAmount(maxUsdphAmount, 18, 0, true)}
-                                  </div>
-                                </>
-                              );
-                            }}
-                          />
-                        </td>
-                        <td>{getWeightText(tokenInfo)}</td>
-                        <td>{formatAmount(utilization, 2, 2, false)}%</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <div className="token-grid">
-              {tokens.map((token) => {
-                const tokenInfo = infoTokens[token.address];
-                let utilization = bigNumberify(0);
-                if (
-                  tokenInfo &&
-                  tokenInfo.reservedAmount &&
-                  tokenInfo.poolAmount &&
-                  tokenInfo.poolAmount.gt(0)
-                ) {
-                  utilization = tokenInfo.reservedAmount
-                    .mul(BASIS_POINTS_DIVISOR)
-                    .div(tokenInfo.poolAmount);
-                }
-                let maxUsdphAmount = DEFAULT_MAX_USDPH_AMOUNT;
-                if (
-                  tokenInfo.maxUsdphAmount &&
-                  tokenInfo.maxUsdphAmount.gt(0)
-                ) {
-                  maxUsdphAmount = tokenInfo.maxUsdphAmount;
-                }
-
-                const tokenImage = importImage(
-                  "ic_" + token.symbol.toLowerCase() + "_24.svg"
-                );
-                return (
-                  <div className="App-card" key={token.symbol}>
-                    <div className="App-card-title">
-                      <div className="mobile-token-card">
-                        <img
-                          src={tokenImage}
-                          alt={token.symbol}
-                          width="20px"
-                          height="20px"
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Target Min Amount:
+                                  </span>
+                                  {formatKeyAmount(
+                                    tokenInfo,
+                                    "bufferAmount",
+                                    token.decimals,
+                                    2,
+                                    true
+                                  )}{" "}
+                                  {token.symbol}
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    Max {tokenInfo.symbol} Capacity:
+                                  </span>
+                                  ${formatAmount(maxUsdphAmount, 18, 0, true)}
+                                </div>
+                              </>
+                            );
+                          }}
                         />
-                        <div className="token-symbol-text">{token.symbol}</div>
-                        <div>
-                          <AssetDropdown
-                            assetSymbol={token.symbol}
-                            assetInfo={token}
-                          />
-                        </div>
                       </div>
                     </div>
-                    <div className="App-card-divider"></div>
-                    <div className="App-card-content">
-                      <div className="App-card-row">
-                        <div className="label">Price</div>
-                        <div>
-                          $
-                          {formatKeyAmount(
-                            tokenInfo,
-                            "minPrice",
-                            USD_DECIMALS,
-                            2,
-                            true
-                          )}
-                        </div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Pool</div>
-                        <div>
-                          <TooltipComponent
-                            handle={`$${formatKeyAmount(
-                              tokenInfo,
-                              "managedUsd",
-                              USD_DECIMALS,
-                              0,
-                              true
-                            )}`}
-                            position="right-bottom"
-                            renderContent={() => {
-                              return (
-                                <>
-                                  <div className="Tooltip-row">
-                                    <span className="label">Pool Amount:</span>
-                                    {formatKeyAmount(
-                                      tokenInfo,
-                                      "managedAmount",
-                                      token.decimals,
-                                      2,
-                                      true
-                                    )}{" "}
-                                    {token.symbol}
-                                  </div>
-                                  <div className="Tooltip-row">
-                                    <span className="label">
-                                      Target Min Amount:
-                                    </span>
-                                    {formatKeyAmount(
-                                      tokenInfo,
-                                      "bufferAmount",
-                                      token.decimals,
-                                      2,
-                                      true
-                                    )}{" "}
-                                    {token.symbol}
-                                  </div>
-                                  <div className="Tooltip-row">
-                                    <span className="label">
-                                      Max {tokenInfo.symbol} Capacity:
-                                    </span>
-                                    ${formatAmount(maxUsdphAmount, 18, 0, true)}
-                                  </div>
-                                </>
-                              );
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Weight</div>
-                        <div>{getWeightText(tokenInfo)}</div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Utilization</div>
-                        <div>{formatAmount(utilization, 2, 2, false)}%</div>
-                      </div>
+                    <div className="App-card-row">
+                      <div className="label">Weight</div>
+                      <div>{getWeightText(tokenInfo)}</div>
+                    </div>
+                    <div className="App-card-row">
+                      <div className="label">Utilization</div>
+                      <div>{formatAmount(utilization, 2, 2, false)}%</div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-        <Footer />
       </div>
-    </SEO>
+      <Footer />
+    </div>
   );
 }

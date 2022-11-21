@@ -6,7 +6,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-
+import { Title } from "react-head";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
@@ -429,6 +429,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
+  const [pageTitle, setPageTitle] = useState(getPageTitle("Trade"));
 
   const hideBanner = () => {
     const hiddenLimit = new Date(
@@ -660,11 +661,12 @@ export const Exchange = forwardRef((props, ref) => {
       2,
       true
     );
-    const title = getPageTitle(
-      currentTokenPriceStr +
-        ` | ${selectedToken.symbol}${selectedToken.isStable ? "" : "USD"}`
+    setPageTitle(
+      getPageTitle(
+        currentTokenPriceStr +
+          ` | ${selectedToken.symbol}${selectedToken.isStable ? "" : "USD"}`
+      )
     );
-    document.title = title;
   }, [
     tokenSelection,
     swapOption,
@@ -1132,6 +1134,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   return (
     <div className="Exchange page-layout">
+      <Title>{pageTitle}</Title>
       {showBanner && <ExchangeBanner hideBanner={hideBanner} />}
       <div className="Exchange-content">
         <div className="Exchange-left">

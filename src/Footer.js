@@ -19,7 +19,7 @@ export default function Footer() {
     <div className="Footer">
       <div className="Footer-wrapper">
         <div className="Footer-logo">
-          <img src={logo} alt="MetaMask" />
+          <img src={logo} alt="Phamous" />
         </div>
         <div className="Footer-social-link-block">
           <a

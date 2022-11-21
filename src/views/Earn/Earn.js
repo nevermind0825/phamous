@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Title } from "react-head";
 import { useWeb3React } from "@web3-react/core";
 
 import phameBigIcon from "../../img/ic_phame_custom.svg";
@@ -25,9 +26,10 @@ import {
   useChainId,
   PLACEHOLDER_ACCOUNT,
   USD_DECIMALS,
-  importImage,
+  importTokenImage,
   PHLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
+  getPageTitle,
 } from "../../Helpers";
 import { useInfoTokens, callContract } from "../../Api";
 
@@ -1077,6 +1079,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
 
   return (
     <div className="default-container page-layout">
+      <Title>{getPageTitle("Earn")}</Title>
       <StakeModal
         isVisible={isStakeModalVisible}
         setIsVisible={setIsStakeModalVisible}
@@ -1390,9 +1393,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                   <div className="label">
                     <div className="mobile-token-card">
                       <img
-                        src={importImage(
-                          "ic_" + reward.tokenSymbol.toLowerCase() + "_24.svg"
-                        )}
+                        src={importTokenImage(reward.tokenSymbol)}
                         alt={reward.tokenSymbol}
                         width="20px"
                         height="20px"
@@ -1505,11 +1506,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                   <div className="label">
                     <div className="mobile-token-card">
                       <img
-                        src={importImage(
-                          "ic_" +
-                            composition.tokenSymbol.toLowerCase() +
-                            "_24.svg"
-                        )}
+                        src={importTokenImage(composition.tokenSymbol)}
                         alt={composition.tokenSymbol}
                         width="20px"
                         height="20px"

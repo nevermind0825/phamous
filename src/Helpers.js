@@ -2812,6 +2812,21 @@ export function importImage(name) {
   return tokenImage && tokenImage.default;
 }
 
+export function importTokenImage(tokenSymbol) {
+  const symbol = tokenSymbol.toLowerCase();
+  let tokenImage = null;
+  try {
+    tokenImage = require(`./img/ic_${symbol}_40.svg`);
+  } catch (_) {
+    try {
+      tokenImage = require(`./img/ic_${symbol}_40.png`);
+    } catch (_) {
+      tokenImage = require("./img/ic_pls_40.svg");
+    }
+  }
+  return tokenImage && tokenImage.default;
+}
+
 export function getTwitterIntentURL(text, url = "", hashtag = "") {
   let finalURL = "https://twitter.com/intent/tweet?text=";
   if (text.length > 0) {

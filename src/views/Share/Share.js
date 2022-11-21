@@ -1,10 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useEffectOnce } from "react-use";
-import SEO from "../../components/Common/SEO";
 import Footer from "../../Footer";
+import { Meta, Title } from "react-head";
 
-import { getTradePageUrl } from "../../Helpers";
+import { getTradePageUrl, getPageTitle } from "../../Helpers";
 import { shareUrl } from "../../lib/uploadImage";
 
 export default function Share() {
@@ -18,11 +18,14 @@ export default function Share() {
   });
 
   return (
-    <SEO image={imgUrl}>
+    <>
       <div>
-        <img src={shareUrl(id)} alt="Phamous" />
+        <Title>{getPageTitle("Position Share")}</Title>
+        <Meta property="og:image" content={imgUrl} />
+        <Meta name="twitter:image" content={imgUrl} />
+        <img src={imgUrl} alt="Phamous Open Position" />
       </div>
       <Footer />
-    </SEO>
+    </>
   );
 }

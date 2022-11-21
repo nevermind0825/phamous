@@ -171,7 +171,7 @@ export default function Home({ showRedirectModal }) {
           <div className="Home-latest-info-block">
             <img
               src={statsIcon}
-              alt="trading"
+              alt="stats"
               className="Home-latest-info__icon"
             />
             <div className="Home-latest-info-content">
@@ -184,7 +184,7 @@ export default function Home({ showRedirectModal }) {
           <div className="Home-latest-info-block">
             <img
               src={totaluserIcon}
-              alt="trading"
+              alt="total user"
               className="Home-latest-info__icon"
             />
             <div className="Home-latest-info-content">
@@ -231,7 +231,7 @@ export default function Home({ showRedirectModal }) {
             <div className="Home-benefit-icon">
               <img
                 src={simpleSwapIcon}
-                alt="simpleswap"
+                alt="swap"
                 className="Home-benefit-icon-symbol"
               />
               <div className="Home-benefit-title">Simple Swaps</div>
@@ -256,7 +256,7 @@ export default function Home({ showRedirectModal }) {
           <div className="Home-cta-options">
             <div className="Home-cta-option Home-cta-option-pls">
               <div className="Home-cta-option-icon">
-                <img src={plsIcon} alt="plsIcon" />
+                <img src={plsIcon} alt="PLS" />
               </div>
               <div className="Home-cta-option-info">
                 <div className="Home-cta-option-title">

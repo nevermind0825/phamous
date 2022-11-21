@@ -66,7 +66,7 @@ export default function TokenCard({ showRedirectModal }) {
     <div className="Home-token-card-options">
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={phameBigIcon} alt="phameBigIcon" /> PHAME
+          <img src={phameBigIcon} alt="PHAME" /> PHAME
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
@@ -104,7 +104,7 @@ export default function TokenCard({ showRedirectModal }) {
       </div>
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={phlpBigIcon} alt="phlpBigIcon" /> PHLP
+          <img src={phlpBigIcon} alt="PHLP" /> PHLP
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">

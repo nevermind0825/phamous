@@ -93,8 +93,14 @@ export default function TokenSelector(props) {
               tokenPopupImage = require("../../img/ic_" +
                 token.symbol.toLowerCase() +
                 "_40.svg");
-            } catch (error) {
-              tokenPopupImage = require("../../img/ic_pls_40.svg");
+            } catch (_) {
+              try {
+                tokenPopupImage = require("../../img/ic_" +
+                  token.symbol.toLowerCase() +
+                  "_40.png");
+              } catch (_) {
+                tokenPopupImage = require("../../img/ic_pls_40.svg");
+              }
             }
             const info = infoTokens ? infoTokens[token.address] : {};
             let mintAmount;

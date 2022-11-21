@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Title } from "react-head";
 import { useHistory } from "react-router-dom";
 
 import { useWeb3React } from "@web3-react/core";
@@ -36,7 +37,8 @@ import {
   PHLP_COOLDOWN_DURATION,
   USDPH_DECIMALS,
   PLACEHOLDER_ACCOUNT,
-  importImage,
+  importTokenImage,
+  getPageTitle,
 } from "../../Helpers";
 
 import { callContract, useInfoTokens } from "../../Api";
@@ -695,22 +697,23 @@ export default function PhlpSwap(props) {
 
   return (
     <div className="PhlpSwap">
+      <Title>{getPageTitle("PHLP")}</Title>
       <div className="PhlpSwap-content">
         <div className="App-card PhlpSwap-stats-card">
           <div className="App-card-title">
             <div className="App-card-title-mark">
               <div className="App-card-title-mark-icon">
-                <img src={phlp40Icon} alt="phlp40Icon" />
+                <img src={phlp40Icon} alt="PHLP" />
                 {chainId === PLS_TESTNET_V2 ? (
                   <img
                     src={pls16Icon}
-                    alt="pls16Icon"
+                    alt="PLS"
                     className="selected-network-symbol"
                   />
                 ) : (
                   <img
                     src={pls16Icon}
-                    alt="pls16Icon"
+                    alt="PLS"
                     className="selected-network-symbol"
                   />
                 )}
@@ -840,7 +843,7 @@ export default function PhlpSwap(props) {
               defaultTokenName={"PHLP"}
             >
               <div className="selected-token">
-                PHLP <img src={phlp24Icon} alt="phlp24Icon" />
+                PHLP <img src={phlp24Icon} alt="PHLP" />
               </div>
             </BuyInputSection>
           )}
@@ -874,7 +877,7 @@ export default function PhlpSwap(props) {
               defaultTokenName={"PHLP"}
             >
               <div className="selected-token">
-                PHLP <img src={phlp24Icon} alt="phlp24Icon" />
+                PHLP <img src={phlp24Icon} alt="PHLP" />
               </div>
             </BuyInputSection>
           )}
@@ -1089,9 +1092,7 @@ export default function PhlpSwap(props) {
                   .mul(tokenInfo.minPrice)
                   .div(expandDecimals(1, token.decimals));
               }
-              const tokenImage = importImage(
-                "ic_" + token.symbol.toLowerCase() + "_40.svg"
-              );
+              const tokenImage = importTokenImage(token.symbol);
               const isCapReached = tokenInfo.managedUsd?.gt(
                 tokenInfo.maxUsdphAmount.mul(
                   expandDecimals(1, USD_DECIMALS - USDPH_DECIMALS)
@@ -1387,9 +1388,7 @@ export default function PhlpSwap(props) {
                   return "";
               }
             }
-            const tokenImage = importImage(
-              "ic_" + token.symbol.toLowerCase() + "_24.svg"
-            );
+            const tokenImage = importTokenImage(token.symbol);
             return (
               <div className="App-card" key={token.symbol}>
                 <div className="mobile-token-card">

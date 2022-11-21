@@ -89,7 +89,7 @@ export default function NetworkSelector(props) {
   function IndicatorsContainer(props) {
     return (
       <components.IndicatorsContainer {...props}>
-        <img src={selectorDropdowns} alt="" />
+        <img src={selectorDropdowns} alt="selectorDropdowns" />
       </components.IndicatorsContainer>
     );
   }

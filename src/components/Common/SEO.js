@@ -1,4 +1,4 @@
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import { HeadProvider, Meta, Title } from "react-head";
 
 function SEO(props) {
   const { children, ...customMeta } = props;
@@ -9,25 +9,24 @@ function SEO(props) {
     type: "exchange",
     ...customMeta,
   };
+
   return (
-    <HelmetProvider>
-      <Helmet>
-        <title>{meta.title}</title>
-        <meta name="robots" content="follow, index" />
-        <meta content={meta.description} name="description" />
-        <meta property="og:type" content={meta.type} />
-        <meta property="og:site_name" content="Phamous" />
-        <meta property="og:description" content={meta.description} />
-        <meta property="og:title" content={meta.title} />
-        <meta property="og:image" content={meta.image} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@Phamouscrypto" />
-        <meta name="twitter:title" content={meta.title} />
-        <meta name="twitter:description" content={meta.description} />
-        <meta name="twitter:image" content={meta.image} />
-      </Helmet>
+    <HeadProvider>
+      <Title>{meta.title}</Title>
+      <Meta name="robots" content="follow, index" />
+      <Meta name="description" content={meta.description} />
+      <Meta property="og:type" content={meta.type} />
+      <Meta property="og:site_name" content="Phamous" />
+      <Meta property="og:description" content={meta.description} />
+      <Meta property="og:title" content={meta.title} />
+      <Meta property="og:image" content={meta.image} />
+      <Meta name="twitter:card" content="summary_large_image" />
+      <Meta name="twitter:site" content="@Phamouscrypto" />
+      <Meta name="twitter:title" content={meta.title} />
+      <Meta name="twitter:description" content={meta.description} />
+      <Meta name="twitter:image" content={meta.image} />
       {children}
-    </HelmetProvider>
+    </HeadProvider>
   );
 }
 

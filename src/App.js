@@ -93,7 +93,6 @@ import TermsAndConditions from "./views/TermsAndConditions/TermsAndConditions";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 
 import logo from "./assets/buck.png";
-import linkLogo from "./assets/svg/link.svg";
 import phattyLogo from "./assets/svg/phatty.svg";
 import phiatLogo from "./assets/svg/phiat.svg";
 
@@ -141,7 +140,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <FiX className="App-header-menu-icon" />
           </div>
           <HeaderLink to="/" className="App-header-link-main">
-            <img src={logo} alt="Phamous Logo" />
+            <img src={logo} alt="Phamous" />
           </HeaderLink>
         </div>
       )}
@@ -730,8 +729,8 @@ function FullApp() {
                   )}
                 </div>
                 <a className="App-header-link-main clickable" href="/">
-                  <img src={logo} className="big" alt="Phamous Logo" />
-                  <img src={logo} className="small" alt="Phamous Logo" />
+                  <img src={logo} className="big" alt="Phamous" />
+                  <img src={logo} className="small" alt="Phamous" />
                   <span color="white" id="logo-text">
                     PHAMOUS
                   </span>
@@ -774,8 +773,8 @@ function FullApp() {
                     className="App-header-link-main clickable"
                     onClick={() => setIsDrawerVisible(!isDrawerVisible)}
                   >
-                    <img src={logo} className="big" alt="Phamous Logo" />
-                    <img src={logo} className="small" alt="Phamous Logo" />
+                    <img src={logo} className="big" alt="Phamous" />
+                    <img src={logo} className="small" alt="Phamous" />
                   </div>
                 </div>
                 <div className="App-header-container-right">

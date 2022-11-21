@@ -1,5 +1,5 @@
 import React from "react";
-import SEO from "../../components/Common/SEO";
+import { Title } from "react-head";
 
 import Footer from "../../Footer";
 import {
@@ -39,14 +39,14 @@ export default function Ecosystem() {
   ];
 
   return (
-    <SEO title={getPageTitle("Ecosystem Projects")}>
-      <div className="default-container page-layout">
-        <div>
-          <div className="section-title-block">
-            <div className="section-title-icon"></div>
-            <div className="section-title-content"></div>
-          </div>
-          {/* <div className="DashboardV2-projects">
+    <div className="default-container page-layout">
+      <Title>{getPageTitle("Ecosystem")}</Title>
+      <div>
+        <div className="section-title-block">
+          <div className="section-title-icon"></div>
+          <div className="section-title-content"></div>
+        </div>
+        {/* <div className="DashboardV2-projects">
             {officialPages.map((item) => {
               const linkLabel = item.linkLabel ? item.linkLabel : item.link;
               return (
@@ -166,44 +166,43 @@ export default function Ecosystem() {
               );
             })}
           </div> */}
-          <div className="Tab-title-section">
-            <div className="Page-title">Ecosystem Groups</div>
-            <div className="Page-description">
-              A true DeFi ecosystem for Hexicans
-            </div>
-          </div>
-          <div className="DashboardV2-projects">
-            {telegramGroups.map((item) => {
-              const linkLabel = item.linkLabel ? item.linkLabel : item.link;
-              return (
-                <div className="App-card" key={item.link}>
-                  <div className="App-card-title">{item.title}</div>
-                  <div className="App-card-divider"></div>
-                  <div className="App-card-content">
-                    <div className="App-card-row">
-                      <div className="label">Link</div>
-                      <div>
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {linkLabel}
-                        </a>
-                      </div>
-                    </div>
-                    <div className="App-card-row">
-                      <div className="label">About</div>
-                      <div>{item.about}</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        <div className="Tab-title-section">
+          <div className="Page-title">Ecosystem Groups</div>
+          <div className="Page-description">
+            A true DeFi ecosystem for Hexicans
           </div>
         </div>
-        <Footer />
+        <div className="DashboardV2-projects">
+          {telegramGroups.map((item) => {
+            const linkLabel = item.linkLabel ? item.linkLabel : item.link;
+            return (
+              <div className="App-card" key={item.link}>
+                <div className="App-card-title">{item.title}</div>
+                <div className="App-card-divider"></div>
+                <div className="App-card-content">
+                  <div className="App-card-row">
+                    <div className="label">Link</div>
+                    <div>
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {linkLabel}
+                      </a>
+                    </div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">About</div>
+                    <div>{item.about}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </SEO>
+      <Footer />
+    </div>
   );
 }
