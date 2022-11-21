@@ -177,10 +177,7 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <HeaderLink to="/dashboard">Dashboard</HeaderLink>
           </div>
           <div className="App-header-link-container">
-            <HeaderLink to="/staking">Staking</HeaderLink>
-          </div>
-          <div className="App-header-link-container">
-            <HeaderLink to="/buy">Buy</HeaderLink>
+            <HeaderLink to="/earn">Earn</HeaderLink>
           </div>
           <div className="App-header-link-container">
             <HeaderLink to="/ecosystem">Ecosystem</HeaderLink>
