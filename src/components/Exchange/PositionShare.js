@@ -11,7 +11,7 @@ import "./PositionShare.css";
 import { QRCodeSVG } from "qrcode.react";
 import {
   getHomeUrl,
-  getAppBaseUrl,
+  getShareBaseUrl,
   getTwitterIntentURL,
   USD_DECIMALS,
   formatAmount,
@@ -47,10 +47,10 @@ function PositionShare({
     id = id.slice(0, -6);
     console.log(id);
   }
-  const appUrl = getAppBaseUrl();
+  const shareUrl = getShareBaseUrl();
   const tweetLink = getTwitterIntentURL(
     `Latest $${positionToShare?.indexToken?.symbol} trade on @Phamouscrypto`,
-    id ? `${appUrl}/share/${id}` : ""
+    id ? `${shareUrl}/api/share?id=${id}` : ""
   );
 
   useEffect(() => {

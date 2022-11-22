@@ -2791,6 +2791,16 @@ export function getAppBaseUrl() {
   return "https://testnet.phamous.io/#";
 }
 
+export function getShareBaseUrl() {
+  if (isLocal()) {
+    return "http://phamous-ui-share.vercel.app";
+  }
+  if (isDevelopment()) {
+    return "https://phamous-ui-share.vercel.app";
+  }
+  return "https://share.phamous.io";
+}
+
 export function getTradePageUrl() {
   if (isLocal()) {
     return "http://localhost:3010/#/trade";

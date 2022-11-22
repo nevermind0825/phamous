@@ -15,7 +15,3 @@ export default async function uploadImage(image: string) {
     return undefined;
   }
 }
-
-export function shareUrl(id: string) {
-  return `https://phiat.exchange/parse/files/${PARSE_APP_ID}/${id}_s.jpg`;
-}

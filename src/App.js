@@ -45,7 +45,6 @@ import {
 
 import Dashboard from "./views/Dashboard/Dashboard";
 import Ecosystem from "./views/Ecosystem/Ecosystem";
-import Share from "./views/Share/Share";
 import { Exchange } from "./views/Exchange/Exchange";
 // eslint-disable-next-line no-unused-vars
 import Home from "./views/Home/Home"; // need its css
@@ -177,7 +176,10 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
             <HeaderLink to="/dashboard">Dashboard</HeaderLink>
           </div>
           <div className="App-header-link-container">
-            <HeaderLink to="/earn">Earn</HeaderLink>
+            <HeaderLink to="/staking">Staking</HeaderLink>
+          </div>
+          <div className="App-header-link-container">
+            <HeaderLink to="/buy">Buy</HeaderLink>
           </div>
           <div className="App-header-link-container">
             <HeaderLink to="/ecosystem">Ecosystem</HeaderLink>
@@ -855,9 +857,6 @@ function FullApp() {
             </Route>
             <Route exact path="/ecosystem">
               <Ecosystem />
-            </Route>
-            <Route exact path="/share/:id">
-              <Share />
             </Route>
             {/* <Route exact path="/orders_overview">
                 <OrdersOverview />
