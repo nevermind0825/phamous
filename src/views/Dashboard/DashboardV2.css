@@ -2,17 +2,6 @@
   padding-top: 4.65rem;
 }
 
-.DashboardV2-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1.5rem;
-  margin-top: 0.8rem;
-}
-
-.DashboardV2-token-cards {
-  margin-top: 0.8rem;
-}
-
 .token-table-wrapper {
   border: 1px solid #1e2136;
   border-radius: 0.4rem;
@@ -47,7 +36,7 @@
   margin-bottom: 1.5rem;
 }
 
-.stats-wrapper .App-card {
+.stats-wrapper .token-stats {
   width: 100%;
   display: flex;
 }
