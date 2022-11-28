@@ -23,6 +23,7 @@ import {
   SHORT,
   INCREASE,
   DECREASE,
+  MAX_LEVERAGE,
 } from "../../Helpers";
 
 const getOrdersForPosition = (position, orders, nativeTokenAddress) => {
@@ -217,11 +218,11 @@ export default function PositionsList(props) {
               </div>
             )}
             {positions.map((position) => {
-              const positionOrders = getOrdersForPosition(
-                position,
-                orders,
-                nativeTokenAddress
-              );
+              // const positionOrders = getOrdersForPosition(
+              //   position,
+              //   orders,
+              //   nativeTokenAddress
+              // );
               const liquidationPrice = getLiquidationPrice(position);
               const hasPositionProfit =
                 position[showPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
@@ -241,7 +242,10 @@ export default function PositionsList(props) {
                 borrowFeeText = `Borrow Fee / Day: $${formatAmount(
                   borrowFeeRate,
                   USD_DECIMALS,
-                  2
+                  2,
+                  true,
+                  undefined,
+                  0
                 )}`;
               }
 
@@ -255,9 +259,36 @@ export default function PositionsList(props) {
                   <div className="App-card-divider"></div>
                   <div className="App-card-content">
                     <div className="App-card-row">
-                      <div className="label">Leverage</div>
+                      <div className="label">
+                        <Tooltip
+                          handle={
+                            savedIsPnlInLeverage
+                              ? "Leverage (including PnL)"
+                              : "Leverage"
+                          }
+                          position="left-top"
+                          handleClassName="plain"
+                          renderContent={() => (
+                            <div>
+                              You can change in settings to show leverage
+                              {savedIsPnlInLeverage
+                                ? " without PnL"
+                                : " including PnL"}
+                              .
+                            </div>
+                          )}
+                        />
+                      </div>
                       <div>
-                        {formatAmount(position.leverage, 4, 2, true)}x&nbsp;
+                        {formatAmount(
+                          position.leverage,
+                          4,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}
+                        x&nbsp;
                         <span
                           className={cx("Exchange-list-side", {
                             positive: position.isLong,
@@ -271,7 +302,15 @@ export default function PositionsList(props) {
                     <div className="App-card-row">
                       <div className="label">Size</div>
                       <div>
-                        ${formatAmount(position.size, USD_DECIMALS, 2, true)}
+                        $
+                        {formatAmount(
+                          position.size,
+                          USD_DECIMALS,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}
                       </div>
                     </div>
                     <div className="App-card-row">
@@ -282,7 +321,9 @@ export default function PositionsList(props) {
                             position.collateralAfterFee,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}`}
                           position="right-bottom"
                           handleClassName={cx("plain", {
@@ -306,7 +347,9 @@ export default function PositionsList(props) {
                                   position.collateral,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}
                                 <br />
                                 Borrow Fee: $
@@ -314,7 +357,9 @@ export default function PositionsList(props) {
                                   position.fundingFee,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}
                                 {borrowFeeText && <div>{borrowFeeText}</div>}
                                 <br />
@@ -327,7 +372,26 @@ export default function PositionsList(props) {
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">PnL</div>
+                      <div className="label">
+                        <Tooltip
+                          handle={
+                            showPnlAfterFees
+                              ? "Before-Fee PnL"
+                              : "After-Fee PnL"
+                          }
+                          position="left-top"
+                          handleClassName="plain"
+                          renderContent={() => (
+                            <div>
+                              You can change in settings to show
+                              {showPnlAfterFees
+                                ? " after-fee PnL"
+                                : " bfter-fee PnL"}
+                              .
+                            </div>
+                          )}
+                        />
+                      </div>
                       <div>
                         <span
                           className={cx("Exchange-list-info-label", {
@@ -348,7 +412,9 @@ export default function PositionsList(props) {
                             position.netValue,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}`}
                           position="right-bottom"
                           handleClassName="plain"
@@ -366,7 +432,9 @@ export default function PositionsList(props) {
                                   position.collateral,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}
                                 <br />
                                 PnL: {position.deltaBeforeFeesStr}
@@ -376,7 +444,9 @@ export default function PositionsList(props) {
                                   position.fundingFee,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}
                                 <br />
                                 Open + Close fee: $
@@ -384,7 +454,9 @@ export default function PositionsList(props) {
                                   position.positionFee,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}
                                 <br />
                                 PnL After Fees: {position.deltaAfterFeesStr} (
@@ -395,7 +467,7 @@ export default function PositionsList(props) {
                         />
                       </div>
                     </div>
-                    <div className="App-card-row">
+                    {/* <div className="App-card-row">
                       <div className="label">Orders</div>
                       <div>
                         {positionOrders.length === 0 && "None"}
@@ -403,9 +475,9 @@ export default function PositionsList(props) {
                           const orderText = () => (
                             <>
                               {order.triggerAboveThreshold ? ">" : "<"}{" "}
-                              {formatAmount(order.triggerPrice, 30, 2, true)}:
+                              {formatAmount(order.triggerPrice, 30, 4, true)}:
                               {order.type === INCREASE ? " +" : " -"}$
-                              {formatAmount(order.sizeDelta, 30, 2, true)}
+                              {formatAmount(order.sizeDelta, 30, 2, true, undefined, 0)}
                             </>
                           );
                           if (order.error) {
@@ -439,7 +511,7 @@ export default function PositionsList(props) {
                           }
                         })}
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="App-card-divider"></div>
                   <div className="App-card-content">
@@ -450,7 +522,7 @@ export default function PositionsList(props) {
                         {formatAmount(
                           position.markPrice,
                           USD_DECIMALS,
-                          2,
+                          4,
                           true
                         )}
                       </div>
@@ -462,15 +534,30 @@ export default function PositionsList(props) {
                         {formatAmount(
                           position.averagePrice,
                           USD_DECIMALS,
-                          2,
+                          4,
                           true
                         )}
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Liq. Price</div>
+                      <div className="label">
+                        <Tooltip
+                          position="left-top"
+                          handle="Liq. Price"
+                          renderContent={() =>
+                            `Liquidation price is calculated as the price at which the (collateral - losses - borrow fee) is less than ${formatAmount(
+                              (10000 * 10000) / MAX_LEVERAGE,
+                              2,
+                              0,
+                              true,
+                              undefined,
+                              0
+                            )}% of your position's size or can not cover liquidation cost.`
+                          }
+                        />
+                      </div>
                       <div>
-                        ${formatAmount(liquidationPrice, USD_DECIMALS, 2, true)}
+                        ${formatAmount(liquidationPrice, USD_DECIMALS, 4, true)}
                       </div>
                     </div>
                   </div>
@@ -496,7 +583,16 @@ export default function PositionsList(props) {
                       }}
                       disabled={position.size.eq(0)}
                     >
-                      Share
+                      <Tooltip
+                        handle="Share"
+                        position="left-bottom"
+                        handleClassName="plain"
+                        renderContent={() => (
+                          <div>
+                            Position sharing will display after-fee performance.
+                          </div>
+                        )}
+                      />
                     </button>
                   </div>
                 </div>
@@ -508,13 +604,54 @@ export default function PositionsList(props) {
       <table className="Exchange-list large App-box">
         <tbody>
           <tr className="Exchange-list-header">
-            <th>Position</th>
-            <th>Net Value</th>
+            <th>
+              <Tooltip
+                handle="Position"
+                position="left-top"
+                handleClassName="plain"
+                renderContent={() => (
+                  <div>
+                    You can change in settings to show leverage
+                    {savedIsPnlInLeverage ? " without PnL" : " including PnL"}.
+                  </div>
+                )}
+              />
+            </th>
+            <th>
+              Net Value
+              <br />
+              <Tooltip
+                handle={showPnlAfterFees ? "Before-Fee PnL" : "After-Fee PnL"}
+                position="left-top"
+                handleClassName="plain"
+                renderContent={() => (
+                  <div>
+                    You can change in settings to show
+                    {showPnlAfterFees ? " after-fee PnL" : " bfter-fee PnL"}.
+                  </div>
+                )}
+              />
+            </th>
             <th>Size</th>
             <th>Collateral</th>
             <th>Mark Price</th>
             <th>Entry Price</th>
-            <th>Liq. Price</th>
+            <th>
+              <Tooltip
+                position="left-bottom"
+                handle="Liq. Price"
+                renderContent={() =>
+                  `Liquidation price is calculated as the price at which the (collateral - losses - borrow fee) is less than ${formatAmount(
+                    (10000 * 10000) / MAX_LEVERAGE,
+                    2,
+                    0,
+                    true,
+                    undefined,
+                    0
+                  )}% of your position's size or can not cover liquidation cost.`
+                }
+              />
+            </th>
             <th></th>
             <th></th>
           </tr>
@@ -563,7 +700,10 @@ export default function PositionsList(props) {
               borrowFeeText = `Borrow Fee / Day: $${formatAmount(
                 borrowFeeRate,
                 USD_DECIMALS,
-                2
+                2,
+                true,
+                undefined,
+                0
               )}`;
             }
 
@@ -582,7 +722,15 @@ export default function PositionsList(props) {
                   <div className="Exchange-list-info-label">
                     {position.leverage && (
                       <span className="muted">
-                        {formatAmount(position.leverage, 4, 2, true)}x&nbsp;
+                        {formatAmount(
+                          position.leverage,
+                          4,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}
+                        x&nbsp;
                       </span>
                     )}
                     <span
@@ -604,7 +752,9 @@ export default function PositionsList(props) {
                           position.netValue,
                           USD_DECIMALS,
                           2,
-                          true
+                          true,
+                          undefined,
+                          0
                         )}`}
                         position="left-bottom"
                         handleClassName="plain"
@@ -622,7 +772,9 @@ export default function PositionsList(props) {
                                 position.collateral,
                                 USD_DECIMALS,
                                 2,
-                                true
+                                true,
+                                undefined,
+                                0
                               )}
                               <br />
                               PnL: {position.deltaBeforeFeesStr}
@@ -632,7 +784,9 @@ export default function PositionsList(props) {
                                 position.fundingFee,
                                 USD_DECIMALS,
                                 2,
-                                true
+                                true,
+                                undefined,
+                                0
                               )}
                               <br />
                               Open + Close fee: $
@@ -640,7 +794,9 @@ export default function PositionsList(props) {
                                 position.positionFee,
                                 USD_DECIMALS,
                                 2,
-                                true
+                                true,
+                                undefined,
+                                0
                               )}
                               <br />
                               <br />
@@ -666,7 +822,15 @@ export default function PositionsList(props) {
                 </td>
                 <td>
                   <div>
-                    ${formatAmount(position.size, USD_DECIMALS, 2, true)}
+                    $
+                    {formatAmount(
+                      position.size,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}
                   </div>
                   {positionOrders.length > 0 && (
                     <div
@@ -697,12 +861,19 @@ export default function PositionsList(props) {
                                     {order.triggerAboveThreshold ? ">" : "<"}{" "}
                                     {formatAmount(
                                       order.triggerPrice,
-                                      30,
-                                      2,
+                                      USD_DECIMALS,
+                                      4,
                                       true
                                     )}
                                     :{order.type === INCREASE ? " +" : " -"}$
-                                    {formatAmount(order.sizeDelta, 30, 2, true)}
+                                    {formatAmount(
+                                      order.sizeDelta,
+                                      USD_DECIMALS,
+                                      2,
+                                      true,
+                                      undefined,
+                                      0
+                                    )}
                                     {order.error && (
                                       <>
                                         ,{" "}
@@ -727,7 +898,9 @@ export default function PositionsList(props) {
                       position.collateralAfterFee,
                       USD_DECIMALS,
                       2,
-                      true
+                      true,
+                      undefined,
+                      0
                     )}`}
                     position="left-bottom"
                     handleClassName={cx("plain", {
@@ -751,7 +924,9 @@ export default function PositionsList(props) {
                             position.collateral,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}
                           <br />
                           Borrow Fee: $
@@ -759,7 +934,9 @@ export default function PositionsList(props) {
                             position.fundingFee,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}
                           {borrowFeeText && <div>{borrowFeeText}</div>}
                           <br />
@@ -778,7 +955,7 @@ export default function PositionsList(props) {
                     handle={`$${formatAmount(
                       position.markPrice,
                       USD_DECIMALS,
-                      2,
+                      4,
                       true
                     )}`}
                     position="left-bottom"
@@ -802,13 +979,13 @@ export default function PositionsList(props) {
                   className="clickable"
                   onClick={() => onPositionClick(position)}
                 >
-                  ${formatAmount(position.averagePrice, USD_DECIMALS, 2, true)}
+                  ${formatAmount(position.averagePrice, USD_DECIMALS, 4, true)}
                 </td>
                 <td
                   className="clickable"
                   onClick={() => onPositionClick(position)}
                 >
-                  ${formatAmount(liquidationPrice, USD_DECIMALS, 2, true)}
+                  ${formatAmount(liquidationPrice, USD_DECIMALS, 4, true)}
                 </td>
                 <td>
                   <button
@@ -837,7 +1014,16 @@ export default function PositionsList(props) {
                     }}
                     disabled={position.size.eq(0)}
                   >
-                    Share
+                    <Tooltip
+                      handle="Share"
+                      position="right-bottom"
+                      handleClassName="plain"
+                      renderContent={() => (
+                        <div>
+                          Position sharing will display after-fee performance.
+                        </div>
+                      )}
+                    />
                   </button>
                 </td>
               </tr>

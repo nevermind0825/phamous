@@ -571,14 +571,18 @@ export default function PhlpSwap(props) {
       failMsg: "Buy failed.",
       successMsg: `${formatAmount(
         phlpAmount,
-        18,
+        PHLP_DECIMALS,
         4,
-        true
+        true,
+        undefined,
+        0
       )} PHLP bought with ${formatAmount(
         swapAmount,
         swapTokenInfo.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${swapTokenInfo.symbol}!`,
       setPendingTxns,
     })
@@ -614,14 +618,18 @@ export default function PhlpSwap(props) {
       failMsg: "Sell failed.",
       successMsg: `${formatAmount(
         phlpAmount,
-        18,
+        PHLP_DECIMALS,
         4,
-        true
+        true,
+        undefined,
+        0
       )} PHLP sold for ${formatAmount(
         swapAmount,
         swapTokenInfo.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${swapTokenInfo.symbol}!`,
       setPendingTxns,
     })
@@ -661,17 +669,45 @@ export default function PhlpSwap(props) {
   let receiveBalance = "$0.00";
   if (isBuying) {
     if (swapUsdMin) {
-      payBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
+      payBalance = `$${formatAmount(
+        swapUsdMin,
+        USD_DECIMALS,
+        2,
+        true,
+        undefined,
+        0
+      )}`;
     }
     if (phlpUsdMax) {
-      receiveBalance = `$${formatAmount(phlpUsdMax, USD_DECIMALS, 2, true)}`;
+      receiveBalance = `$${formatAmount(
+        phlpUsdMax,
+        USD_DECIMALS,
+        2,
+        true,
+        undefined,
+        0
+      )}`;
     }
   } else {
     if (phlpUsdMax) {
-      payBalance = `$${formatAmount(phlpUsdMax, USD_DECIMALS, 2, true)}`;
+      payBalance = `$${formatAmount(
+        phlpUsdMax,
+        USD_DECIMALS,
+        2,
+        true,
+        undefined,
+        0
+      )}`;
     }
     if (swapUsdMin) {
-      receiveBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
+      receiveBalance = `$${formatAmount(
+        swapUsdMin,
+        USD_DECIMALS,
+        2,
+        true,
+        undefined,
+        0
+      )}`;
     }
   }
 
@@ -682,7 +718,7 @@ export default function PhlpSwap(props) {
     helperToast.success(`${token.symbol} selected in order form`);
   };
 
-  let feePercentageText = formatAmount(feeBasisPoints, 2, 2, true, "-");
+  let feePercentageText = formatAmount(feeBasisPoints, 2, 2, true, "-", 0);
   if (feeBasisPoints !== undefined && feeBasisPoints.toString().length > 0) {
     feePercentageText += "%";
   }
@@ -732,14 +768,30 @@ export default function PhlpSwap(props) {
             <div className="App-card-row">
               <div className="label">Price</div>
               <div className="value">
-                ${formatAmount(phlpPrice, USD_DECIMALS, 3, true)}
+                ${formatAmount(phlpPrice, USD_DECIMALS, 4, true)}
               </div>
             </div>
             <div className="App-card-row">
               <div className="label">Wallet</div>
               <div className="value">
-                {formatAmount(phlpBalance, PHLP_DECIMALS, 4, true)} PHLP ($
-                {formatAmount(phlpBalanceUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(
+                  phlpBalance,
+                  PHLP_DECIMALS,
+                  4,
+                  true,
+                  undefined,
+                  0
+                )}{" "}
+                PHLP ($
+                {formatAmount(
+                  phlpBalanceUsd,
+                  USD_DECIMALS,
+                  2,
+                  true,
+                  undefined,
+                  0
+                )}
+                )
               </div>
             </div>
           </div>
@@ -749,7 +801,7 @@ export default function PhlpSwap(props) {
               <div className="label">APR</div>
               <div className="value">
                 <Tooltip
-                  handle={`${formatAmount(totalApr, 2, 2, true)}%`}
+                  handle={`${formatAmount(totalApr, 2, 2, true, undefined, 0)}%`}
                   position="right-bottom"
                   renderContent={() => {
                     return (
@@ -758,7 +810,7 @@ export default function PhlpSwap(props) {
                           <span className="label">
                             {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
                           </span>
-                          <span>{formatAmount(0, 2, 2, false)}%</span>
+                          <span>{formatAmount(0, 2, 2, true, undefined, 0)}%</span>
                         </div>
                       </>
                     );
@@ -769,8 +821,17 @@ export default function PhlpSwap(props) {
             <div className="App-card-row">
               <div className="label">Total Supply</div>
               <div className="value">
-                {formatAmount(phlpSupply, PHLP_DECIMALS, 4, true)} PHLP ($
-                {formatAmount(phlpSupplyUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(phlpSupply, PHLP_DECIMALS, 4, true, undefined, 0)}{" "}
+                PHLP ($
+                {formatAmount(
+                  phlpSupplyUsd,
+                  USD_DECIMALS,
+                  2,
+                  true,
+                  undefined,
+                  0
+                )}
+                )
               </div>
             </div>
           </div>
@@ -790,7 +851,9 @@ export default function PhlpSwap(props) {
                 swapTokenBalance,
                 swapToken.decimals,
                 4,
-                true
+                true,
+                undefined,
+                0
               )}`}
               inputValue={swapValue}
               onInputValueChange={onSwapValueChange}
@@ -829,7 +892,9 @@ export default function PhlpSwap(props) {
                 maxSellAmount,
                 PHLP_DECIMALS,
                 4,
-                true
+                true,
+                undefined,
+                0
               )}`}
               inputValue={phlpValue}
               onInputValueChange={onPhlpValueChange}
@@ -869,7 +934,9 @@ export default function PhlpSwap(props) {
                 phlpBalance,
                 PHLP_DECIMALS,
                 4,
-                true
+                true,
+                undefined,
+                0
               )}`}
               inputValue={phlpValue}
               onInputValueChange={onPhlpValueChange}
@@ -890,7 +957,9 @@ export default function PhlpSwap(props) {
                 swapTokenBalance,
                 swapToken.decimals,
                 4,
-                true
+                true,
+                undefined,
+                0
               )}`}
               inputValue={swapValue}
               onInputValueChange={onSwapValueChange}
@@ -1124,7 +1193,7 @@ export default function PhlpSwap(props) {
                     );
                   case (isBuying && !isCapReached) ||
                     (!isBuying && managedUsd?.gt(0)):
-                    return `${formatAmount(tokenFeeBps, 2, 2, true, "-")}${
+                    return `${formatAmount(tokenFeeBps, 2, 2, true, "-", 0)}${
                       tokenFeeBps !== undefined &&
                       tokenFeeBps.toString().length > 0
                         ? "%"
@@ -1182,7 +1251,9 @@ export default function PhlpSwap(props) {
                                   amountLeftToDeposit,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}`
                           }
                           position="right-bottom"
@@ -1199,7 +1270,9 @@ export default function PhlpSwap(props) {
                                     managedUsd,
                                     USD_DECIMALS,
                                     2,
-                                    true
+                                    true,
+                                    undefined,
+                                    0
                                   )}{" "}
                                   (
                                   {formatKeyAmount(
@@ -1207,7 +1280,8 @@ export default function PhlpSwap(props) {
                                     "poolAmount",
                                     token.decimals,
                                     2,
-                                    true
+                                    true,
+                                    0
                                   )}{" "}
                                   {token.symbol})
                                 </div>
@@ -1218,9 +1292,11 @@ export default function PhlpSwap(props) {
                                   $
                                   {formatAmount(
                                     tokenInfo.maxUsdphAmount,
-                                    18,
+                                    USDPH_DECIMALS,
                                     0,
-                                    true
+                                    true,
+                                    undefined,
+                                    0
                                   )}
                                 </div>
                               </>
@@ -1239,7 +1315,9 @@ export default function PhlpSwap(props) {
                                   availableAmountUsd,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}`
                           }
                           position="right-bottom"
@@ -1267,9 +1345,11 @@ export default function PhlpSwap(props) {
                                   $
                                   {formatAmount(
                                     tokenInfo.maxUsdphAmount,
-                                    18,
+                                    USDPH_DECIMALS,
                                     0,
-                                    true
+                                    true,
+                                    undefined,
+                                    0
                                   )}
                                 </div>
                               </>
@@ -1288,7 +1368,15 @@ export default function PhlpSwap(props) {
                       true
                     )}{" "}
                     {tokenInfo.symbol} ($
-                    {formatAmount(balanceUsd, USD_DECIMALS, 2, true)})
+                    {formatAmount(
+                      balanceUsd,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}
+                    )
                   </td>
                   <td>{renderFees()}</td>
                   <td>
@@ -1378,7 +1466,7 @@ export default function PhlpSwap(props) {
                   );
                 case (isBuying && !isCapReached) ||
                   (!isBuying && managedUsd?.gt(0)):
-                  return `${formatAmount(tokenFeeBps, 2, 2, true, "-")}${
+                  return `${formatAmount(tokenFeeBps, 2, 2, true, "-", 0)}${
                     tokenFeeBps !== undefined &&
                     tokenFeeBps.toString().length > 0
                       ? "%"
@@ -1439,7 +1527,9 @@ export default function PhlpSwap(props) {
                               amountLeftToDeposit,
                               USD_DECIMALS,
                               2,
-                              true
+                              true,
+                              undefined,
+                              0
                             )}`
                           }
                           position="right-bottom"
@@ -1456,7 +1546,9 @@ export default function PhlpSwap(props) {
                                     managedUsd,
                                     USD_DECIMALS,
                                     2,
-                                    true
+                                    true,
+                                    undefined,
+                                    0
                                   )}{" "}
                                   (
                                   {formatKeyAmount(
@@ -1475,9 +1567,11 @@ export default function PhlpSwap(props) {
                                   $
                                   {formatAmount(
                                     tokenInfo.maxUsdphAmount,
-                                    18,
+                                    USDPH_DECIMALS,
                                     0,
-                                    true
+                                    true,
+                                    undefined,
+                                    0
                                   )}
                                 </div>
                               </>
@@ -1516,7 +1610,9 @@ export default function PhlpSwap(props) {
                                   availableAmountUsd,
                                   USD_DECIMALS,
                                   2,
-                                  true
+                                  true,
+                                  undefined,
+                                  0
                                 )}`
                           }
                           position="right-bottom"
@@ -1544,9 +1640,11 @@ export default function PhlpSwap(props) {
                                   $
                                   {formatAmount(
                                     tokenInfo.maxUsdphAmount,
-                                    18,
+                                    USDPH_DECIMALS,
                                     0,
-                                    true
+                                    true,
+                                    undefined,
+                                    0
                                   )}
                                 </div>
                               </>
@@ -1568,7 +1666,15 @@ export default function PhlpSwap(props) {
                         true
                       )}{" "}
                       {tokenInfo.symbol} ($
-                      {formatAmount(balanceUsd, USD_DECIMALS, 2, true)})
+                      {formatAmount(
+                        balanceUsd,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}
+                      )
                     </div>
                   </div>
                   <div className="App-card-row">

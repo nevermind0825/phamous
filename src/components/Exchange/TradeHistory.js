@@ -14,6 +14,7 @@ import {
   deserialize,
   getExchangeRateDisplay,
   bigNumberify,
+  USDPH_DECIMALS,
 } from "../../Helpers";
 import { useTrades, useLiquidationsData } from "../../Api";
 import { getContract } from "../../Addresses";
@@ -34,7 +35,9 @@ function getPositionDisplay(increase, indexToken, isLong, sizeDelta) {
     sizeDelta,
     USD_DECIMALS,
     2,
-    true
+    true,
+    undefined,
+    0
   )} USD`;
 }
 
@@ -70,18 +73,48 @@ function renderLiquidationTooltip(liquidationData, label) {
           <br />
           <br />
           Initial collateral: $
-          {formatAmount(liquidationData.collateral, USD_DECIMALS, 2, true)}
+          {formatAmount(
+            liquidationData.collateral,
+            USD_DECIMALS,
+            2,
+            true,
+            undefined,
+            0
+          )}
           <br />
           Min required collateral: $
-          {formatAmount(minCollateral, USD_DECIMALS, 2, true)}
+          {formatAmount(minCollateral, USD_DECIMALS, 2, true, undefined, 0)}
           <br />
           Borrow fee: $
-          {formatAmount(liquidationData.borrowFee, USD_DECIMALS, 2, true)}
+          {formatAmount(
+            liquidationData.borrowFee,
+            USD_DECIMALS,
+            2,
+            true,
+            undefined,
+            0
+          )}
           <br />
-          PnL: -${formatAmount(liquidationData.loss, USD_DECIMALS, 2, true)}
+          PnL: -$
+          {formatAmount(
+            liquidationData.loss,
+            USD_DECIMALS,
+            2,
+            true,
+            undefined,
+            0
+          )}
           {liquidationData.type === "full" && (
             <div>
-              Liquidation fee: ${formatAmount(LIQUIDATION_FEE, 30, 2, true)}
+              Liquidation fee: $
+              {formatAmount(
+                LIQUIDATION_FEE,
+                USD_DECIMALS,
+                2,
+                true,
+                undefined,
+                0
+              )}
             </div>
           )}
         </>
@@ -142,12 +175,16 @@ export default function TradeHistory(props) {
           params.tokenAmount,
           token.decimals,
           4,
-          true
+          true,
+          undefined,
+          0
         )} ${token.symbol} for ${formatAmount(
           params.usdphAmount,
-          18,
+          USDPH_DECIMALS,
           4,
-          true
+          true,
+          undefined,
+          0
         )} USDPH`;
       }
 
@@ -163,14 +200,18 @@ export default function TradeHistory(props) {
         }
         return `Swap ${formatAmount(
           params.usdphAmount,
-          18,
+          USDPH_DECIMALS,
           4,
-          true
+          true,
+          undefined,
+          0
         )} USDPH for ${formatAmount(
           params.tokenAmount,
           token.decimals,
           4,
-          true
+          true,
+          undefined,
+          0
         )} ${token.symbol}`;
       }
 
@@ -194,12 +235,16 @@ export default function TradeHistory(props) {
           params.amountIn,
           tokenIn.decimals,
           4,
-          true
+          true,
+          undefined,
+          0
         )} ${tokenIn.symbol} for ${formatAmount(
           params.amountOut,
           tokenOut.decimals,
           4,
-          true
+          true,
+          undefined,
+          0
         )} ${tokenOut.symbol}`;
       }
 
@@ -226,12 +271,16 @@ export default function TradeHistory(props) {
           params.sizeDelta,
           USD_DECIMALS,
           2,
-          true
+          true,
+          undefined,
+          0
         )} USD, Acceptable Price: ${params.isLong ? "<" : ">"} ${formatAmount(
           params.acceptablePrice,
           USD_DECIMALS,
           2,
-          true
+          true,
+          undefined,
+          0
         )} USD`;
       }
 
@@ -258,11 +307,13 @@ export default function TradeHistory(props) {
           params.sizeDelta,
           USD_DECIMALS,
           2,
-          true
+          true,
+          undefined,
+          0
         )} USD, Acceptable Price: ${params.isLong ? ">" : "<"} ${formatAmount(
           params.acceptablePrice,
           USD_DECIMALS,
-          2,
+          4,
           true
         )} USD`;
       }
@@ -291,8 +342,15 @@ export default function TradeHistory(props) {
           <>
             Could not increase {indexToken.symbol}{" "}
             {params.isLong ? "Long" : "Short"},
-            {`+${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)}`} USD,
-            Acceptable Price:&nbsp;
+            {`+${formatAmount(
+              params.sizeDelta,
+              USD_DECIMALS,
+              2,
+              true,
+              undefined,
+              0
+            )}`}{" "}
+            USD, Acceptable Price:&nbsp;
             {params.isLong ? "<" : ">"}&nbsp;
             <Tooltip
               position="left-top"
@@ -300,7 +358,9 @@ export default function TradeHistory(props) {
                 params.acceptablePrice,
                 USD_DECIMALS,
                 2,
-                true
+                true,
+                undefined,
+                0
               )} USD`}
               renderContent={() => (
                 <>
@@ -334,15 +394,22 @@ export default function TradeHistory(props) {
           <>
             Could not decrease {indexToken.symbol}{" "}
             {params.isLong ? "Long" : "Short"},
-            {`+${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)}`} USD,
-            Acceptable Price:&nbsp;
+            {`+${formatAmount(
+              params.sizeDelta,
+              USD_DECIMALS,
+              2,
+              true,
+              undefined,
+              0
+            )}`}{" "}
+            USD, Acceptable Price:&nbsp;
             {params.isLong ? ">" : "<"}&nbsp;
             <Tooltip
               position="left-top"
               handle={`${formatAmount(
                 params.acceptablePrice,
                 USD_DECIMALS,
-                2,
+                4,
                 true
               )} USD`}
               renderContent={() => (
@@ -378,14 +445,26 @@ export default function TradeHistory(props) {
             params.collateralDelta,
             USD_DECIMALS,
             2,
-            true
+            true,
+            undefined,
+            0
           )} USD into ${indexToken.symbol} ${params.isLong ? "Long" : "Short"}`;
         }
         return `Increase ${indexToken.symbol} ${
           params.isLong ? "Long" : "Short"
-        }, +${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)} USD, ${
-          indexToken.symbol
-        } Price: ${formatAmount(params.price, USD_DECIMALS, 2, true)} USD`;
+        }, +${formatAmount(
+          params.sizeDelta,
+          USD_DECIMALS,
+          2,
+          true,
+          undefined,
+          0
+        )} USD, ${indexToken.symbol} Price: ${formatAmount(
+          params.price,
+          USD_DECIMALS,
+          4,
+          true
+        )} USD`;
       }
 
       if (
@@ -410,7 +489,9 @@ export default function TradeHistory(props) {
             params.collateralDelta,
             USD_DECIMALS,
             2,
-            true
+            true,
+            undefined,
+            0
           )} USD from ${indexToken.symbol} ${params.isLong ? "Long" : "Short"}`;
         }
         const isLiquidation = params.flags?.isLiquidation;
@@ -425,9 +506,16 @@ export default function TradeHistory(props) {
             <>
               {renderLiquidationTooltip(liquidationData, "Partial Liquidation")}{" "}
               {indexToken.symbol} {params.isLong ? "Long" : "Short"}, -
-              {formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)} USD,{" "}
-              {indexToken.symbol}&nbsp; Price: $
-              {formatAmount(params.price, USD_DECIMALS, 2, true)} USD
+              {formatAmount(
+                params.sizeDelta,
+                USD_DECIMALS,
+                2,
+                true,
+                undefined,
+                0
+              )}{" "}
+              USD, {indexToken.symbol}&nbsp; Price: $
+              {formatAmount(params.price, USD_DECIMALS, 4, true)} USD
             </>
           );
         }
@@ -438,11 +526,18 @@ export default function TradeHistory(props) {
         ${actionDisplay} ${indexToken.symbol} ${
           params.isLong ? "Long" : "Short"
         },
-        -${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)} USD,
+        -${formatAmount(
+          params.sizeDelta,
+          USD_DECIMALS,
+          2,
+          true,
+          undefined,
+          0
+        )} USD,
         ${indexToken.symbol} Price: ${formatAmount(
           params.price,
           USD_DECIMALS,
-          2,
+          4,
           true
         )} USD
       `;
@@ -471,19 +566,20 @@ export default function TradeHistory(props) {
             <>
               {renderLiquidationTooltip(liquidationData, "Liquidated")}{" "}
               {indexToken.symbol} {params.isLong ? "Long" : "Short"}, -
-              {formatAmount(params.size, USD_DECIMALS, 2, true)} USD,&nbsp;
+              {formatAmount(params.size, USD_DECIMALS, 2, true, undefined, 0)}{" "}
+              USD,&nbsp;
               {indexToken.symbol} Price: $
-              {formatAmount(params.markPrice, USD_DECIMALS, 2, true)} USD
+              {formatAmount(params.markPrice, USD_DECIMALS, 4, true)} USD
             </>
           );
         }
         return `
         Liquidated ${indexToken.symbol} ${params.isLong ? "Long" : "Short"},
-        -${formatAmount(params.size, USD_DECIMALS, 2, true)} USD,
+        -${formatAmount(params.size, USD_DECIMALS, 2, true, undefined, 0)} USD,
         ${indexToken.symbol} Price: ${formatAmount(
           params.markPrice,
           USD_DECIMALS,
-          2,
+          4,
           true
         )} USD
       `;
@@ -508,12 +604,12 @@ export default function TradeHistory(props) {
         const executionPriceDisplay = formatAmount(
           order.executionPrice,
           USD_DECIMALS,
-          2,
+          4,
           true
         );
         const sizeDeltaDisplay = `${
           order.type === "Increase" ? "+" : "-"
-        }${formatAmount(order.sizeDelta, USD_DECIMALS, 2, true)}`;
+        }${formatAmount(order.sizeDelta, USD_DECIMALS, 2, true, undefined, 0)}`;
 
         return `
         Execute Order: ${order.type} ${indexToken.symbol} ${longShortDisplay}
@@ -539,7 +635,7 @@ export default function TradeHistory(props) {
         const increase = tradeData.action.includes("Increase");
         const priceDisplay = `${
           order.triggerAboveThreshold ? ">" : "<"
-        } ${formatAmount(order.triggerPrice, USD_DECIMALS, 2, true)}`;
+        } ${formatAmount(order.triggerPrice, USD_DECIMALS, 4, true)}`;
         return `
         ${getOrderActionTitle(tradeData.action)}:
         ${getPositionDisplay(
@@ -570,13 +666,17 @@ export default function TradeHistory(props) {
           order.amountIn,
           fromToken.decimals,
           fromToken.isStable ? 2 : 4,
-          true
+          true,
+          undefined,
+          0
         );
         const toAmountDisplay = formatAmount(
           order.amountOut,
           toToken.decimals,
           toToken.isStable ? 2 : 4,
-          true
+          true,
+          undefined,
+          0
         );
         return `
         Execute Order: Swap ${fromAmountDisplay} ${fromToken.symbol} for ${toAmountDisplay} ${toToken.symbol}
@@ -606,7 +706,9 @@ export default function TradeHistory(props) {
               order.amountIn,
               fromToken.decimals,
               fromToken.isStable ? 2 : 4,
-              true
+              true,
+              undefined,
+              0
             )
           : "";
         const minOutDisplay = toToken
@@ -614,7 +716,9 @@ export default function TradeHistory(props) {
               order.minOut,
               toToken.decimals,
               toToken.isStable ? 2 : 4,
-              true
+              true,
+              undefined,
+              0
             )
           : "";
 

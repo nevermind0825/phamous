@@ -107,15 +107,15 @@
   }
   .Stake-cards {
     display: flex;
-    flex-wrap: wrap;    
-  }
-  .App-card{
-    width: 100%;
+    flex-wrap: wrap;
   }
   .Stake-content {
     min-height: 100vh;
   }
   .Stake-total-rewards-card {
     grid-row: 2;
+  }
+  .App-card {
+    width: 100%;
   }
 }

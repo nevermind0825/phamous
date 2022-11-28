@@ -26,6 +26,7 @@ import {
   DEFAULT_MAX_USDPH_AMOUNT,
   getPageTitle,
   importTokenImage,
+  USDPH_DECIMALS,
 } from "../../Helpers";
 import { useInfoTokens } from "../../Api";
 
@@ -177,8 +178,10 @@ export default function DashboardV2() {
       currentWeightBps,
       2,
       2,
-      false
-    )}% / ${formatAmount(targetWeightBps, 2, 2, false)}%`;
+      false,
+      undefined,
+      0
+    )}% / ${formatAmount(targetWeightBps, 2, 2, false, undefined, 0)}%`;
 
     return (
       <TooltipComponent
@@ -189,11 +192,11 @@ export default function DashboardV2() {
             <>
               <div className="Tooltip-row">
                 <span className="label">Current Weight:</span>
-                {formatAmount(currentWeightBps, 2, 2, false)}%
+                {formatAmount(currentWeightBps, 2, 2, false, undefined, 0)}%
               </div>
               <div className="Tooltip-row">
                 <span className="label">Target Weight:</span>
-                {formatAmount(targetWeightBps, 2, 2, false)}%
+                {formatAmount(targetWeightBps, 2, 2, false, undefined, 0)}%
               </div>
               <br />
               {currentWeightBps.lt(targetWeightBps) && (
@@ -250,14 +253,18 @@ export default function DashboardV2() {
         .div(adjustedUsdphSupply);
       if (tokenInfo.isStable) {
         stablePhlp += parseFloat(
-          `${formatAmount(currentWeightBps, 2, 2, false)}`
+          `${formatAmount(currentWeightBps, 2, 2, false, undefined, 0)}`
         );
       }
-      totalPhlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
+      totalPhlp += parseFloat(
+        `${formatAmount(currentWeightBps, 2, 2, false, undefined, 0)}`
+      );
       return {
         fullname: token.name,
         name: token.symbol,
-        value: parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`),
+        value: parseFloat(
+          `${formatAmount(currentWeightBps, 2, 2, false, undefined, 0)}`
+        ),
       };
     }
     return null;
@@ -323,7 +330,7 @@ export default function DashboardV2() {
                   <div className="label">AUM</div>
                   <div>
                     <TooltipComponent
-                      handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
+                      handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true, undefined, 0)}`}
                       position="right-bottom"
                       renderContent={() => `Assets Under Management: PHAME staked (All chains) + PHLP pool (${chainName})`}
                     />
@@ -332,9 +339,9 @@ export default function DashboardV2() {
               <div className="App-card-row">
                 <div className="label">PHLP Pool</div>
                 <div>
-                  ${formatAmount(aum, USD_DECIMALS, 0, true)}
+                  ${formatAmount(aum, USD_DECIMALS, 0, true, undefined, 0)}
                   {/* <TooltipComponent
-                      handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
+                      handle={`$${formatAmount(aum, USD_DECIMALS, 0, true, undefined, 0)}`}
                       position="right-bottom"
                       renderContent={() =>
                         `Total value of tokens in PHLP pool (${chainName})`
@@ -344,25 +351,40 @@ export default function DashboardV2() {
               </div>
               {/* <div className="App-card-row">
                   <div className="label">24h Volume</div>
-                  <div>${formatAmount(volumeInfo.totalVolume, USD_DECIMALS, 0, true)}</div>
+                  <div>${formatAmount(volumeInfo.totalVolume, USD_DECIMALS, 0, true, undefined, 0)}</div>
                 </div> */}
               <div className="App-card-row">
                 <div className="label">Long Positions</div>
                 <div>
-                  ${formatAmount(totalLongPositionSizes, USD_DECIMALS, 0, true)}
+                  $
+                  {formatAmount(
+                    totalLongPositionSizes,
+                    USD_DECIMALS,
+                    0,
+                    true,
+                    undefined,
+                    0
+                  )}
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Short Positions</div>
                 <div>
                   $
-                  {formatAmount(totalShortPositionSizes, USD_DECIMALS, 0, true)}
+                  {formatAmount(
+                    totalShortPositionSizes,
+                    USD_DECIMALS,
+                    0,
+                    true,
+                    undefined,
+                    0
+                  )}
                 </div>
               </div>
               {/* {feeHistory.length ? (
                   <div className="App-card-row">
                     <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
-                    <div>${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}</div>
+                    <div>${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true, undefined, 0)}</div>
                   </div>
                 ) : null} */}
             </div>
@@ -377,7 +399,7 @@ export default function DashboardV2() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">Total Volume</div>
-                  <div>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</div>
+                  <div>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true, undefined, 0)}</div>
                 </div>
               </div>
             </div> */}
@@ -424,18 +446,34 @@ export default function DashboardV2() {
                 <div className="App-card-content">
                   <div className="App-card-row">
                     <div className="label">Price</div>
-                    <div>${formatAmount(phlpPrice, USD_DECIMALS, 3, true)}</div>
+                    <div>${formatAmount(phlpPrice, USD_DECIMALS, 4, true)}</div>
                   </div>
                   <div className="App-card-row">
                     <div className="label">Supply</div>
                     <div>
-                      {formatAmount(phlpSupply, PHLP_DECIMALS, 0, true)} PHLP
+                      {formatAmount(
+                        phlpSupply,
+                        PHLP_DECIMALS,
+                        0,
+                        true,
+                        undefined,
+                        0
+                      )}{" "}
+                      PHLP
                     </div>
                   </div>
                   <div className="App-card-row">
                     <div className="label">Market Cap</div>
                     <div>
-                      ${formatAmount(phlpMarketCap, USD_DECIMALS, 0, true)}
+                      $
+                      {formatAmount(
+                        phlpMarketCap,
+                        USD_DECIMALS,
+                        0,
+                        true,
+                        undefined,
+                        0
+                      )}
                     </div>
                   </div>
                   <div className="App-card-row">
@@ -616,7 +654,15 @@ export default function DashboardV2() {
                                   <span className="label">
                                     Max {tokenInfo.symbol} Capacity:
                                   </span>
-                                  ${formatAmount(maxUsdphAmount, 18, 0, true)}
+                                  $
+                                  {formatAmount(
+                                    maxUsdphAmount,
+                                    USDPH_DECIMALS,
+                                    0,
+                                    true,
+                                    undefined,
+                                    0
+                                  )}
                                 </div>
                               </>
                             );
@@ -624,7 +670,9 @@ export default function DashboardV2() {
                         />
                       </td>
                       <td>{getWeightText(tokenInfo)}</td>
-                      <td>{formatAmount(utilization, 2, 2, false)}%</td>
+                      <td>
+                        {formatAmount(utilization, 2, 2, false, undefined, 0)}%
+                      </td>
                     </tr>
                   );
                 })}
@@ -728,7 +776,15 @@ export default function DashboardV2() {
                                   <span className="label">
                                     Max {tokenInfo.symbol} Capacity:
                                   </span>
-                                  ${formatAmount(maxUsdphAmount, 18, 0, true)}
+                                  $
+                                  {formatAmount(
+                                    maxUsdphAmount,
+                                    USDPH_DECIMALS,
+                                    0,
+                                    true,
+                                    undefined,
+                                    0
+                                  )}
                                 </div>
                               </>
                             );
@@ -742,7 +798,9 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Utilization</div>
-                      <div>{formatAmount(utilization, 2, 2, false)}%</div>
+                      <div>
+                        {formatAmount(utilization, 2, 2, false, undefined, 0)}%
+                      </div>
                     </div>
                   </div>
                 </div>

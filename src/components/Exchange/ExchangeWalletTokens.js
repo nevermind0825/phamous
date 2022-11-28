@@ -36,7 +36,14 @@ export default function ExchangeWalletTokens(props) {
               {balance && (
                 <div className="align-right">
                   {balance.gt(0) &&
-                    formatAmount(balance, token.decimals, 4, true)}
+                    formatAmount(
+                      balance,
+                      token.decimals,
+                      4,
+                      true,
+                      undefined,
+                      0
+                    )}
                   {balance.eq(0) && "-"}
                 </div>
               )}
@@ -47,7 +54,7 @@ export default function ExchangeWalletTokens(props) {
               </div>
               {balanceUsd && balanceUsd.gt(0) && (
                 <div className="align-right">
-                  ${formatAmount(balanceUsd, 30, 2, true)}
+                  ${formatAmount(balanceUsd, 30, 2, true, undefined, 0)}
                 </div>
               )}
             </div>

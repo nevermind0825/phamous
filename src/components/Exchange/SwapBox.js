@@ -420,7 +420,9 @@ export default function SwapBox(props) {
               toTokenInfo.maxAvailableLong,
               USD_DECIMALS,
               2,
-              true
+              true,
+              undefined,
+              0
             )} USD`}
             position="right-bottom"
             renderContent={() => {
@@ -435,7 +437,9 @@ export default function SwapBox(props) {
                       toTokenInfo.maxLongCapacity,
                       USD_DECIMALS,
                       2,
-                      true
+                      true,
+                      undefined,
+                      0
                     )}
                   </div>
                   <br />
@@ -448,7 +452,9 @@ export default function SwapBox(props) {
                       toTokenInfo.guaranteedUsd,
                       USD_DECIMALS,
                       2,
-                      true
+                      true,
+                      undefined,
+                      0
                     )}
                   </div>
                 </>
@@ -1560,12 +1566,16 @@ export default function SwapBox(props) {
         fromAmount,
         fromToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${fromToken.symbol} for ${formatAmount(
         toAmount,
         toToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
@@ -1591,12 +1601,16 @@ export default function SwapBox(props) {
         fromAmount,
         fromToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${fromToken.symbol} for ${formatAmount(
         toAmount,
         toToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${toToken.symbol}!`,
       setPendingTxns,
     })
@@ -1667,10 +1681,14 @@ export default function SwapBox(props) {
       setIsSubmitting(false);
       setIsPendingConfirmation(true);
       helperToast.error(
-        `Leave at least ${formatAmount(DUST_BNB, 18, 3)} ${getConstant(
-          chainId,
-          "nativeTokenSymbol"
-        )} for gas`
+        `Leave at least ${formatAmount(
+          DUST_BNB,
+          18,
+          4,
+          undefined,
+          undefined,
+          0
+        )} ${getConstant(chainId, "nativeTokenSymbol")} for gas`
       );
       return;
     }
@@ -1732,12 +1750,16 @@ export default function SwapBox(props) {
         fromAmount,
         fromToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${fromToken.symbol} for ${formatAmount(
         toAmount,
         toToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       )} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
@@ -1768,7 +1790,7 @@ export default function SwapBox(props) {
     const successMsg = `
       Created limit order for ${indexToken.symbol} ${
       isLong ? "Long" : "Short"
-    }: ${formatAmount(toUsdMax, USD_DECIMALS, 2)} USD!
+    }: ${formatAmount(toUsdMax, USD_DECIMALS, 2, undefined, undefined, 0)} USD!
     `;
     return Api.createIncreaseOrder(
       chainId,
@@ -1902,10 +1924,14 @@ export default function SwapBox(props) {
       setIsSubmitting(false);
       setIsPendingConfirmation(false);
       helperToast.error(
-        `Leave at least ${formatAmount(DUST_BNB, 18, 3)} ${getConstant(
-          chainId,
-          "nativeTokenSymbol"
-        )} for gas`
+        `Leave at least ${formatAmount(
+          DUST_BNB,
+          18,
+          4,
+          undefined,
+          undefined,
+          0
+        )} ${getConstant(chainId, "nativeTokenSymbol")} for gas`
       );
       return;
     }
@@ -1922,7 +1948,14 @@ export default function SwapBox(props) {
       : indexToken.symbol;
     const successMsg = `Requested increase of ${tokenSymbol} ${
       isLong ? "Long" : "Short"
-    } by ${formatAmount(toUsdMax, USD_DECIMALS, 2)} USD.`;
+    } by ${formatAmount(
+      toUsdMax,
+      USD_DECIMALS,
+      2,
+      undefined,
+      undefined,
+      0
+    )} USD.`;
 
     Api.callContract(chainId, contract, method, params, {
       value,
@@ -2154,14 +2187,23 @@ export default function SwapBox(props) {
   const hasZeroBorrowFee = false;
   let borrowFeeText;
   if (isLong && toTokenInfo && toTokenInfo.fundingRate) {
-    borrowFeeText = formatAmount(toTokenInfo.fundingRate, 4, 4) + "% / 1h";
+    borrowFeeText =
+      formatAmount(toTokenInfo.fundingRate, 4, 4, undefined, undefined, 0) +
+      "% / 1h";
     if (toTokenInfo.fundingRate.eq(0)) {
       // hasZeroBorrowFee = true
     }
   }
   if (isShort && shortCollateralToken && shortCollateralToken.fundingRate) {
     borrowFeeText =
-      formatAmount(shortCollateralToken.fundingRate, 4, 4) + "% / 1h";
+      formatAmount(
+        shortCollateralToken.fundingRate,
+        4,
+        4,
+        undefined,
+        undefined,
+        0
+      ) + "% / 1h";
     if (shortCollateralToken.fundingRate.eq(0)) {
       // hasZeroBorrowFee = true
     }
@@ -2234,7 +2276,16 @@ export default function SwapBox(props) {
                 <div className="muted">
                   {fromUsdMin && (
                     <div className="Exchange-swap-usd">
-                      Pay: {formatAmount(fromUsdMin, USD_DECIMALS, 2, true)} USD
+                      Pay:{" "}
+                      {formatAmount(
+                        fromUsdMin,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}{" "}
+                      USD
                     </div>
                   )}
                   {!fromUsdMin && "Pay"}
@@ -2245,7 +2296,14 @@ export default function SwapBox(props) {
                     onClick={setFromValueToMaximumAvailable}
                   >
                     Balance:{" "}
-                    {formatAmount(fromBalance, fromToken.decimals, 4, true)}
+                    {formatAmount(
+                      fromBalance,
+                      fromToken.decimals,
+                      4,
+                      true,
+                      undefined,
+                      0
+                    )}
                   </div>
                 )}
               </div>
@@ -2293,7 +2351,15 @@ export default function SwapBox(props) {
                   {toUsdMax && (
                     <div className="Exchange-swap-usd">
                       {getToLabel()}:{" "}
-                      {formatAmount(toUsdMax, USD_DECIMALS, 2, true)} USD
+                      {formatAmount(
+                        toUsdMax,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}{" "}
+                      USD
                     </div>
                   )}
                   {!toUsdMax && getToLabel()}
@@ -2301,7 +2367,14 @@ export default function SwapBox(props) {
                 {toBalance && isSwap && (
                   <div className="muted align-right">
                     Balance:{" "}
-                    {formatAmount(toBalance, toToken.decimals, 4, true)}
+                    {formatAmount(
+                      toBalance,
+                      toToken.decimals,
+                      4,
+                      true,
+                      undefined,
+                      0
+                    )}
                   </div>
                 )}
                 {(isLong || isShort) && hasLeverageOption && (
@@ -2350,7 +2423,14 @@ export default function SwapBox(props) {
                   }}
                 >
                   Position:{" "}
-                  {formatAmount(existingPosition.size, USD_DECIMALS, 2, true)}
+                  {formatAmount(
+                    existingPosition.size,
+                    USD_DECIMALS,
+                    2,
+                    true,
+                    undefined,
+                    0
+                  )}
                 </div>
               )}
             </div>
@@ -2428,7 +2508,10 @@ export default function SwapBox(props) {
                       triggerRatioInverted
                     ),
                     USD_DECIMALS,
-                    4
+                    4,
+                    true,
+                    undefined,
+                    0
                   )}
                 </div>
               )}
@@ -2467,11 +2550,11 @@ export default function SwapBox(props) {
                 className="muted align-right clickable"
                 onClick={() => {
                   setTriggerPriceValue(
-                    formatAmountFree(entryMarkPrice, USD_DECIMALS, 2)
+                    formatAmountFree(entryMarkPrice, USD_DECIMALS, 4)
                   );
                 }}
               >
-                Mark: {formatAmount(entryMarkPrice, USD_DECIMALS, 2, true)}
+                Mark: {formatAmount(entryMarkPrice, USD_DECIMALS, 4, true)}
               </div>
             </div>
             <div className="Exchange-swap-section-bottom">
@@ -2496,10 +2579,18 @@ export default function SwapBox(props) {
                 {!fees && "-"}
                 {fees && (
                   <div>
-                    {formatAmount(feeBps, 2, 2, false)}%&nbsp; (
-                    {formatAmount(fees, fromToken.decimals, 4, true)}{" "}
+                    {formatAmount(feeBps, 2, 2, false, undefined, 0)}%&nbsp; (
+                    {formatAmount(
+                      fees,
+                      fromToken.decimals,
+                      4,
+                      true,
+                      undefined,
+                      0
+                    )}{" "}
                     {fromToken.symbol}: $
-                    {formatAmount(feesUsd, USD_DECIMALS, 2, true)})
+                    {formatAmount(feesUsd, USD_DECIMALS, 2, true, undefined, 0)}
+                    )
                   </div>
                 )}
               </div>
@@ -2525,7 +2616,7 @@ export default function SwapBox(props) {
               >
                 <Slider
                   min={1.1}
-                  max={50.5}
+                  max={50.0}
                   step={0.1}
                   marks={leverageMarks}
                   handle={leverageSliderHandle}
@@ -2561,14 +2652,22 @@ export default function SwapBox(props) {
               <div className="align-right">
                 {hasExistingPosition && toAmount && toAmount.gt(0) && (
                   <div className="inline-block muted">
-                    {formatAmount(existingPosition.leverage, 4, 2)}x
+                    {formatAmount(
+                      existingPosition.leverage,
+                      4,
+                      2,
+                      undefined,
+                      undefined,
+                      0
+                    )}
+                    x
                     <BsArrowRight className="transition-arrow" />
                   </div>
                 )}
                 {toAmount &&
                   leverage &&
                   leverage.gt(0) &&
-                  `${formatAmount(leverage, 4, 2)}x`}
+                  `${formatAmount(leverage, 4, 2, undefined, undefined, 0)}x`}
                 {!toAmount && leverage && leverage.gt(0) && `-`}
                 {leverage && leverage.eq(0) && `-`}
               </div>
@@ -2582,19 +2681,43 @@ export default function SwapBox(props) {
                     {formatAmount(
                       existingPosition.averagePrice,
                       USD_DECIMALS,
-                      2,
-                      true
+                      4,
+                      true,
+                      undefined,
+                      4
                     )}
                     <BsArrowRight className="transition-arrow" />
                   </div>
                 )}
                 {nextAveragePrice &&
-                  `$${formatAmount(nextAveragePrice, USD_DECIMALS, 2, true)}`}
+                  `$${formatAmount(
+                    nextAveragePrice,
+                    USD_DECIMALS,
+                    4,
+                    true,
+                    undefined,
+                    4
+                  )}`}
                 {!nextAveragePrice && `-`}
               </div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Liq. Price</div>
+              <div className="Exchange-info-label">
+                <Tooltip
+                  position="left-top"
+                  handle="Liq. Price"
+                  renderContent={() =>
+                    `Liquidation price is calculated as the price at which the (collateral - losses - borrow fee) is less than ${formatAmount(
+                      (10000 * 10000) / MAX_LEVERAGE,
+                      2,
+                      0,
+                      true,
+                      undefined,
+                      0
+                    )}% of your position's size or can not cover liquidation cost.`
+                  }
+                />
+              </div>
               <div className="align-right">
                 {hasExistingPosition && toAmount && toAmount.gt(0) && (
                   <div className="inline-block muted">
@@ -2602,8 +2725,10 @@ export default function SwapBox(props) {
                     {formatAmount(
                       existingLiquidationPrice,
                       USD_DECIMALS,
-                      2,
-                      true
+                      4,
+                      true,
+                      undefined,
+                      4
                     )}
                     <BsArrowRight className="transition-arrow" />
                   </div>
@@ -2613,8 +2738,10 @@ export default function SwapBox(props) {
                   `$${formatAmount(
                     displayLiquidationPrice,
                     USD_DECIMALS,
-                    2,
-                    true
+                    4,
+                    true,
+                    undefined,
+                    4
                   )}`}
                 {!toAmount && displayLiquidationPrice && `-`}
                 {!displayLiquidationPrice && `-`}
@@ -2625,7 +2752,14 @@ export default function SwapBox(props) {
                 {!feesUsd && "-"}
                 {feesUsd && (
                   <Tooltip
-                    handle={`$${formatAmount(feesUsd, USD_DECIMALS, 2, true)}`}
+                    handle={`$${formatAmount(
+                      feesUsd,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -2637,14 +2771,28 @@ export default function SwapBox(props) {
                               <br />
                               Swap {fromToken.symbol} to{" "}
                               {collateralToken.symbol} Fee: $
-                              {formatAmount(swapFees, USD_DECIMALS, 2, true)}
+                              {formatAmount(
+                                swapFees,
+                                USD_DECIMALS,
+                                2,
+                                true,
+                                undefined,
+                                0
+                              )}
                               <br />
                               <br />
                             </div>
                           )}
                           <div>
                             Position Fee (0.1% of position size): $
-                            {formatAmount(positionFee, USD_DECIMALS, 2, true)}
+                            {formatAmount(
+                              positionFee,
+                              USD_DECIMALS,
+                              2,
+                              true,
+                              undefined,
+                              0
+                            )}
                           </div>
                         </>
                       );
@@ -2676,7 +2824,7 @@ export default function SwapBox(props) {
                 formatAmount(
                   fromTokenInfo.minPrice,
                   USD_DECIMALS,
-                  2,
+                  4,
                   true
                 )}{" "}
               USD
@@ -2686,7 +2834,7 @@ export default function SwapBox(props) {
             <div className="Exchange-info-label">{toToken.symbol} Price</div>
             <div className="align-right">
               {toTokenInfo &&
-                formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, 2, true)}{" "}
+                formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, 4, true)}{" "}
               USD
             </div>
           </div>
@@ -2698,7 +2846,9 @@ export default function SwapBox(props) {
                   maxSwapAmountUsd,
                   USD_DECIMALS,
                   2,
-                  true
+                  true,
+                  undefined,
+                  0
                 )} USD`}
                 position="right-bottom"
                 renderContent={() => {
@@ -2712,10 +2862,19 @@ export default function SwapBox(props) {
                           maxFromTokenIn,
                           fromTokenInfo.decimals,
                           2,
-                          true
+                          true,
+                          undefined,
+                          0
                         )}{" "}
                         {fromTokenInfo.symbol} <br />({"$ "}
-                        {formatAmount(maxFromTokenInUSD, USD_DECIMALS, 2, true)}
+                        {formatAmount(
+                          maxFromTokenInUSD,
+                          USD_DECIMALS,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}
                         )
                       </div>
                       <br />
@@ -2727,10 +2886,20 @@ export default function SwapBox(props) {
                           maxToTokenOut,
                           toTokenInfo.decimals,
                           2,
-                          true
+                          true,
+                          undefined,
+                          0
                         )}{" "}
                         {toTokenInfo.symbol} <br />({"$ "}
-                        {formatAmount(maxToTokenOutUSD, USD_DECIMALS, 2, true)})
+                        {formatAmount(
+                          maxToTokenOutUSD,
+                          USD_DECIMALS,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}
+                        )
                       </div>
                     </div>
                   );
@@ -2762,7 +2931,7 @@ export default function SwapBox(props) {
                 handle={`${formatAmount(
                   entryMarkPrice,
                   USD_DECIMALS,
-                  2,
+                  4,
                   true
                 )} USD`}
                 position="right-bottom"
@@ -2770,7 +2939,7 @@ export default function SwapBox(props) {
                   return (
                     <>
                       The position will be opened at{" "}
-                      {formatAmount(entryMarkPrice, USD_DECIMALS, 2, true)} USD
+                      {formatAmount(entryMarkPrice, USD_DECIMALS, 4, true)} USD
                       with a max slippage of{" "}
                       {parseFloat(savedSlippageAmount / 100.0).toFixed(2)}%.
                       <br />
@@ -2800,7 +2969,7 @@ export default function SwapBox(props) {
                 handle={`${formatAmount(
                   exitMarkPrice,
                   USD_DECIMALS,
-                  2,
+                  4,
                   true
                 )} USD`}
                 position="right-bottom"
@@ -2809,7 +2978,7 @@ export default function SwapBox(props) {
                     <>
                       If you have an existing position, the position will be
                       closed at{" "}
-                      {formatAmount(entryMarkPrice, USD_DECIMALS, 2, true)} USD.
+                      {formatAmount(entryMarkPrice, USD_DECIMALS, 4, true)} USD.
                       <br />
                       <br />
                       This exit price will change with the price of the asset.
@@ -2882,7 +3051,9 @@ export default function SwapBox(props) {
                     maxShortAmountUsd, // toTokenInfo.maxAvailableShort,
                     USD_DECIMALS,
                     2,
-                    true
+                    true,
+                    undefined,
+                    0
                   )} USD`}
                   position="right-bottom"
                   renderContent={() => {
@@ -2897,7 +3068,9 @@ export default function SwapBox(props) {
                             toTokenInfo.maxGlobalShortSize,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}
                         </div>
                         <br />
@@ -2910,7 +3083,9 @@ export default function SwapBox(props) {
                             toTokenInfo.globalShortSize,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}
                         </div>
                       </>

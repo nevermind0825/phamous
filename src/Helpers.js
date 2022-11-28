@@ -151,7 +151,12 @@ export const formatAmount = (
       (displayDecimals >= 10 && displayDecimals >= 2 * originalDisplayDecimals)
     ) {
       break;
-    } else if (Number(amountStr) === 0) {
+    } else if (
+      !needSmart &&
+      (Number(amountStr) === 0 ||
+        amountStr.length < smartDecimals ||
+        Number(amountStr.slice(0, -smartDecimals)) === 0)
+    ) {
       needSmart = true;
       displayDecimals++;
     } else if (
@@ -1333,8 +1338,15 @@ export function getDeltaStr({ delta, deltaPercentage, hasProfit }) {
     deltaStr = "";
     deltaPercentageStr = "";
   }
-  deltaStr += `$${formatAmount(delta, USD_DECIMALS, 2, true)}`;
-  deltaPercentageStr += `${formatAmount(deltaPercentage, 2, 2)}%`;
+  deltaStr += `$${formatAmount(delta, USD_DECIMALS, 2, true, undefined, 0)}`;
+  deltaPercentageStr += `${formatAmount(
+    deltaPercentage,
+    2,
+    2,
+    true,
+    undefined,
+    0
+  )}%`;
 
   return { deltaStr, deltaPercentageStr };
 }

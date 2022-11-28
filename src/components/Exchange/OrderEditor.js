@@ -288,7 +288,7 @@ export default function OrderEditor(props) {
           profit
           {/* </a> */} of {deltaStr}. <br />
           Profit price: {position.isLong ? ">" : "<"} $
-          {formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule only
+          {formatAmount(profitPrice, USD_DECIMALS, 4, true)}. This rule only
           applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
           {formatDateTime(minProfitExpiration)}.
         </div>
@@ -339,11 +339,11 @@ export default function OrderEditor(props) {
               className="muted align-right clickable"
               onClick={() => {
                 setTriggerPriceValue(
-                  formatAmountFree(indexTokenMarkPrice, USD_DECIMALS, 2)
+                  formatAmountFree(indexTokenMarkPrice, USD_DECIMALS, 4)
                 );
               }}
             >
-              Mark: {formatAmount(indexTokenMarkPrice, USD_DECIMALS, 2)}
+              Mark: {formatAmount(indexTokenMarkPrice, USD_DECIMALS, 4, true)}
             </div>
           </div>
           <div className="Exchange-swap-section-bottom">
@@ -365,18 +365,18 @@ export default function OrderEditor(props) {
             <>
               <span className="muted">
                 {triggerPricePrefix}{" "}
-                {formatAmount(order.triggerPrice, USD_DECIMALS, 2, true)}
+                {formatAmount(order.triggerPrice, USD_DECIMALS, 4, true)}
               </span>
               &nbsp;
               <BsArrowRight />
               &nbsp;
               {triggerPricePrefix}{" "}
-              {formatAmount(triggerPrice, USD_DECIMALS, 2, true)}
+              {formatAmount(triggerPrice, USD_DECIMALS, 4, true)}
             </>
           ) : (
             <span>
               {triggerPricePrefix}{" "}
-              {formatAmount(order.triggerPrice, USD_DECIMALS, 2, true)}
+              {formatAmount(order.triggerPrice, USD_DECIMALS, 4, true)}
             </span>
           )}
         </ExchangeInfoRow>
@@ -386,7 +386,7 @@ export default function OrderEditor(props) {
             <div className="align-right">{`$${formatAmount(
               liquidationPrice,
               USD_DECIMALS,
-              2,
+              4,
               true
             )}`}</div>
           </div>
@@ -439,7 +439,8 @@ export default function OrderEditor(props) {
                   triggerRatioInverted
                 ),
                 USD_DECIMALS,
-                2
+                4,
+                true
               )}
             </div>
           )}
@@ -473,15 +474,36 @@ export default function OrderEditor(props) {
         {triggerRatio && !triggerRatio.eq(order.triggerRatio) ? (
           <>
             <span className="muted">
-              {formatAmount(order.minOut, toTokenInfo.decimals, 4, true)}
+              {formatAmount(
+                order.minOut,
+                toTokenInfo.decimals,
+                4,
+                true,
+                undefined,
+                0
+              )}
             </span>
             &nbsp;
             <BsArrowRight />
             &nbsp;
-            {formatAmount(toAmount, toTokenInfo.decimals, 4, true)}
+            {formatAmount(
+              toAmount,
+              toTokenInfo.decimals,
+              4,
+              true,
+              undefined,
+              0
+            )}
           </>
         ) : (
-          formatAmount(order.minOut, toTokenInfo.decimals, 4, true)
+          formatAmount(
+            order.minOut,
+            toTokenInfo.decimals,
+            4,
+            true,
+            undefined,
+            0
+          )
         )}
         &nbsp;{toTokenInfo.symbol}
       </ExchangeInfoRow>
@@ -524,7 +546,7 @@ export default function OrderEditor(props) {
             {fromTokenInfo.symbol} price
           </div>
           <div className="align-right">
-            {formatAmount(fromTokenInfo.minPrice, USD_DECIMALS, 2, true)} USD
+            {formatAmount(fromTokenInfo.minPrice, USD_DECIMALS, 4, true)} USD
           </div>
         </div>
       )}
@@ -532,7 +554,7 @@ export default function OrderEditor(props) {
         <div className="Exchange-info-row">
           <div className="Exchange-info-label">{toTokenInfo.symbol} price</div>
           <div className="align-right">
-            {formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, 2, true)} USD
+            {formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, 4, true)} USD
           </div>
         </div>
       )}

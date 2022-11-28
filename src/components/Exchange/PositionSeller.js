@@ -327,7 +327,14 @@ export default function PositionSeller(props) {
     }
 
     maxAmount = position.size;
-    maxAmountFormatted = formatAmount(maxAmount, USD_DECIMALS, 2, true);
+    maxAmountFormatted = formatAmount(
+      maxAmount,
+      USD_DECIMALS,
+      2,
+      true,
+      undefined,
+      0
+    );
     maxAmountFormattedFree = formatAmountFree(maxAmount, USD_DECIMALS, 2);
     if (fromAmount && collateralToken.maxPrice) {
       convertedAmount = fromAmount
@@ -337,7 +344,9 @@ export default function PositionSeller(props) {
         convertedAmount,
         collateralToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       );
     }
 
@@ -620,7 +629,14 @@ export default function PositionSeller(props) {
 
     const successMsg = `Requested decrease of ${position.indexToken.symbol} ${
       position.isLong ? "Long" : "Short"
-    } by ${formatAmount(sizeDelta, USD_DECIMALS, 2)} USD.`;
+    } by ${formatAmount(
+      sizeDelta,
+      USD_DECIMALS,
+      2,
+      undefined,
+      undefined,
+      0
+    )} USD.`;
 
     const contract = new ethers.Contract(
       positionRouterAddress,
@@ -664,7 +680,9 @@ export default function PositionSeller(props) {
       existingOrder.sizeDelta.mul(PRECISION).div(existingOrder.triggerPrice),
       USD_DECIMALS,
       4,
-      true
+      true,
+      undefined,
+      0
     );
     const prefix = existingOrder.triggerAboveThreshold
       ? TRIGGER_PREFIX_ABOVE
@@ -674,9 +692,16 @@ export default function PositionSeller(props) {
         You have an active order to decrease{" "}
         {existingOrder.isLong ? "Long" : "Short"} {sizeInToken}{" "}
         {indexToken.symbol} ($
-        {formatAmount(existingOrder.sizeDelta, USD_DECIMALS, 2, true)}) at{" "}
-        {prefix}{" "}
-        {formatAmount(existingOrder.triggerPrice, USD_DECIMALS, 2, true)}
+        {formatAmount(
+          existingOrder.sizeDelta,
+          USD_DECIMALS,
+          2,
+          true,
+          undefined,
+          0
+        )}
+        ) at {prefix}{" "}
+        {formatAmount(existingOrder.triggerPrice, USD_DECIMALS, 4, true)}
       </div>
     );
   }, [existingOrder, infoTokens]);
@@ -702,7 +727,7 @@ export default function PositionSeller(props) {
             {/* </a> */} of {deltaStr}. <br />
             <br />
             Profit price: {position.isLong ? ">" : "<"} $
-            {formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule
+            {formatAmount(profitPrice, USD_DECIMALS, 4, true)}. This rule
             applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
             {formatDateTime(minProfitExpiration)}.
           </div>
@@ -715,7 +740,7 @@ export default function PositionSeller(props) {
           profit
           {/* </a> */} of {deltaStr}. <br />
           Profit price: {position.isLong ? ">" : "<"} $
-          {formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule applies
+          {formatAmount(profitPrice, USD_DECIMALS, 4, true)}. This rule applies
           for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
           {formatDateTime(minProfitExpiration)}.
         </div>
@@ -733,7 +758,14 @@ export default function PositionSeller(props) {
     }
     return (
       <ExchangeInfoRow label="Execution Fee">
-        {formatAmount(DECREASE_ORDER_EXECUTION_GAS_FEE, 18, 4)}{" "}
+        {formatAmount(
+          DECREASE_ORDER_EXECUTION_GAS_FEE,
+          18,
+          4,
+          undefined,
+          undefined,
+          0
+        )}{" "}
         {nativeTokenSymbol}
       </ExchangeInfoRow>
     );
@@ -822,7 +854,7 @@ export default function PositionSeller(props) {
                   }}
                 >
                   Mark:{" "}
-                  {formatAmount(position.markPrice, USD_DECIMALS, 2, true)}
+                  {formatAmount(position.markPrice, USD_DECIMALS, 4, true)}
                 </div>
               </div>
               <div className="Exchange-swap-section-bottom">
@@ -856,7 +888,16 @@ export default function PositionSeller(props) {
             <div className="PositionEditor-keep-leverage-settings">
               <Checkbox isChecked={keepLeverage} setIsChecked={setKeepLeverage}>
                 <span className="muted font-sm">
-                  Keep leverage at {formatAmount(position.leverage, 4, 2)}x
+                  Keep leverage at{" "}
+                  {formatAmount(
+                    position.leverage,
+                    4,
+                    2,
+                    undefined,
+                    undefined,
+                    0
+                  )}
+                  x
                 </span>
               </Checkbox>
             </div>
@@ -874,7 +915,14 @@ export default function PositionSeller(props) {
               <div>
                 <ExchangeInfoRow label="Allowed Slippage">
                   <Tooltip
-                    handle={`${formatAmount(allowedSlippage, 2, 2)}%`}
+                    handle={`${formatAmount(
+                      allowedSlippage,
+                      2,
+                      2,
+                      undefined,
+                      undefined,
+                      0
+                    )}%`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -901,7 +949,7 @@ export default function PositionSeller(props) {
                     `${triggerPricePrefix} ${formatAmount(
                       triggerPriceUsd,
                       USD_DECIMALS,
-                      2,
+                      4,
                       true
                     )}`}
                 </div>
@@ -910,13 +958,13 @@ export default function PositionSeller(props) {
             <div className="Exchange-info-row top-line">
               <div className="Exchange-info-label">Mark Price</div>
               <div className="align-right">
-                ${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}
+                ${formatAmount(position.markPrice, USD_DECIMALS, 4, true)}
               </div>
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Entry Price</div>
               <div className="align-right">
-                ${formatAmount(position.averagePrice, USD_DECIMALS, 2, true)}
+                ${formatAmount(position.averagePrice, USD_DECIMALS, 4, true)}
               </div>
             </div>
             <div className="Exchange-info-row">
@@ -930,7 +978,7 @@ export default function PositionSeller(props) {
                       <div>{`$${formatAmount(
                         liquidationPrice,
                         USD_DECIMALS,
-                        2,
+                        4,
                         true
                       )}`}</div>
                     )}
@@ -942,7 +990,7 @@ export default function PositionSeller(props) {
                             {formatAmount(
                               liquidationPrice,
                               USD_DECIMALS,
-                              2,
+                              4,
                               true
                             )}
                             <BsArrowRight className="transition-arrow" />
@@ -951,7 +999,7 @@ export default function PositionSeller(props) {
                           {formatAmount(
                             nextLiquidationPrice,
                             USD_DECIMALS,
-                            2,
+                            4,
                             true
                           )}
                         </div>
@@ -966,7 +1014,15 @@ export default function PositionSeller(props) {
                 {position && position.size && fromAmount && (
                   <div>
                     <div className="inline-block muted">
-                      ${formatAmount(position.size, USD_DECIMALS, 2, true)}
+                      $
+                      {formatAmount(
+                        position.size,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}
                       <BsArrowRight className="transition-arrow" />
                     </div>
                     $
@@ -974,13 +1030,23 @@ export default function PositionSeller(props) {
                       position.size.sub(fromAmount),
                       USD_DECIMALS,
                       2,
-                      true
+                      true,
+                      undefined,
+                      0
                     )}
                   </div>
                 )}
                 {position && position.size && !fromAmount && (
                   <div>
-                    ${formatAmount(position.size, USD_DECIMALS, 2, true)}
+                    $
+                    {formatAmount(
+                      position.size,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}
                   </div>
                 )}
               </div>
@@ -992,13 +1058,35 @@ export default function PositionSeller(props) {
                   <div>
                     <div className="inline-block muted">
                       $
-                      {formatAmount(position.collateral, USD_DECIMALS, 2, true)}
+                      {formatAmount(
+                        position.collateral,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}
                       <BsArrowRight className="transition-arrow" />
                     </div>
-                    ${formatAmount(nextCollateral, USD_DECIMALS, 2, true)}
+                    $
+                    {formatAmount(
+                      nextCollateral,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}
                   </div>
                 ) : (
-                  `$${formatAmount(position.collateral, USD_DECIMALS, 4, true)}`
+                  `$${formatAmount(
+                    position.collateral,
+                    USD_DECIMALS,
+                    4,
+                    true,
+                    undefined,
+                    0
+                  )}`
                 )}
               </div>
             </div>
@@ -1010,15 +1098,41 @@ export default function PositionSeller(props) {
                   {!isClosing && (
                     <div>
                       {!nextLeverage && (
-                        <div>{formatAmount(position.leverage, 4, 2)}x</div>
+                        <div>
+                          {formatAmount(
+                            position.leverage,
+                            4,
+                            2,
+                            undefined,
+                            undefined,
+                            0
+                          )}
+                          x
+                        </div>
                       )}
                       {nextLeverage && (
                         <div>
                           <div className="inline-block muted">
-                            {formatAmount(position.leverage, 4, 2)}x
+                            {formatAmount(
+                              position.leverage,
+                              4,
+                              2,
+                              undefined,
+                              undefined,
+                              0
+                            )}
+                            x
                             <BsArrowRight className="transition-arrow" />
                           </div>
-                          {formatAmount(nextLeverage, 4, 2)}x
+                          {formatAmount(
+                            nextLeverage,
+                            4,
+                            2,
+                            undefined,
+                            undefined,
+                            0
+                          )}
+                          x
                         </div>
                       )}
                     </div>
@@ -1035,14 +1149,21 @@ export default function PositionSeller(props) {
             <div className="Exchange-info-row top-line">
               <div className="Exchange-info-label">Borrow Fee</div>
               <div className="align-right">
-                ${formatAmount(fundingFee, USD_DECIMALS, 2, true)}
+                ${formatAmount(fundingFee, USD_DECIMALS, 2, true, undefined, 0)}
               </div>
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Closing Fee</div>
               <div className="align-right">
                 {positionFee &&
-                  `$${formatAmount(positionFee, USD_DECIMALS, 2, true)}`}
+                  `$${formatAmount(
+                    positionFee,
+                    USD_DECIMALS,
+                    2,
+                    true,
+                    undefined,
+                    0
+                  )}`}
                 {!positionFee && "-"}
               </div>
             </div>
@@ -1054,7 +1175,10 @@ export default function PositionSeller(props) {
                     handle={`${formatAmount(
                       minExecutionFee,
                       18,
-                      4
+                      4,
+                      undefined,
+                      undefined,
+                      0
                     )} ${nativeTokenSymbol}`}
                     position="right-top"
                     renderContent={() => {
@@ -1083,10 +1207,20 @@ export default function PositionSeller(props) {
                   convertedReceiveAmount,
                   position.collateralToken.decimals,
                   4,
-                  true
+                  true,
+                  undefined,
+                  0
                 )}{" "}
                 {position.collateralToken.symbol} ($
-                {formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
+                {formatAmount(
+                  receiveAmount,
+                  USD_DECIMALS,
+                  2,
+                  true,
+                  undefined,
+                  0
+                )}
+                )
               </div>
             </div>
             {renderExecutionFee()}

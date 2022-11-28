@@ -113,7 +113,7 @@ export function processStakingData(stakingData, infoTokens) {
         const reward = {
           tokenSymbol: tokenInfo.symbol,
           amount: amount
-            ? formatAmount(amount, tokenInfo.decimals, 2, true, undefined, 0)
+            ? formatAmount(amount, tokenInfo.decimals, 4, true, undefined, 0)
             : "-",
           amountInUsd: "-",
         };
@@ -156,12 +156,10 @@ export function processStakingData(stakingData, infoTokens) {
     stakingTokenPrecision: stakingTokenPrecision,
     stakingTokenPrice: stakingTokenPrice
       ? formatAmount(
-          stakingTokenPrice.multipliedBy(1e4).toFixed(0),
+          stakingTokenPrice.multipliedBy(1e10).toFixed(0),
+          10,
           4,
-          3,
-          true,
-          undefined,
-          2
+          true
         )
       : "-",
     totalSupply: stakingData
@@ -233,7 +231,7 @@ export function processStakingData(stakingData, infoTokens) {
       ? formatAmount(
           stakingData.userData.walletBalance,
           stakingTokenPrecision,
-          2,
+          4,
           true,
           undefined,
           0
@@ -256,7 +254,7 @@ export function processStakingData(stakingData, infoTokens) {
       ? formatAmount(
           stakingData.userData.stakedBalance,
           stakingTokenPrecision,
-          2,
+          4,
           true,
           undefined,
           0
@@ -287,7 +285,7 @@ export function processStakingData(stakingData, infoTokens) {
       ? formatAmount(
           stakingData.userData.unstakedBalance,
           stakingTokenPrecision,
-          2,
+          4,
           true,
           undefined,
           0
@@ -310,7 +308,7 @@ export function processStakingData(stakingData, infoTokens) {
       ? formatAmount(
           stakingData.userData.withdrawableBalance,
           stakingTokenPrecision,
-          2,
+          4,
           true,
           undefined,
           0
@@ -446,7 +444,7 @@ export function processPhlpData(phlpData, infoTokens) {
                     .dividedBy(100)
                     .toFixed(0),
                   tokenInfo.decimals,
-                  2,
+                  4,
                   true,
                   undefined,
                   0
@@ -486,8 +484,8 @@ export function processPhlpData(phlpData, infoTokens) {
 
   return {
     price: price
-      ? formatAmount(price.toFixed(0), USD_DECIMALS, 3, true, undefined, 2)
-      : "1.000",
+      ? formatAmount(price.toFixed(0), USD_DECIMALS, 4, true)
+      : "1.0000",
     totalSupply: phlpData
       ? formatAmount(phlpData.totalSupply, PHLP_DECIMALS, 0, true, undefined, 0)
       : "-",
@@ -506,7 +504,7 @@ export function processPhlpData(phlpData, infoTokens) {
       ? formatAmount(
           phlpData.walletBalance,
           PHLP_DECIMALS,
-          2,
+          4,
           true,
           undefined,
           0
@@ -685,7 +683,7 @@ function StakeModal(props) {
               className="muted align-right clickable"
               onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}
             >
-              Max: {formatAmount(maxAmount, 18, 4, true)}
+              Max: {formatAmount(maxAmount, 18, 4, true, undefined, 0)}
             </div>
           </div>
           <div className="Exchange-swap-section-bottom">
@@ -800,7 +798,7 @@ function UnstakeModal(props) {
               className="muted align-right clickable"
               onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}
             >
-              Max: {formatAmount(maxAmount, 18, 4, true)}
+              Max: {formatAmount(maxAmount, 18, 4, true, undefined, 0)}
             </div>
           </div>
           <div className="Exchange-swap-section-bottom">

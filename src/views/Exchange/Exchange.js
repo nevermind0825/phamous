@@ -658,7 +658,7 @@ export const Exchange = forwardRef((props, ref) => {
     const currentTokenPriceStr = formatAmount(
       selectedToken.maxPrice,
       USD_DECIMALS,
-      2,
+      4,
       true
     );
     setPageTitle(
@@ -770,12 +770,21 @@ export const Exchange = forwardRef((props, ref) => {
           collateralDelta,
           USD_DECIMALS,
           2,
-          true
+          true,
+          undefined,
+          0
         )} USD into ${tokenSymbol} ${isLong ? "Long" : "Short."}`;
       } else {
         message = `Increased ${tokenSymbol} ${
           isLong ? "Long" : "Short"
-        }, +${formatAmount(sizeDelta, USD_DECIMALS, 2, true)} USD.`;
+        }, +${formatAmount(
+          sizeDelta,
+          USD_DECIMALS,
+          2,
+          true,
+          undefined,
+          0
+        )} USD.`;
       }
 
       pushSuccessNotification(chainId, message, e);
@@ -808,12 +817,21 @@ export const Exchange = forwardRef((props, ref) => {
           collateralDelta,
           USD_DECIMALS,
           2,
-          true
+          true,
+          undefined,
+          0
         )} USD from ${tokenSymbol} ${isLong ? "Long" : "Short"}.`;
       } else {
         message = `Decreased ${tokenSymbol} ${
           isLong ? "Long" : "Short"
-        }, -${formatAmount(sizeDelta, USD_DECIMALS, 2, true)} USD.`;
+        }, -${formatAmount(
+          sizeDelta,
+          USD_DECIMALS,
+          2,
+          true,
+          undefined,
+          0
+        )} USD.`;
       }
 
       pushSuccessNotification(chainId, message, e);

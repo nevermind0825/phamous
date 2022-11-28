@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import cx from "classnames";
 
-import { formatAmount, expandDecimals, bigNumberify } from "../../Helpers";
+import {
+  formatAmount,
+  expandDecimals,
+  bigNumberify,
+  USD_DECIMALS,
+} from "../../Helpers";
 
 import { getToken } from "../../data/Tokens";
 
@@ -140,7 +145,14 @@ export default function TokenSelector(props) {
                   {balance && (
                     <div className="Token-text">
                       {balance.gt(0) &&
-                        formatAmount(balance, token.decimals, 4, true)}
+                        formatAmount(
+                          balance,
+                          token.decimals,
+                          4,
+                          true,
+                          undefined,
+                          0
+                        )}
                       {balance.eq(0) && "-"}
                     </div>
                   )}
@@ -148,13 +160,30 @@ export default function TokenSelector(props) {
                     {mintAmount && (
                       <div>
                         Mintable:{" "}
-                        {formatAmount(mintAmount, token.decimals, 2, true)}{" "}
+                        {formatAmount(
+                          mintAmount,
+                          token.decimals,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}{" "}
                         USDPH
                       </div>
                     )}
                     {showMintingCap && !mintAmount && <div>-</div>}
                     {!showMintingCap && balanceUsd && balanceUsd.gt(0) && (
-                      <div>${formatAmount(balanceUsd, 30, 2, true)}</div>
+                      <div>
+                        $
+                        {formatAmount(
+                          balanceUsd,
+                          USD_DECIMALS,
+                          2,
+                          true,
+                          undefined,
+                          0
+                        )}
+                      </div>
                     )}
                   </span>
                 </div>

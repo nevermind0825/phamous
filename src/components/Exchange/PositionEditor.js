@@ -129,7 +129,9 @@ export default function PositionEditor(props) {
         maxAmount,
         collateralToken.decimals,
         4,
-        true
+        true,
+        undefined,
+        0
       );
       maxAmountFormattedFree = formatAmountFree(
         maxAmount,
@@ -146,13 +148,23 @@ export default function PositionEditor(props) {
         convertedAmountFormatted = formatAmount(
           convertedAmount,
           USD_DECIMALS,
-          2
+          2,
+          undefined,
+          undefined,
+          0
         );
       }
     } else {
       fromAmount = parseValue(fromValue, USD_DECIMALS);
       maxAmount = position.collateral;
-      maxAmountFormatted = formatAmount(maxAmount, USD_DECIMALS, 2, true);
+      maxAmountFormatted = formatAmount(
+        maxAmount,
+        USD_DECIMALS,
+        2,
+        true,
+        undefined,
+        0
+      );
       maxAmountFormattedFree = formatAmountFree(maxAmount, USD_DECIMALS, 2);
       if (fromAmount) {
         convertedAmount = fromAmount
@@ -162,7 +174,9 @@ export default function PositionEditor(props) {
           convertedAmount,
           collateralToken.decimals,
           4,
-          true
+          true,
+          undefined,
+          0
         );
       }
     }
@@ -380,7 +394,14 @@ export default function PositionEditor(props) {
     ) {
       setIsSwapping(false);
       helperToast.error(
-        `Leave at least ${formatAmount(DUST_BNB, 18, 3)} ETH for gas`
+        `Leave at least ${formatAmount(
+          DUST_BNB,
+          18,
+          4,
+          undefined,
+          undefined,
+          0
+        )} ETH for gas`
       );
       return;
     }
@@ -396,7 +417,10 @@ export default function PositionEditor(props) {
       successMsg: `Requested deposit of ${formatAmount(
         fromAmount,
         position.collateralToken.decimals,
-        4
+        4,
+        true,
+        undefined,
+        0
       )} ${position.collateralToken.symbol} into ${
         position.indexToken.symbol
       } ${position.isLong ? "Long" : "Short"}.`,
@@ -466,7 +490,10 @@ export default function PositionEditor(props) {
       successMsg: `Requested withdrawal of ${formatAmount(
         fromAmount,
         USD_DECIMALS,
-        2
+        2,
+        true,
+        undefined,
+        0
       )} USD from ${position.indexToken.symbol} ${
         position.isLong ? "Long" : "Short"
       }.`,
@@ -589,7 +616,15 @@ export default function PositionEditor(props) {
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Size</div>
                     <div className="align-right">
-                      {formatAmount(position.size, USD_DECIMALS, 2, true)} USD
+                      {formatAmount(
+                        position.size,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}{" "}
+                      USD
                     </div>
                   </div>
                   <div className="Exchange-info-row">
@@ -602,7 +637,9 @@ export default function PositionEditor(props) {
                             position.collateral,
                             USD_DECIMALS,
                             2,
-                            true
+                            true,
+                            undefined,
+                            0
                           )}
                         </div>
                       )}
@@ -614,11 +651,21 @@ export default function PositionEditor(props) {
                               position.collateral,
                               USD_DECIMALS,
                               2,
-                              true
+                              true,
+                              undefined,
+                              0
                             )}
                             <BsArrowRight className="transition-arrow" />
                           </div>
-                          ${formatAmount(nextCollateral, USD_DECIMALS, 2, true)}
+                          $
+                          {formatAmount(
+                            nextCollateral,
+                            USD_DECIMALS,
+                            2,
+                            true,
+                            undefined,
+                            0
+                          )}
                         </div>
                       )}
                     </div>
@@ -628,16 +675,33 @@ export default function PositionEditor(props) {
                     <div className="align-right">
                       {!nextLeverage && (
                         <div>
-                          {formatAmount(position.leverage, 4, 2, true)}x
+                          {formatAmount(
+                            position.leverage,
+                            4,
+                            2,
+                            true,
+                            undefined,
+                            0
+                          )}
+                          x
                         </div>
                       )}
                       {nextLeverage && (
                         <div>
                           <div className="inline-block muted">
-                            {formatAmount(position.leverage, 4, 2, true)}x
+                            {formatAmount(
+                              position.leverage,
+                              4,
+                              2,
+                              true,
+                              undefined,
+                              0
+                            )}
+                            x
                             <BsArrowRight className="transition-arrow" />
                           </div>
-                          {formatAmount(nextLeverage, 4, 2, true)}x
+                          {formatAmount(nextLeverage, 4, 2, true, undefined, 0)}
+                          x
                         </div>
                       )}
                     </div>
@@ -645,7 +709,7 @@ export default function PositionEditor(props) {
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Mark Price</div>
                     <div className="align-right">
-                      ${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}
+                      ${formatAmount(position.markPrice, USD_DECIMALS, 4, true)}
                     </div>
                   </div>
                   <div className="Exchange-info-row">
@@ -657,7 +721,7 @@ export default function PositionEditor(props) {
                             `$${formatAmount(
                               liquidationPrice,
                               USD_DECIMALS,
-                              2,
+                              4,
                               true
                             )}`}
                           {fromAmount && "-"}
@@ -670,7 +734,7 @@ export default function PositionEditor(props) {
                             {formatAmount(
                               liquidationPrice,
                               USD_DECIMALS,
-                              2,
+                              4,
                               true
                             )}
                             <BsArrowRight className="transition-arrow" />
@@ -679,7 +743,7 @@ export default function PositionEditor(props) {
                           {formatAmount(
                             nextLiquidationPrice,
                             USD_DECIMALS,
-                            2,
+                            4,
                             true
                           )}
                         </div>

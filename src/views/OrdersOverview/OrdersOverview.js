@@ -183,7 +183,9 @@ export default function OrdersOverview() {
                           order.amountIn,
                           fromToken.decimals,
                           4,
-                          true
+                          true,
+                          undefined,
+                          0
                         )}{" "}
                         {fromToken.symbol}
                         &nbsp;for&nbsp;
@@ -191,7 +193,9 @@ export default function OrdersOverview() {
                           order.minOut,
                           toToken.decimals,
                           4,
-                          true
+                          true,
+                          undefined,
+                          0
                         )}{" "}
                         {toToken.symbol}
                       </>
@@ -228,7 +232,7 @@ export default function OrdersOverview() {
                       near: !shouldExecute && nearExecute,
                     })}
                   >
-                    {formatAmount(diffPercent, 2, 2)}%
+                    {formatAmount(diffPercent, 2, 2, undefined, undefined, 0)}%
                   </td>
                   <td>
                     <NavLink to={`/actions/${order.account}`}>
@@ -325,7 +329,14 @@ export default function OrdersOverview() {
                   </td>
                   <td>
                     {type === INCREASE ? "+" : "-"}$
-                    {formatAmount(order.sizeDelta, USD_DECIMALS, 2, true)}
+                    {formatAmount(
+                      order.sizeDelta,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}
                   </td>
                   <td
                     className={cx({
@@ -334,7 +345,7 @@ export default function OrdersOverview() {
                     })}
                   >
                     {order.triggerAboveThreshold ? "> " : "< "}
-                    {formatAmount(order.triggerPrice, USD_DECIMALS, 2, true)}
+                    {formatAmount(order.triggerPrice, USD_DECIMALS, 4, true)}
                   </td>
                   <td
                     className={cx({
@@ -342,7 +353,7 @@ export default function OrdersOverview() {
                       near: !shouldExecute && nearExecute,
                     })}
                   >
-                    ${formatAmount(markPrice, USD_DECIMALS, 2, true)}
+                    ${formatAmount(markPrice, USD_DECIMALS, 4, true)}
                   </td>
                   <td
                     className={cx({
@@ -350,7 +361,7 @@ export default function OrdersOverview() {
                       near: !shouldExecute && nearExecute,
                     })}
                   >
-                    {formatAmount(diffPercent, 2, 2)}%
+                    {formatAmount(diffPercent, 2, 2, undefined, undefined, 0)}%
                   </td>
                   <td>
                     <NavLink to={`/actions/${order.account}`}>

@@ -320,7 +320,7 @@ export default function ExchangeTVChart(props) {
           lines.push(
             currentSeries.createPriceLine({
               price: parseFloat(
-                formatAmount(order.triggerPrice, USD_DECIMALS, 2)
+                formatAmount(order.triggerPrice, USD_DECIMALS, 4)
               ),
               color,
               title: title.padEnd(PRICE_LINE_TEXT_WIDTH, " "),
@@ -335,7 +335,7 @@ export default function ExchangeTVChart(props) {
           lines.push(
             currentSeries.createPriceLine({
               price: parseFloat(
-                formatAmount(position.averagePrice, USD_DECIMALS, 2)
+                formatAmount(position.averagePrice, USD_DECIMALS, 4)
               ),
               color,
               title: `Open ${position.indexToken.symbol} ${
@@ -348,7 +348,7 @@ export default function ExchangeTVChart(props) {
           lines.push(
             currentSeries.createPriceLine({
               price: parseFloat(
-                formatAmount(liquidationPrice, USD_DECIMALS, 2)
+                formatAmount(liquidationPrice, USD_DECIMALS, 4)
               ),
               color,
               title: `Liq. ${position.indexToken.symbol} ${
@@ -385,9 +385,7 @@ export default function ExchangeTVChart(props) {
         .toFixed(0),
       USD_DECIMALS,
       4,
-      true,
-      undefined,
-      3
+      true
     );
     const fullLength = smartClose.length;
     const className = cx({
@@ -501,12 +499,12 @@ export default function ExchangeTVChart(props) {
           <div>
             <div className="ExchangeChart-main-price">
               {chartToken.maxPrice &&
-                formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
+                formatAmount(chartToken.maxPrice, USD_DECIMALS, 4)}
             </div>
             <div className="ExchangeChart-info-label">
               $
               {chartToken.minPrice &&
-                formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
+                formatAmount(chartToken.minPrice, USD_DECIMALS, 4)}
             </div>
           </div>
           <div>
@@ -525,14 +523,14 @@ export default function ExchangeTVChart(props) {
             <div className="ExchangeChart-info-label">24h High</div>
             <div>
               {!high && "-"}
-              {high && formatNumber(high, 2)}
+              {high && formatNumber(high, 4)}
             </div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div className="ExchangeChart-info-label">24h Low</div>
             <div>
               {!low && "-"}
-              {low && formatNumber(low, 2)}
+              {low && formatNumber(low, 4)}
             </div>
           </div>
         </div>

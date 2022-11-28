@@ -184,7 +184,7 @@ function PositionShareCard({
             >
               {isLong ? "LONG" : "SHORT"}
             </li>
-            <li>{formatAmount(leverage, 4, 2, true)}x&nbsp;</li>
+            <li>{formatAmount(leverage, 4, 2, true, undefined, 0)}x&nbsp;</li>
             <li>{indexToken.symbol} USD</li>
           </ul>
           <h3 className="pnl">{deltaAfterFeesPercentageStr}</h3>
@@ -192,13 +192,13 @@ function PositionShareCard({
             <div>
               <p>Entry Price</p>
               <p className="price">
-                ${formatAmount(averagePrice, USD_DECIMALS, 2, true)}
+                ${formatAmount(averagePrice, USD_DECIMALS, 4, true)}
               </p>
             </div>
             <div>
               <p>Index Price</p>
               <p className="price">
-                ${formatAmount(markPrice, USD_DECIMALS, 2, true)}
+                ${formatAmount(markPrice, USD_DECIMALS, 4, true)}
               </p>
             </div>
           </div>

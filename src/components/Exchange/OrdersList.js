@@ -199,14 +199,18 @@ export default function OrdersList(props) {
                 order.amountIn,
                 fromTokenInfo.decimals,
                 fromTokenInfo.isStable || fromTokenInfo.isUsdph ? 2 : 4,
-                true
+                true,
+                undefined,
+                0
               )}{" "}
               {fromTokenInfo.symbol} for{" "}
               {formatAmount(
                 order.minOut,
                 toTokenInfo.decimals,
                 toTokenInfo.isStable || toTokenInfo.isUsdph ? 2 : 4,
-                true
+                true,
+                undefined,
+                0
               )}{" "}
               {toTokenInfo.symbol}
             </td>
@@ -222,7 +226,9 @@ export default function OrdersList(props) {
                     order.minOut,
                     toTokenInfo.decimals,
                     toTokenInfo.isStable || toTokenInfo.isUsdph ? 2 : 4,
-                    true
+                    true,
+                    undefined,
+                    0
                   )} ${
                   toTokenInfo.symbol
                 } if this order is executed. The execution price may vary depending on swap fees at the time the order is executed.
@@ -276,7 +282,8 @@ export default function OrdersList(props) {
         <>
           {order.type === INCREASE ? "Increase" : "Decrease"} {indexTokenSymbol}{" "}
           {order.isLong ? "Long" : "Short"}
-          &nbsp;by ${formatAmount(order.sizeDelta, USD_DECIMALS, 2, true)}
+          &nbsp;by $
+          {formatAmount(order.sizeDelta, USD_DECIMALS, 2, true, undefined, 0)}
           {error && <div className="Exchange-list-item-error">{error}</div>}
         </>
       );
@@ -326,12 +333,22 @@ export default function OrdersList(props) {
                   return (
                     <span>
                       Collateral: $
-                      {formatAmount(collateralUSD, USD_DECIMALS, 2, true)} (
+                      {formatAmount(
+                        collateralUSD,
+                        USD_DECIMALS,
+                        2,
+                        true,
+                        undefined,
+                        0
+                      )}{" "}
+                      (
                       {formatAmount(
                         order.purchaseTokenAmount,
                         collateralTokenInfo.decimals,
                         4,
-                        true
+                        true,
+                        undefined,
+                        0
                       )}{" "}
                       {collateralTokenInfo.baseSymbol ||
                         collateralTokenInfo.symbol}
@@ -344,11 +361,11 @@ export default function OrdersList(props) {
           </td>
           <td>
             {triggerPricePrefix}{" "}
-            {formatAmount(order.triggerPrice, USD_DECIMALS, 2, true)}
+            {formatAmount(order.triggerPrice, USD_DECIMALS, 4, true)}
           </td>
           <td>
             <Tooltip
-              handle={formatAmount(markPrice, USD_DECIMALS, 2, true)}
+              handle={formatAmount(markPrice, USD_DECIMALS, 4, true)}
               position="right-bottom"
               renderContent={() => {
                 return (
@@ -407,14 +424,18 @@ export default function OrdersList(props) {
                 order.amountIn,
                 fromTokenInfo.decimals,
                 fromTokenInfo.isStable ? 2 : 4,
-                true
+                true,
+                undefined,
+                0
               )}{" "}
               {fromTokenInfo.symbol} for{" "}
               {formatAmount(
                 order.minOut,
                 toTokenInfo.decimals,
                 toTokenInfo.isStable ? 2 : 4,
-                true
+                true,
+                undefined,
+                0
               )}{" "}
               {toTokenInfo.symbol}
             </div>
@@ -435,7 +456,9 @@ export default function OrdersList(props) {
                       order.minOut,
                       toTokenInfo.decimals,
                       toTokenInfo.isStable || toTokenInfo.isUsdph ? 2 : 4,
-                      true
+                      true,
+                      undefined,
+                      0
                     )} ${
                       toTokenInfo.symbol
                     } if this order is executed. The exact execution price may vary depending on fees at the time the order is executed.
@@ -523,7 +546,8 @@ export default function OrdersList(props) {
           <div className="App-card-title-small">
             {order.type === INCREASE ? "Increase" : "Decrease"}{" "}
             {indexTokenSymbol} {order.isLong ? "Long" : "Short"}
-            &nbsp;by ${formatAmount(order.sizeDelta, USD_DECIMALS, 2, true)}
+            &nbsp;by $
+            {formatAmount(order.sizeDelta, USD_DECIMALS, 2, true, undefined, 0)}
             {error && <div className="Exchange-list-item-error">{error}</div>}
           </div>
           <div className="App-card-divider"></div>
@@ -532,14 +556,14 @@ export default function OrdersList(props) {
               <div className="label">Price</div>
               <div>
                 {triggerPricePrefix}{" "}
-                {formatAmount(order.triggerPrice, USD_DECIMALS, 2, true)}
+                {formatAmount(order.triggerPrice, USD_DECIMALS, 4, true)}
               </div>
             </div>
             <div className="App-card-row">
               <div className="label">Mark Price</div>
               <div>
                 <Tooltip
-                  handle={formatAmount(markPrice, USD_DECIMALS, 2, true)}
+                  handle={formatAmount(markPrice, USD_DECIMALS, 4, true)}
                   position="right-bottom"
                   renderContent={() => {
                     return (
@@ -557,12 +581,23 @@ export default function OrdersList(props) {
               <div className="App-card-row">
                 <div className="label">Collateral</div>
                 <div>
-                  ${formatAmount(collateralUSD, USD_DECIMALS, 2, true)} (
+                  $
+                  {formatAmount(
+                    collateralUSD,
+                    USD_DECIMALS,
+                    2,
+                    true,
+                    undefined,
+                    0
+                  )}{" "}
+                  (
                   {formatAmount(
                     order.purchaseTokenAmount,
                     collateralTokenInfo.decimals,
                     4,
-                    true
+                    true,
+                    undefined,
+                    0
                   )}{" "}
                   {collateralTokenInfo.baseSymbol || collateralTokenInfo.symbol}
                   )

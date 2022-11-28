@@ -151,10 +151,10 @@ export default function ConfirmationBox(props) {
       .div(BASIS_POINTS_DIVISOR);
 
     fromTokenUsd = fromTokenInfo
-      ? formatAmount(fromTokenInfo.minPrice, USD_DECIMALS, 2, true)
+      ? formatAmount(fromTokenInfo.minPrice, USD_DECIMALS, 4, true)
       : 0;
     toTokenUsd = toTokenInfo
-      ? formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, 2, true)
+      ? formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, 4, true)
       : 0;
   }
 
@@ -398,7 +398,7 @@ export default function ConfirmationBox(props) {
               {/* </a> */} of {existingPosition.deltaStr}.<br />
               <br />
               Profit price: {existingPosition.isLong ? ">" : "<"} $
-              {formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule only
+              {formatAmount(profitPrice, USD_DECIMALS, 4, true)}. This rule only
               applies for the next {getTimeRemaining(minProfitExpiration)},
               until {formatDateTime(minProfitExpiration)}.
             </div>
@@ -425,7 +425,7 @@ export default function ConfirmationBox(props) {
                 profit
                 {/* </a> */} of {existingPosition.deltaStr}.<br />
                 Profit price: {existingPosition.isLong ? ">" : "<"} $
-                {formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule
+                {formatAmount(profitPrice, USD_DECIMALS, 4, true)}. This rule
                 only applies for the next{" "}
                 {getTimeRemaining(minProfitExpiration)}, until{" "}
                 {formatDateTime(minProfitExpiration)}.
@@ -463,7 +463,9 @@ export default function ConfirmationBox(props) {
       existingOrder.sizeDelta.mul(PRECISION).div(existingOrder.triggerPrice),
       USD_DECIMALS,
       4,
-      true
+      true,
+      undefined,
+      0
     );
     if (existingOrders?.length > 1) {
       return (
@@ -503,7 +505,7 @@ export default function ConfirmationBox(props) {
                       {type === INCREASE ? "Increase" : "Decrease"}{" "}
                       {indexToken.symbol} {isLong ? "Long" : "Short"} &nbsp;
                       {triggerPricePrefix} $
-                      {formatAmount(triggerPrice, USD_DECIMALS, 2, true)}
+                      {formatAmount(triggerPrice, USD_DECIMALS, 4, true)}
                     </p>
                     <button onClick={() => onCancelOrderClick(order)}>
                       Cancel
@@ -521,8 +523,16 @@ export default function ConfirmationBox(props) {
         You have an active Limit Order to Increase{" "}
         {existingOrder.isLong ? "Long" : "Short"} {sizeInToken}{" "}
         {indexToken.symbol} ($
-        {formatAmount(existingOrder.sizeDelta, USD_DECIMALS, 2, true)}) at price
-        ${formatAmount(existingOrder.triggerPrice, USD_DECIMALS, 2, true)}
+        {formatAmount(
+          existingOrder.sizeDelta,
+          USD_DECIMALS,
+          2,
+          true,
+          undefined,
+          0
+        )}
+        ) at price $
+        {formatAmount(existingOrder.triggerPrice, USD_DECIMALS, 4, true)}
       </div>
     );
   }, [
@@ -572,7 +582,7 @@ export default function ConfirmationBox(props) {
                   {type === INCREASE ? "Increase" : "Decrease"}{" "}
                   {indexToken.symbol} {isLong ? "Long" : "Short"}
                   &nbsp;{triggerPricePrefix} $
-                  {formatAmount(triggerPrice, USD_DECIMALS, 2, true)}
+                  {formatAmount(triggerPrice, USD_DECIMALS, 4, true)}
                 </p>
                 <button
                   onClick={() =>
@@ -636,15 +646,31 @@ export default function ConfirmationBox(props) {
       return (
         <div className="Confirmation-box-main">
           <div>
-            Pay&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)}{" "}
+            Pay&nbsp;
+            {formatAmount(
+              fromAmount,
+              fromToken.decimals,
+              4,
+              true,
+              undefined,
+              0
+            )}{" "}
             {fromToken.symbol} ($
-            {formatAmount(fromUsdMin, USD_DECIMALS, 2, true)})
+            {formatAmount(fromUsdMin, USD_DECIMALS, 2, true, undefined, 0)})
           </div>
           <div className="Confirmation-box-main-icon"></div>
           <div>
-            Receive&nbsp;{formatAmount(toAmount, toToken.decimals, 4, true)}{" "}
+            Receive&nbsp;
+            {formatAmount(
+              toAmount,
+              toToken.decimals,
+              4,
+              true,
+              undefined,
+              0
+            )}{" "}
             {toToken.symbol} ($
-            {formatAmount(toUsdMax, USD_DECIMALS, 2, true)})
+            {formatAmount(toUsdMax, USD_DECIMALS, 2, true, undefined, 0)})
           </div>
         </div>
       );
@@ -653,16 +679,24 @@ export default function ConfirmationBox(props) {
     return (
       <div className="Confirmation-box-main">
         <span>
-          Pay&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)}{" "}
+          Pay&nbsp;
+          {formatAmount(
+            fromAmount,
+            fromToken.decimals,
+            4,
+            true,
+            undefined,
+            0
+          )}{" "}
           {fromToken.symbol} ($
-          {formatAmount(fromUsdMin, USD_DECIMALS, 2, true)})
+          {formatAmount(fromUsdMin, USD_DECIMALS, 2, true, undefined, 0)})
         </span>
         <div className="Confirmation-box-main-icon"></div>
         <div>
           {isLong ? "Long" : "Short"}&nbsp;
-          {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol}{" "}
-          ($
-          {formatAmount(toUsdMax, USD_DECIMALS, 2, true)})
+          {formatAmount(toAmount, toToken.decimals, 4, true, undefined, 0)}{" "}
+          {toToken.symbol} ($
+          {formatAmount(toUsdMax, USD_DECIMALS, 2, true, undefined, 0)})
         </div>
       </div>
     );
@@ -694,7 +728,8 @@ export default function ConfirmationBox(props) {
     }
     return (
       <ExchangeInfoRow label="Execution Fee">
-        {formatAmount(executionFee, 18, 4)} {getNativeToken(chainId).symbol}
+        {formatAmount(executionFee, 18, 4, undefined, undefined, 0)}{" "}
+        {getNativeToken(chainId).symbol}
       </ExchangeInfoRow>
     );
   }, [isMarketOrder, executionFee, chainId]);
@@ -771,7 +806,9 @@ export default function ConfirmationBox(props) {
                 availableLiquidity,
                 token.decimals,
                 token.isStable ? 0 : 2,
-                true
+                true,
+                undefined,
+                0
               )}{" "}
               {token.symbol}
             </>
@@ -826,21 +863,29 @@ export default function ConfirmationBox(props) {
           <ExchangeInfoRow label="Leverage">
             {hasExistingPosition && toAmount && toAmount.gt(0) && (
               <div className="inline-block muted">
-                {formatAmount(existingPosition.leverage, 4, 2)}x
+                {formatAmount(
+                  existingPosition.leverage,
+                  4,
+                  2,
+                  undefined,
+                  undefined,
+                  0
+                )}
+                x
                 <BsArrowRight className="transition-arrow" />
               </div>
             )}
             {toAmount &&
               leverage &&
               leverage.gt(0) &&
-              `${formatAmount(leverage, 4, 2)}x`}
+              `${formatAmount(leverage, 4, 2, undefined, undefined, 0)}x`}
             {!toAmount && leverage && leverage.gt(0) && `-`}
             {leverage && leverage.eq(0) && `-`}
           </ExchangeInfoRow>
           <ExchangeInfoRow label="Liq. Price">
             {hasExistingPosition && toAmount && toAmount.gt(0) && (
               <div className="inline-block muted">
-                ${formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, true)}
+                ${formatAmount(existingLiquidationPrice, USD_DECIMALS, 4, true)}
                 <BsArrowRight className="transition-arrow" />
               </div>
             )}
@@ -849,14 +894,14 @@ export default function ConfirmationBox(props) {
               `$${formatAmount(
                 displayLiquidationPrice,
                 USD_DECIMALS,
-                2,
+                4,
                 true
               )}`}
             {!toAmount && displayLiquidationPrice && `-`}
             {!displayLiquidationPrice && `-`}
           </ExchangeInfoRow>
           <ExchangeInfoRow label="Fees">
-            ${formatAmount(feesUsd, USD_DECIMALS, 2, true)}
+            ${formatAmount(feesUsd, USD_DECIMALS, 2, true, undefined, 0)}
           </ExchangeInfoRow>
           <ExchangeInfoRow label="Collateral">
             <Tooltip
@@ -864,7 +909,9 @@ export default function ConfirmationBox(props) {
                 collateralAfterFees,
                 USD_DECIMALS,
                 2,
-                true
+                true,
+                undefined,
+                0
               )}`}
               position="right-bottom"
               renderContent={() => {
@@ -874,9 +921,17 @@ export default function ConfirmationBox(props) {
                     <br />
                     <br />
                     Pay amount: $
-                    {formatAmount(fromUsdMin, USD_DECIMALS, 2, true)}
+                    {formatAmount(
+                      fromUsdMin,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}
                     <br />
-                    Fees: ${formatAmount(feesUsd, USD_DECIMALS, 2, true)}
+                    Fees: $
+                    {formatAmount(feesUsd, USD_DECIMALS, 2, true, undefined, 0)}
                     <br />
                   </>
                 );
@@ -889,7 +944,15 @@ export default function ConfirmationBox(props) {
               isWarning={spread.isHigh}
               isTop={true}
             >
-              {formatAmount(spread.value.mul(100), USD_DECIMALS, 2, true)}%
+              {formatAmount(
+                spread.value.mul(100),
+                USD_DECIMALS,
+                2,
+                true,
+                undefined,
+                0
+              )}
+              %
             </ExchangeInfoRow>
           )}
           {isMarketOrder && (
@@ -900,29 +963,43 @@ export default function ConfirmationBox(props) {
                   {formatAmount(
                     existingPosition.averagePrice,
                     USD_DECIMALS,
-                    2,
+                    4,
                     true
                   )}
                   <BsArrowRight className="transition-arrow" />
                 </div>
               )}
               {nextAveragePrice &&
-                `$${formatAmount(nextAveragePrice, USD_DECIMALS, 2, true)}`}
+                `$${formatAmount(nextAveragePrice, USD_DECIMALS, 4, true)}`}
               {!nextAveragePrice && `-`}
             </ExchangeInfoRow>
           )}
           {!isMarketOrder && (
             <ExchangeInfoRow label="Limit Price" isTop={true}>
-              ${formatAmount(triggerPriceUsd, USD_DECIMALS, 2, true)}
+              ${formatAmount(triggerPriceUsd, USD_DECIMALS, 4, true)}
             </ExchangeInfoRow>
           )}
           <ExchangeInfoRow label="Borrow Fee">
             {isLong &&
               toTokenInfo &&
-              formatAmount(toTokenInfo.fundingRate, 4, 4)}
+              formatAmount(
+                toTokenInfo.fundingRate,
+                4,
+                4,
+                undefined,
+                undefined,
+                0
+              )}
             {isShort &&
               shortCollateralToken &&
-              formatAmount(shortCollateralToken.fundingRate, 4, 4)}
+              formatAmount(
+                shortCollateralToken.fundingRate,
+                4,
+                4,
+                undefined,
+                undefined,
+                0
+              )}
             {((isLong && toTokenInfo && toTokenInfo.fundingRate) ||
               (isShort &&
                 shortCollateralToken &&
@@ -936,7 +1013,10 @@ export default function ConfirmationBox(props) {
                   handle={`${formatAmount(
                     minExecutionFee,
                     18,
-                    4
+                    4,
+                    undefined,
+                    undefined,
+                    0
                   )} ${nativeTokenSymbol}`}
                   position="right-top"
                   renderContent={() => {
@@ -961,7 +1041,14 @@ export default function ConfirmationBox(props) {
           )}
           <ExchangeInfoRow label="Allowed Slippage">
             <Tooltip
-              handle={`${formatAmount(allowedSlippage, 2, 2)}%`}
+              handle={`${formatAmount(
+                allowedSlippage,
+                2,
+                2,
+                undefined,
+                undefined,
+                0
+              )}%`}
               position="right-top"
               renderContent={() => {
                 return (
@@ -1053,7 +1140,7 @@ export default function ConfirmationBox(props) {
           {renderSpreadWarning()}
           {orderOption === LIMIT && renderAvailableLiquidity()}
           <ExchangeInfoRow label="Min. Receive">
-            {formatAmount(minOut, toTokenInfo.decimals, 4, true)}{" "}
+            {formatAmount(minOut, toTokenInfo.decimals, 4, true, undefined, 0)}{" "}
             {toTokenInfo.symbol}
           </ExchangeInfoRow>
           <ExchangeInfoRow label="Price">
@@ -1077,16 +1164,31 @@ export default function ConfirmationBox(props) {
           )}
           {showSpread && (
             <ExchangeInfoRow label="Spread" isWarning={spread.isHigh}>
-              {formatAmount(spread.value.mul(100), USD_DECIMALS, 2, true)}%
+              {formatAmount(
+                spread.value.mul(100),
+                USD_DECIMALS,
+                2,
+                true,
+                undefined,
+                0
+              )}
+              %
             </ExchangeInfoRow>
           )}
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Fees</div>
             <div className="align-right">
-              {formatAmount(feeBps, 2, 2, true)}% (
-              {formatAmount(fees, fromTokenInfo.decimals, 4, true)}{" "}
+              {formatAmount(feeBps, 2, 2, true, undefined, 0)}% (
+              {formatAmount(
+                fees,
+                fromTokenInfo.decimals,
+                4,
+                true,
+                undefined,
+                0
+              )}{" "}
               {fromTokenInfo.symbol}: $
-              {formatAmount(feesUsd, USD_DECIMALS, 2, true)})
+              {formatAmount(feesUsd, USD_DECIMALS, 2, true, undefined, 0)})
             </div>
           </div>
           {renderExecutionFee()}

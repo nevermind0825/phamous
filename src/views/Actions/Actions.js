@@ -133,12 +133,27 @@ export default function Actions() {
                   <div>
                     {token.symbol} {pnlRow.data.isLong ? "Long" : "Short"}{" "}
                     Profit:{" "}
-                    {formatAmount(pnlRow.data.profit, USD_DECIMALS, 2, true)}{" "}
+                    {formatAmount(
+                      pnlRow.data.profit,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}{" "}
                     USD
                   </div>
                   <div>
                     {token.symbol} {pnlRow.data.isLong ? "Long" : "Short"} Loss:{" "}
-                    {formatAmount(pnlRow.data.loss, USD_DECIMALS, 2, true)} USD
+                    {formatAmount(
+                      pnlRow.data.loss,
+                      USD_DECIMALS,
+                      2,
+                      true,
+                      undefined,
+                      0
+                    )}{" "}
+                    USD
                   </div>
                 </div>
               );
