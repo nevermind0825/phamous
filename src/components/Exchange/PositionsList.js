@@ -376,8 +376,8 @@ export default function PositionsList(props) {
                         <Tooltip
                           handle={
                             showPnlAfterFees
-                              ? "Before-Fee PnL"
-                              : "After-Fee PnL"
+                              ? "After-Fee PnL"
+                              : "Before-Fee PnL"
                           }
                           position="left-top"
                           handleClassName="plain"
@@ -385,8 +385,8 @@ export default function PositionsList(props) {
                             <div>
                               You can change in settings to show
                               {showPnlAfterFees
-                                ? " after-fee PnL"
-                                : " bfter-fee PnL"}
+                                ? " before-fee PnL"
+                                : " after-fee PnL"}
                               .
                             </div>
                           )}
@@ -621,13 +621,13 @@ export default function PositionsList(props) {
               Net Value
               <br />
               <Tooltip
-                handle={showPnlAfterFees ? "Before-Fee PnL" : "After-Fee PnL"}
+                handle={showPnlAfterFees ? "After-Fee PnL" : "Before-Fee PnL"}
                 position="left-top"
                 handleClassName="plain"
                 renderContent={() => (
                   <div>
                     You can change in settings to show
-                    {showPnlAfterFees ? " after-fee PnL" : " bfter-fee PnL"}.
+                    {showPnlAfterFees ? " before-fee PnL" : " after-fee PnL"}.
                   </div>
                 )}
               />
