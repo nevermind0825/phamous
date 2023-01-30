@@ -146,30 +146,30 @@ export default function DashboardV2() {
       .div(expandDecimals(1, PHLP_DECIMALS));
   }
 
-  let adjustedUsdphSupply = bigNumberify(0);
+  let totalManagedUsd = bigNumberify(0);
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
     const tokenInfo = infoTokens[token.address];
-    if (tokenInfo && tokenInfo.usdphAmount) {
-      adjustedUsdphSupply = adjustedUsdphSupply.add(tokenInfo.usdphAmount);
+    if (tokenInfo && tokenInfo.managedUsd) {
+      totalManagedUsd = totalManagedUsd.add(tokenInfo.managedUsd);
     }
   }
 
   const getWeightText = (tokenInfo) => {
     if (
       !tokenInfo.weight ||
-      !tokenInfo.usdphAmount ||
-      !adjustedUsdphSupply ||
-      adjustedUsdphSupply.eq(0) ||
+      !tokenInfo.managedUsd ||
+      !totalManagedUsd ||
+      totalManagedUsd.eq(0) ||
       !totalTokenWeights
     ) {
       return "...";
     }
 
-    const currentWeightBps = tokenInfo.usdphAmount
+    const currentWeightBps = tokenInfo.managedUsd
       .mul(BASIS_POINTS_DIVISOR)
-      .div(adjustedUsdphSupply);
+      .div(totalManagedUsd);
     const targetWeightBps = tokenInfo.weight
       .mul(BASIS_POINTS_DIVISOR)
       .div(totalTokenWeights);
@@ -243,14 +243,10 @@ export default function DashboardV2() {
 
   let phlpPool = tokens.map((token) => {
     const tokenInfo = infoTokens[token.address];
-    if (
-      tokenInfo.usdphAmount &&
-      adjustedUsdphSupply &&
-      !adjustedUsdphSupply.eq(0)
-    ) {
-      const currentWeightBps = tokenInfo.usdphAmount
+    if (tokenInfo.managedUsd && totalManagedUsd && !totalManagedUsd.eq(0)) {
+      const currentWeightBps = tokenInfo.managedUsd
         .mul(BASIS_POINTS_DIVISOR)
-        .div(adjustedUsdphSupply);
+        .div(totalManagedUsd);
       if (tokenInfo.isStable) {
         stablePhlp += parseFloat(
           `${formatAmount(currentWeightBps, 2, 2, false, undefined, 0)}`

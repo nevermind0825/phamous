@@ -692,14 +692,18 @@ export function getFeeBasisPoints(
   usdphSupply,
   totalTokenWeights
 ) {
-  if (!token || !token.usdphAmount || !usdphSupply || !totalTokenWeights) {
+  if (!token || !token.managedUsd || !usdphSupply || !totalTokenWeights) {
     return 0;
   }
 
   feeBasisPoints = bigNumberify(feeBasisPoints);
   taxBasisPoints = bigNumberify(taxBasisPoints);
 
-  const initialAmount = token.usdphAmount;
+  const initialAmount = adjustForDecimals(
+    token.managedUsd,
+    USD_DECIMALS,
+    USDPH_DECIMALS
+  );
   let nextAmount = initialAmount.add(usdphDelta);
   if (!increment) {
     nextAmount = usdphDelta.gt(initialAmount)

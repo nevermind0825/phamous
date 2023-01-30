@@ -201,13 +201,13 @@ export default function PhlpSwap(props) {
   const phlpSupply = balancesAndSupplies
     ? balancesAndSupplies[1]
     : bigNumberify(0);
-  const usdphSupply = balancesAndSupplies
-    ? balancesAndSupplies[3]
-    : bigNumberify(0);
   let aum;
   if (aums && aums.length > 0) {
     aum = isBuying ? aums[0] : aums[1];
   }
+  const usdphSupply = aum
+    ? adjustForDecimals(aum, USD_DECIMALS, USDPH_DECIMALS)
+    : bigNumberify(0);
   const phlpPrice =
     aum && aum.gt(0) && phlpSupply.gt(0)
       ? aum.mul(expandDecimals(1, PHLP_DECIMALS)).div(phlpSupply)
@@ -437,23 +437,19 @@ export default function PhlpSwap(props) {
 
       if (
         swapTokenInfo.maxUsdphAmount &&
-        swapTokenInfo.usdphAmount &&
+        swapTokenInfo.managedUsd &&
         swapUsdMin
       ) {
-        const usdphFromAmount = adjustForDecimals(
-          swapUsdMin,
+        const nextUsdphAmount = adjustForDecimals(
+          swapUsdMin.add(swapTokenInfo.managedUsd),
           USD_DECIMALS,
           USDPH_DECIMALS
         );
-        const nextUsdphAmount = swapTokenInfo.usdphAmount.add(usdphFromAmount);
         if (
           swapTokenInfo.maxUsdphAmount.gt(0) &&
           nextUsdphAmount.gt(swapTokenInfo.maxUsdphAmount)
         ) {
-          return [
-            `${swapTokenInfo.symbol} pool exceeded, try different token`,
-            true,
-          ];
+          return [`${swapTokenInfo.symbol} pool exceeded`];
         }
       }
     }

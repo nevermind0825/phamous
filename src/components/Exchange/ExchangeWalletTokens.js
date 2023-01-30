@@ -1,6 +1,13 @@
 import React from "react";
 
-import { formatAmount, expandDecimals, bigNumberify } from "../../Helpers";
+import {
+  adjustForDecimals,
+  formatAmount,
+  expandDecimals,
+  bigNumberify,
+  USD_DECIMALS,
+  USDPH_DECIMALS,
+} from "../../Helpers";
 
 import "./ExchangeWalletTokens.css";
 
@@ -13,8 +20,10 @@ export default function ExchangeWalletTokens(props) {
         const info = infoTokens ? infoTokens[token.address] : {};
         let mintAmount;
         const balance = info.balance;
-        if (mintingCap && info.usdphAmount) {
-          mintAmount = mintingCap.sub(info.usdphAmount);
+        if (mintingCap && info.managedUsd) {
+          mintAmount = mintingCap.sub(
+            adjustForDecimals(info.managedUsd, USD_DECIMALS, USDPH_DECIMALS)
+          );
         }
         if (mintAmount && mintAmount.lt(0)) {
           mintAmount = bigNumberify(0);

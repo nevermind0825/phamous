@@ -426,10 +426,10 @@ export function processPhlpData(phlpData, infoTokens) {
   }
   const compositions = [];
   if (infoTokens) {
-    let totalUsdphSupply = bigNumberify(0);
+    let totalManagedUsd = bigNumberify(0);
     Object.values(infoTokens).forEach((tokenInfo) => {
-      if (!tokenInfo.isNative && tokenInfo.usdphAmount) {
-        totalUsdphSupply = totalUsdphSupply.add(tokenInfo.usdphAmount);
+      if (!tokenInfo.isNative && tokenInfo.managedUsd) {
+        totalManagedUsd = totalManagedUsd.add(tokenInfo.managedUsd);
       }
     });
     Object.values(infoTokens).forEach((tokenInfo) => {
@@ -465,11 +465,11 @@ export function processPhlpData(phlpData, infoTokens) {
                 )
               : "-",
           weight:
-            tokenInfo.usdphAmount && totalUsdphSupply.gt(0)
+            tokenInfo.managedUsd && totalManagedUsd.gt(0)
               ? formatAmount(
-                  tokenInfo.usdphAmount
+                  tokenInfo.managedUsd
                     .mul(BASIS_POINTS_DIVISOR)
-                    .div(totalUsdphSupply),
+                    .div(totalManagedUsd),
                   2,
                   2,
                   true,

@@ -13,6 +13,7 @@ import { ethers } from "ethers";
 import cx from "classnames";
 
 import {
+  adjustForDecimals,
   FUNDING_RATE_PRECISION,
   BASIS_POINTS_DIVISOR,
   MARGIN_FEE_BASIS_POINTS,
@@ -20,6 +21,7 @@ import {
   LONG,
   SHORT,
   USD_DECIMALS,
+  USDPH_DECIMALS,
   getExplorerUrl,
   helperToast,
   formatAmount,
@@ -50,7 +52,7 @@ import {
 import PhamousUiDataProvider from "../../abis/PhamousUiDataProvider.json";
 import Vault from "../../abis/Vault.json";
 import Router from "../../abis/Router.json";
-import IERC20Metadata from "../../abis/IERC20Metadata.json";
+import PhlpManager from "../../abis/PhlpManager.json";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import SwapBox from "../../components/Exchange/SwapBox";
@@ -461,7 +463,7 @@ export const Exchange = forwardRef((props, ref) => {
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
   const uiDataProviderAddress = getContract(chainId, "PhamousUiDataProvider");
-  const usdphAddress = getContract(chainId, "USDPH");
+  const phlpManagerAddress = getContract(chainId, "PhlpManager");
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map(
@@ -601,12 +603,19 @@ export const Exchange = forwardRef((props, ref) => {
     }
   );
 
-  const { data: usdphSupply } = useSWR(
-    [`Exchange:usdphSupply:${active}`, chainId, usdphAddress, "totalSupply"],
+  const { data: aums } = useSWR(
+    [`PhlpSwap:getAums:${active}`, chainId, phlpManagerAddress, "getAums"],
     {
-      fetcher: fetcher(library, IERC20Metadata),
+      fetcher: fetcher(library, PhlpManager),
     }
   );
+  let aum;
+  if (aums && aums.length > 0) {
+    aum = aums[0];
+  }
+  const usdphSupply = aum
+    ? adjustForDecimals(aum, USD_DECIMALS, USDPH_DECIMALS)
+    : bigNumberify(0);
 
   const orderBookAddress = getContract(chainId, "OrderBook");
   const routerAddress = getContract(chainId, "Router");

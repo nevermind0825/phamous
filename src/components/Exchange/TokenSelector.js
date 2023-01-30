@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import cx from "classnames";
 
 import {
+  adjustForDecimals,
   formatAmount,
   expandDecimals,
   bigNumberify,
   USD_DECIMALS,
+  USDPH_DECIMALS,
 } from "../../Helpers";
 
 import { getToken } from "../../data/Tokens";
@@ -110,8 +112,10 @@ export default function TokenSelector(props) {
             const info = infoTokens ? infoTokens[token.address] : {};
             let mintAmount;
             const balance = info.balance;
-            if (showMintingCap && mintingCap && info.usdphAmount) {
-              mintAmount = mintingCap.sub(info.usdphAmount);
+            if (showMintingCap && mintingCap && info.managedUsd) {
+              mintAmount = mintingCap.sub(
+                adjustForDecimals(info.managedUsd, USD_DECIMALS, USDPH_DECIMALS)
+              );
             }
             if (mintAmount && mintAmount.lt(0)) {
               mintAmount = bigNumberify(0);

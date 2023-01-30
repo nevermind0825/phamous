@@ -529,9 +529,9 @@ export default function SwapBox(props) {
 
   const maxFromTokenInUSD = useMemo(() => {
     const value = fromTokenInfo.maxUsdphAmount
-      ?.sub(fromTokenInfo.usdphAmount)
-      .mul(expandDecimals(1, USD_DECIMALS))
-      .div(expandDecimals(1, USDPH_DECIMALS));
+      ?.mul(expandDecimals(1, USD_DECIMALS))
+      .div(expandDecimals(1, USDPH_DECIMALS))
+      .sub(fromTokenInfo.managedUsd);
 
     if (!value) {
       return bigNumberify(0);
@@ -1044,15 +1044,14 @@ export default function SwapBox(props) {
       fromUsdMin &&
       fromTokenInfo.maxUsdphAmount &&
       fromTokenInfo.maxUsdphAmount.gt(0) &&
-      fromTokenInfo.usdphAmount &&
+      fromTokenInfo.managedUsd &&
       fromTokenInfo.maxPrice
     ) {
-      const usdphFromAmount = adjustForDecimals(
-        fromUsdMin,
+      const nextUsdphAmount = adjustForDecimals(
+        fromTokenInfo.managedUsd.add(fromUsdMin),
         USD_DECIMALS,
         USDPH_DECIMALS
       );
-      const nextUsdphAmount = fromTokenInfo.usdphAmount.add(usdphFromAmount);
 
       if (nextUsdphAmount.gt(fromTokenInfo.maxUsdphAmount)) {
         return [`${fromTokenInfo.symbol} pool exceeded`];
@@ -1172,21 +1171,15 @@ export default function SwapBox(props) {
           fromTokenInfo.maxUsdphAmount &&
           fromTokenInfo.maxUsdphAmount.gt(0) &&
           fromTokenInfo.minPrice &&
-          fromTokenInfo.usdphAmount
+          fromTokenInfo.managedUsd
         ) {
-          const usdphFromAmount = adjustForDecimals(
-            fromUsdMin,
+          const nextUsdphAmount = adjustForDecimals(
+            fromTokenInfo.managedUsd.add(fromUsdMin),
             USD_DECIMALS,
             USDPH_DECIMALS
           );
-          const nextUsdphAmount =
-            fromTokenInfo.usdphAmount.add(usdphFromAmount);
           if (nextUsdphAmount.gt(fromTokenInfo.maxUsdphAmount)) {
-            return [
-              `${fromTokenInfo.symbol} pool exceeded, try different token`,
-              true,
-              "MAX_USDPH",
-            ];
+            return [`${fromTokenInfo.symbol} pool exceeded,`];
           }
         }
       }
@@ -1251,20 +1244,16 @@ export default function SwapBox(props) {
           fromTokenInfo.maxUsdphAmount &&
           fromTokenInfo.maxUsdphAmount.gt(0) &&
           fromTokenInfo.minPrice &&
-          fromTokenInfo.usdphAmount
+          fromTokenInfo.managedUsd
         ) {
-          const usdphFromAmount = adjustForDecimals(
-            fromUsdMin,
+          const nextUsdphAmount = adjustForDecimals(
+            fromTokenInfo.managedUsd.add(fromUsdMin),
             USD_DECIMALS,
             USDPH_DECIMALS
           );
-          const nextUsdphAmount =
-            fromTokenInfo.usdphAmount.add(usdphFromAmount);
           if (nextUsdphAmount.gt(fromTokenInfo.maxUsdphAmount)) {
             return [
               `${fromTokenInfo.symbol} pool exceeded, try different token`,
-              true,
-              "MAX_USDPH",
             ];
           }
         }
