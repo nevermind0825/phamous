@@ -1,15 +1,15 @@
-import { ethers } from "ethers";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SWRConfig } from "swr";
+import { ethers } from 'ethers';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { SWRConfig } from 'swr';
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
 
-import { Web3Provider } from "@ethersproject/providers";
-import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
+import { Web3Provider, ExternalProvider } from '@ethersproject/providers';
+import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 
-import { HashRouter as Router, NavLink, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, NavLink, Route, Switch } from 'react-router-dom';
 
-import { PLS_TESTNET_V2 } from "./Constants";
+import { PLS_TESTNET_V2 } from './config/Constants';
 import {
   activateInjectedProvider,
   BASIS_POINTS_DIVISOR,
@@ -41,72 +41,73 @@ import {
   useEagerConnect,
   useInactiveListener,
   useLocalStorageSerializeKey,
-} from "./Helpers";
+} from './utils/Helpers';
 
-import Dashboard from "./views/Dashboard/Dashboard";
-import Ecosystem from "./views/Ecosystem/Ecosystem";
-import { Exchange } from "./views/Exchange/Exchange";
+import Dashboard from './views/Dashboard/Dashboard';
+import Ecosystem from './views/Ecosystem/Ecosystem';
+import { Exchange } from './views/Exchange/Exchange';
 // eslint-disable-next-line no-unused-vars
-import Home from "./views/Home/Home"; // need its css
-import Earn from "./views/Earn/Earn";
+// import Home from './views/Home/Home'; // need its css
+import Earn from './views/Earn/Earn';
 // import Actions from "./views/Actions/Actions";
 // import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 // import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyPhlp from "./views/BuyPhlp/BuyPhlp";
+import BuyPhlp from './views/BuyPhlp/BuyPhlp';
 
-import cx from "classnames";
-import { cssTransition, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Checkbox from "./components/Checkbox/Checkbox";
-import Modal from "./components/Modal/Modal";
-import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
+import cx from 'classnames';
+import { cssTransition, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Checkbox from './components/Checkbox/Checkbox';
+import Modal from './components/Modal/Modal';
+import NetworkSelector from './components/NetworkSelector/NetworkSelector';
 
-import { FaTimes } from "react-icons/fa";
-import { FiX } from "react-icons/fi";
-import { RiMenuLine } from "react-icons/ri";
+import { FaTimes } from 'react-icons/fa';
+import { FiX } from 'react-icons/fi';
+import { RiMenuLine } from 'react-icons/ri';
 
-import "./App.css";
-import "./AppOrder.css";
-import "./Font.css";
-import "./Input.css";
-import "./Shared.css";
+import './App.css';
+import './AppOrder.css';
+import './Font.css';
+import './Input.css';
+import './Shared.css';
 
-import connectWalletImg from "./img/ic_wallet_24.svg";
+import connectWalletImg from './img/ic_wallet_24.svg';
 
-import metamaskImg from "./img/metamask.png";
+import metamaskImg from './img/metamask.png';
 // import coinbaseImg from "./img/coinbaseWallet.png";
-import AddressDropdown from "./components/AddressDropdown/AddressDropdown";
-import { ConnectWalletButton } from "./components/Common/Button";
-import SEO from "./components/Common/SEO";
-import EventToastContainer from "./components/EventToast/EventToastContainer";
-import useEventToast from "./components/EventToast/useEventToast";
-import walletConnectImg from "./img/walletconnect-circle-blue.svg";
+import AddressDropdown from './components/AddressDropdown/AddressDropdown';
+import { ConnectWalletButton } from './components/Common/Button';
+import SEO from './components/Common/SEO';
+import EventToastContainer from './components/EventToast/EventToastContainer';
+import useEventToast from './components/EventToast/useEventToast';
+import walletConnectImg from './img/walletconnect-circle-blue.svg';
 // import useRouteQuery from "./hooks/useRouteQuery";
 
-import PositionRouter from "./abis/PositionRouter.json";
-import Vault from "./abis/Vault.json";
-import { getContract } from "./Addresses";
-import useScrollToTop from "./hooks/useScrollToTop";
-import PageNotFound from "./views/PageNotFound/PageNotFound";
-import TermsAndConditions from "./views/TermsAndConditions/TermsAndConditions";
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import PositionRouter from './abis/PositionRouter.json';
+import Vault from './abis/Vault.json';
+import { getContract } from './config/Addresses';
+import useScrollToTop from './hooks/useScrollToTop';
+import PageNotFound from './views/PageNotFound/PageNotFound';
+import TermsAndConditions from './views/TermsAndConditions/TermsAndConditions';
+import { Redirect } from 'react-router-dom';
 
-import logo from "./assets/buck.png";
-import phattyLogo from "./assets/svg/phatty.svg";
-import phiatLogo from "./assets/svg/phiat.svg";
+import logo from './assets/buck.png';
+import phattyLogo from './assets/svg/phatty.svg';
+import phiatLogo from './assets/svg/phiat.svg';
+import { ChainId } from './utils/types';
 
-if ("ethereum" in window) {
-  window.ethereum.autoRefreshOnNetworkChange = false;
+if ('ethereum' in window) {
+  (window.ethereum as any).autoRefreshOnNetworkChange = false;
 }
 
-function getLibrary(provider) {
+function getLibrary(provider: ExternalProvider) {
   const library = new Web3Provider(provider);
   return library;
 }
 
 const Zoom = cssTransition({
-  enter: "zoomIn",
-  exit: "zoomOut",
+  enter: 'zoomIn',
+  exit: 'zoomOut',
   appendPosition: false,
   collapse: true,
   collapseDuration: 200,
@@ -117,25 +118,29 @@ const Zoom = cssTransition({
 //   "wss://rpc.v2b.testnet.pulsechain.com"
 // );
 
-function getWsProvider(active, chainId) {
+function getWsProvider(active: boolean, chainId: ChainId) {
   if (!active) {
-    return;
+    return undefined;
   }
   if (chainId === PLS_TESTNET_V2) {
     // return plsWsProvider;
-    return;
+    return undefined;
   }
 }
 
-function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
+interface IAppHeaderLinksProps {
+  HeaderLink: any;
+  small?: boolean;
+  openSettings?: any;
+  clickCloseIcon?: () => void;
+}
+
+function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }: IAppHeaderLinksProps) {
   return (
     <div className="App-header-links">
       {small && (
         <div className="App-header-links-header">
-          <div
-            className="App-header-menu-icon-block"
-            onClick={() => clickCloseIcon()}
-          >
+          <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon?.()}>
             <FiX className="App-header-menu-icon" />
           </div>
           <HeaderLink to="/" className="App-header-link-main">
@@ -210,6 +215,17 @@ function AppHeaderLinks({ HeaderLink, small, openSettings, clickCloseIcon }) {
   );
 }
 
+interface IAppHeaderUserProps {
+  HeaderLink: any;
+  openSettings: any;
+  small?: boolean;
+  setActivatingConnector?: any;
+  walletModalVisible?: boolean;
+  setWalletModalVisible: (_: boolean) => void;
+  showNetworkSelectorModal: (_: boolean) => void;
+  disconnectAccountAndCloseSettings: any;
+}
+
 function AppHeaderUser({
   HeaderLink,
   openSettings,
@@ -217,7 +233,7 @@ function AppHeaderUser({
   setWalletModalVisible,
   showNetworkSelectorModal,
   disconnectAccountAndCloseSettings,
-}) {
+}: IAppHeaderUserProps) {
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
   const showConnectionOptions = true;
@@ -225,10 +241,10 @@ function AppHeaderUser({
 
   const networkOptions = [
     {
-      label: "PulseChain Testnet v2b",
+      label: 'PulseChain Testnet v2b',
       value: PLS_TESTNET_V2,
-      icon: "ic_pulsechain_24.svg",
-      color: "#264f79",
+      icon: 'ic_pulsechain_24.svg',
+      color: '#264f79',
     },
   ];
 
@@ -239,26 +255,22 @@ function AppHeaderUser({
   }, [active, setWalletModalVisible]);
 
   const onNetworkSelect = useCallback(
-    (option) => {
+    (option: any) => {
       if (option.value === chainId) {
         return;
       }
       return switchNetwork(option.value, active);
     },
-    [chainId, active]
+    [chainId, active],
   );
 
-  const selectorLabel = getChainName(chainId);
+  const selectorLabel = getChainName(chainId as ChainId);
 
-  if (!active) {
+  if (!active || !account) {
     return (
       <div className="App-header-user">
         <div className="App-header-user-link">
-          <HeaderLink
-            activeClassName="active"
-            className="default-btn"
-            to="/trade"
-          >
+          <HeaderLink activeClassName="active" className="default-btn" to="/trade">
             Trade
           </HeaderLink>
         </div>
@@ -275,11 +287,8 @@ function AppHeaderUser({
           />
         )}
         {showConnectionOptions && (
-          <ConnectWalletButton
-            onClick={() => setWalletModalVisible(true)}
-            imgSrc={connectWalletImg}
-          >
-            {small ? "Connect" : "Connect Wallet"}
+          <ConnectWalletButton onClick={() => setWalletModalVisible(true)} imgSrc={connectWalletImg}>
+            {small ? 'Connect' : 'Connect Wallet'}
           </ConnectWalletButton>
         )}
       </div>
@@ -291,11 +300,7 @@ function AppHeaderUser({
   return (
     <div className="App-header-user">
       <div className="App-header-user-link">
-        <HeaderLink
-          activeClassName="active"
-          className="default-btn"
-          to="/trade"
-        >
+        <HeaderLink activeClassName="active" className="default-btn" to="/trade">
           Trade
         </HeaderLink>
       </div>
@@ -315,11 +320,8 @@ function AppHeaderUser({
         <div className="App-header-user-address">
           <AddressDropdown
             account={account}
-            small={small}
             accountUrl={accountUrl}
-            disconnectAccountAndCloseSettings={
-              disconnectAccountAndCloseSettings
-            }
+            disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
             openSettings={openSettings}
           />
         </div>
@@ -328,9 +330,18 @@ function AppHeaderUser({
   );
 }
 
+interface IHederLinkProps {
+  isHomeLink?: boolean;
+  activeClassName?: string;
+  className?: string;
+  exact?: boolean;
+  to: string;
+  children: JSX.Element;
+}
+
 function FullApp() {
   // const isHome = isHomeSite();
-  const exchangeRef = useRef();
+  const exchangeRef = useRef<any>();
   const { connector, library, deactivate, activate, active } = useWeb3React();
   const { chainId } = useChainId();
   // const location = useLocation();
@@ -345,60 +356,57 @@ function FullApp() {
   const triedEager = useEagerConnect(setActivatingConnector);
   useInactiveListener(!triedEager || !!activatingConnector);
 
-  const [walletModalVisible, setWalletModalVisible] = useState(false);
+  const [walletModalVisible, setWalletModalVisible] = useState<boolean>(false);
   // const [redirectModalVisible, setRedirectModalVisible] = useState(false);
   // const [selectedToPage, setSelectedToPage] = useState("");
 
-  const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
-  const [isNativeSelectorModalVisible, setisNativeSelectorModalVisible] =
-    useState(false);
+  const [isDrawerVisible, setIsDrawerVisible] = useState<boolean>(false);
+  const [isNativeSelectorModalVisible, setisNativeSelectorModalVisible] = useState<boolean>(false);
   const fadeVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
   };
   const slideVariants = {
-    hidden: { x: "-100%" },
+    hidden: { x: '-100%' },
     visible: { x: 0 },
   };
 
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
-  const [savedSlippageAmount, setSavedSlippageAmount] =
-    useLocalStorageSerializeKey(
-      [chainId, SLIPPAGE_BPS_KEY],
-      DEFAULT_SLIPPAGE_AMOUNT
-    );
-  const [slippageAmount, setSlippageAmount] = useState(0);
-  const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
-  const [shouldDisableOrderValidation, setShouldDisableOrderValidation] =
-    useState(false);
+  const [savedSlippageAmount, setSavedSlippageAmount] = useLocalStorageSerializeKey(
+    [chainId, SLIPPAGE_BPS_KEY],
+    DEFAULT_SLIPPAGE_AMOUNT,
+  );
+  const [slippageAmount, setSlippageAmount] = useState<number>(0);
+  const [isPnlInLeverage, setIsPnlInLeverage] = useState<boolean>(false);
+  const [shouldDisableOrderValidation, setShouldDisableOrderValidation] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
 
-  const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] =
-    useLocalStorageSerializeKey([chainId, IS_PNL_IN_LEVERAGE_KEY], false);
-
-  const [savedShowPnlAfterFees, setSavedShowPnlAfterFees] =
-    useLocalStorageSerializeKey([chainId, SHOW_PNL_AFTER_FEES_KEY], false);
-  const [
-    savedShouldDisableOrderValidation,
-    setSavedShouldDisableOrderValidation,
-  ] = useLocalStorageSerializeKey(
-    [chainId, DISABLE_ORDER_VALIDATION_KEY],
-    false
+  const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
+    [chainId, IS_PNL_IN_LEVERAGE_KEY],
+    false,
   );
 
-  const [savedShouldShowPositionLines, setSavedShouldShowPositionLines] =
-    useLocalStorageSerializeKey(
-      [chainId, SHOULD_SHOW_POSITION_LINES_KEY],
-      false
-    );
+  const [savedShowPnlAfterFees, setSavedShowPnlAfterFees] = useLocalStorageSerializeKey(
+    [chainId, SHOW_PNL_AFTER_FEES_KEY],
+    false,
+  );
+  const [savedShouldDisableOrderValidation, setSavedShouldDisableOrderValidation] = useLocalStorageSerializeKey(
+    [chainId, DISABLE_ORDER_VALIDATION_KEY],
+    false,
+  );
+
+  const [savedShouldShowPositionLines, setSavedShouldShowPositionLines] = useLocalStorageSerializeKey(
+    [chainId, SHOULD_SHOW_POSITION_LINES_KEY],
+    false,
+  );
 
   useEffect(() => {
-    if (window.ethereum) {
+    if ('ethereum' in window) {
       // hack
       // for some reason after network is changed to Avalanche through Metamask
       // it triggers event with chainId = 1
       // reload helps web3 to return correct chain data
-      return window.ethereum.on("chainChanged", () => {
+      return (window.ethereum as any).on('chainChanged', () => {
         document.location.reload();
       });
     }
@@ -424,11 +432,10 @@ function FullApp() {
     getWalletConnectHandler(activate, deactivate, setActivatingConnector)();
   };
 
-  const userOnMobileDevice =
-    "navigator" in window && isMobileDevice(window.navigator);
+  const userOnMobileDevice = 'navigator' in window && isMobileDevice(window.navigator);
 
-  const attemptActivateWallet = (providerName) => {
-    localStorage.setItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, true);
+  const attemptActivateWallet = (providerName: string) => {
+    localStorage.setItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, 'true');
     localStorage.setItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY, providerName);
     activateInjectedProvider(providerName);
     connectInjectedWallet();
@@ -441,22 +448,15 @@ function FullApp() {
           MetaMask not detected.
           <br />
           <br />
-          <a
-            href="https://metamask.io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
             Install MetaMask
           </a>
-          {userOnMobileDevice
-            ? ", and use Phamous with its built-in browser"
-            : " to start using Phamous"}
-          .
-        </div>
+          {userOnMobileDevice ? ', and use Phamous with its built-in browser' : ' to start using Phamous'}.
+        </div>,
       );
       return false;
     }
-    attemptActivateWallet("MetaMask");
+    attemptActivateWallet('MetaMask');
   };
 
   // const activateCoinBase = () => {
@@ -480,32 +480,27 @@ function FullApp() {
   const connectWallet = () => setWalletModalVisible(true);
 
   const openSettings = () => {
-    const slippage = parseInt(savedSlippageAmount);
+    const slippage = parseInt(savedSlippageAmount?.toString() || '0');
     setSlippageAmount((slippage / BASIS_POINTS_DIVISOR) * 100);
-    setIsPnlInLeverage(savedIsPnlInLeverage);
-    setShowPnlAfterFees(savedShowPnlAfterFees);
-    setShouldDisableOrderValidation(savedShouldDisableOrderValidation);
+    setIsPnlInLeverage(savedIsPnlInLeverage as boolean);
+    setShowPnlAfterFees(savedShowPnlAfterFees as boolean);
+    setShouldDisableOrderValidation(savedShouldDisableOrderValidation as boolean);
     setIsSettingsVisible(true);
   };
 
-  const showNetworkSelectorModal = (val) => {
+  const showNetworkSelectorModal = (val: boolean) => {
     setisNativeSelectorModalVisible(val);
   };
 
   const saveAndCloseSettings = () => {
-    const slippage = parseFloat(slippageAmount);
-    if (isNaN(slippage)) {
-      helperToast.error("Invalid slippage value");
-      return;
-    }
-    if (slippage > 5) {
-      helperToast.error("Slippage should be less than 5%");
+    if (slippageAmount > 5) {
+      helperToast.error('Slippage should be less than 5%');
       return;
     }
 
-    const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
-    if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
-      helperToast.error("Max slippage precision is 0.01%");
+    const basisPoints = (slippageAmount * BASIS_POINTS_DIVISOR) / 100;
+    if (Math.floor(basisPoints) !== basisPoints) {
+      helperToast.error('Max slippage precision is 0.01%');
       return;
     }
 
@@ -521,21 +516,23 @@ function FullApp() {
 
   useEffect(() => {
     if (isDrawerVisible) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     }
-    return () => (document.body.style.overflow = "unset");
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isDrawerVisible]);
 
-  const [pendingTxns, setPendingTxns] = useState([]);
+  const [pendingTxns, setPendingTxns] = useState<any[]>([]);
 
   // const showRedirectModal = (to) => {
   //   setRedirectModalVisible(true);
   //   setSelectedToPage(to);
   // };
 
-  const HeaderLink = ({ isHomeLink, className, exact, to, children }) => {
+  const HeaderLink = ({ isHomeLink, className, exact, to, children }: IHederLinkProps) => {
     // const isOnHomePage = location.pathname === "/";
 
     // if (isHome && !(isHomeLink && !isOnHomePage)) {
@@ -558,12 +555,7 @@ function FullApp() {
     }
 
     return (
-      <NavLink
-        activeClassName="active"
-        className={cx(className)}
-        exact={exact}
-        to={to}
-      >
+      <NavLink activeClassName="active" className={cx(className)} exact={exact} to={to}>
         {children}
       </NavLink>
     );
@@ -571,33 +563,33 @@ function FullApp() {
 
   useEffect(() => {
     const checkPendingTxns = async () => {
-      const updatedPendingTxns = [];
+      const updatedPendingTxns: any[] = [];
       for (let i = 0; i < pendingTxns.length; i++) {
-        const pendingTxn = pendingTxns[i];
+        const pendingTxn: any = pendingTxns[i];
         const receipt = await library.getTransactionReceipt(pendingTxn.hash);
         if (receipt) {
           if (receipt.status === 0) {
-            const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
+            const txUrl = getExplorerUrl(chainId) + 'tx/' + pendingTxn.hash;
             helperToast.error(
               <div>
-                Txn failed.{" "}
+                Txn failed.{' '}
                 <a href={txUrl} target="_blank" rel="noopener noreferrer">
                   View
                 </a>
                 <br />
-              </div>
+              </div>,
             );
           }
           if (receipt.status === 1 && pendingTxn.message) {
-            const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
+            const txUrl = getExplorerUrl(chainId) + 'tx/' + pendingTxn.hash;
             helperToast.success(
               <div>
-                {pendingTxn.message}{" "}
+                {pendingTxn.message}{' '}
                 <a href={txUrl} target="_blank" rel="noopener noreferrer">
                   View
                 </a>
                 <br />
-              </div>
+              </div>,
             );
           }
           continue;
@@ -616,59 +608,47 @@ function FullApp() {
     return () => clearInterval(interval);
   }, [library, pendingTxns, chainId]);
 
-  const vaultAddress = getContract(chainId, "Vault");
-  const positionRouterAddress = getContract(chainId, "PositionRouter");
+  const vaultAddress = getContract(chainId as ChainId, 'Vault');
+  const positionRouterAddress = getContract(chainId as ChainId, 'PositionRouter');
 
   useEffect(() => {
-    const wsProvider = getWsProvider(active, chainId);
+    const wsProvider = getWsProvider(active, chainId as ChainId);
     if (!wsProvider) {
       return;
     }
 
     const wsVault = new ethers.Contract(vaultAddress, Vault.abi, wsProvider);
-    const wsPositionRouter = new ethers.Contract(
-      positionRouterAddress,
-      PositionRouter.abi,
-      wsProvider
-    );
+    const wsPositionRouter = new ethers.Contract(positionRouterAddress, PositionRouter.abi, wsProvider);
 
-    const callExchangeRef = (method, ...args) => {
-      if (!exchangeRef || !exchangeRef.current) {
-        return;
+    const callExchangeRef = (method: string, ...args: any) => {
+      if (exchangeRef && exchangeRef.current) {
+        exchangeRef.current[method](...args);
       }
-
-      exchangeRef.current[method](...args);
     };
 
     // handle the subscriptions here instead of within the Exchange component to avoid unsubscribing and re-subscribing
     // each time the Exchange components re-renders, which happens on every data update
-    const onUpdatePosition = (...args) =>
-      callExchangeRef("onUpdatePosition", ...args);
-    const onClosePosition = (...args) =>
-      callExchangeRef("onClosePosition", ...args);
-    const onIncreasePosition = (...args) =>
-      callExchangeRef("onIncreasePosition", ...args);
-    const onDecreasePosition = (...args) =>
-      callExchangeRef("onDecreasePosition", ...args);
-    const onCancelIncreasePosition = (...args) =>
-      callExchangeRef("onCancelIncreasePosition", ...args);
-    const onCancelDecreasePosition = (...args) =>
-      callExchangeRef("onCancelDecreasePosition", ...args);
+    const onUpdatePosition = (...args: any) => callExchangeRef('onUpdatePosition', ...args);
+    const onClosePosition = (...args: any) => callExchangeRef('onClosePosition', ...args);
+    const onIncreasePosition = (...args: any) => callExchangeRef('onIncreasePosition', ...args);
+    const onDecreasePosition = (...args: any) => callExchangeRef('onDecreasePosition', ...args);
+    const onCancelIncreasePosition = (...args: any) => callExchangeRef('onCancelIncreasePosition', ...args);
+    const onCancelDecreasePosition = (...args: any) => callExchangeRef('onCancelDecreasePosition', ...args);
 
-    wsVault.on("UpdatePosition", onUpdatePosition);
-    wsVault.on("ClosePosition", onClosePosition);
-    wsVault.on("IncreasePosition", onIncreasePosition);
-    wsVault.on("DecreasePosition", onDecreasePosition);
-    wsPositionRouter.on("CancelIncreasePosition", onCancelIncreasePosition);
-    wsPositionRouter.on("CancelDecreasePosition", onCancelDecreasePosition);
+    wsVault.on('UpdatePosition', onUpdatePosition);
+    wsVault.on('ClosePosition', onClosePosition);
+    wsVault.on('IncreasePosition', onIncreasePosition);
+    wsVault.on('DecreasePosition', onDecreasePosition);
+    wsPositionRouter.on('CancelIncreasePosition', onCancelIncreasePosition);
+    wsPositionRouter.on('CancelDecreasePosition', onCancelDecreasePosition);
 
     return function cleanup() {
-      wsVault.off("UpdatePosition", onUpdatePosition);
-      wsVault.off("ClosePosition", onClosePosition);
-      wsVault.off("IncreasePosition", onIncreasePosition);
-      wsVault.off("DecreasePosition", onDecreasePosition);
-      wsPositionRouter.off("CancelIncreasePosition", onCancelIncreasePosition);
-      wsPositionRouter.off("CancelDecreasePosition", onCancelDecreasePosition);
+      wsVault.off('UpdatePosition', onUpdatePosition);
+      wsVault.off('ClosePosition', onClosePosition);
+      wsVault.off('IncreasePosition', onIncreasePosition);
+      wsVault.off('DecreasePosition', onDecreasePosition);
+      wsPositionRouter.off('CancelIncreasePosition', onCancelIncreasePosition);
+      wsPositionRouter.off('CancelDecreasePosition', onCancelDecreasePosition);
     };
   }, [active, chainId, vaultAddress, positionRouterAddress]);
 
@@ -678,51 +658,36 @@ function FullApp() {
         <div className="App-content">
           {isDrawerVisible && (
             <AnimatePresence>
-              {isDrawerVisible && (
-                <motion.div
-                  className="App-header-backdrop"
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={fadeVariants}
-                  transition={{ duration: 0.2 }}
-                  onClick={() => setIsDrawerVisible(!isDrawerVisible)}
-                ></motion.div>
-              )}
+              <motion.div
+                className="App-header-backdrop"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={fadeVariants}
+                transition={{ duration: 0.2 }}
+                onClick={() => setIsDrawerVisible(!isDrawerVisible)}
+              ></motion.div>
             </AnimatePresence>
           )}
           {isNativeSelectorModalVisible && (
             <AnimatePresence>
-              {isNativeSelectorModalVisible && (
-                <motion.div
-                  className="selector-backdrop"
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={fadeVariants}
-                  transition={{ duration: 0.2 }}
-                  onClick={() =>
-                    setisNativeSelectorModalVisible(
-                      !isNativeSelectorModalVisible
-                    )
-                  }
-                ></motion.div>
-              )}
+              <motion.div
+                className="selector-backdrop"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={fadeVariants}
+                transition={{ duration: 0.2 }}
+                onClick={() => setisNativeSelectorModalVisible(!isNativeSelectorModalVisible)}
+              ></motion.div>
             </AnimatePresence>
           )}
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <div
-                  className="App-header-menu-icon-block"
-                  onClick={() => setIsDrawerVisible(!isDrawerVisible)}
-                >
-                  {!isDrawerVisible && (
-                    <RiMenuLine className="App-header-menu-icon" />
-                  )}
-                  {isDrawerVisible && (
-                    <FaTimes className="App-header-menu-icon" />
-                  )}
+                <div className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                  {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
+                  {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                 </div>
                 <a className="App-header-link-main clickable" href="/">
                   <img src={logo} className="big" alt="Phamous" />
@@ -736,9 +701,7 @@ function FullApp() {
               <div className="App-header-container-right">
                 <AppHeaderUser
                   HeaderLink={HeaderLink}
-                  disconnectAccountAndCloseSettings={
-                    disconnectAccountAndCloseSettings
-                  }
+                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
                   setActivatingConnector={setActivatingConnector}
                   walletModalVisible={walletModalVisible}
@@ -747,28 +710,18 @@ function FullApp() {
                 />
               </div>
             </div>
-            <div className={cx("App-header", "small", { active: true })}>
+            <div className={cx('App-header', 'small', { active: true })}>
               <div
-                className={cx("App-header-link-container", "App-header-top", {
+                className={cx('App-header-link-container', 'App-header-top', {
                   active: isDrawerVisible,
                 })}
               >
                 <div className="App-header-container-left">
-                  <div
-                    className="App-header-menu-icon-block"
-                    onClick={() => setIsDrawerVisible(!isDrawerVisible)}
-                  >
-                    {!isDrawerVisible && (
-                      <RiMenuLine className="App-header-menu-icon" />
-                    )}
-                    {isDrawerVisible && (
-                      <FaTimes className="App-header-menu-icon" />
-                    )}
+                  <div className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                    {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
+                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
-                  <div
-                    className="App-header-link-main clickable"
-                    onClick={() => setIsDrawerVisible(!isDrawerVisible)}
-                  >
+                  <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <img src={logo} className="big" alt="Phamous" />
                     <img src={logo} className="small" alt="Phamous" />
                   </div>
@@ -776,9 +729,7 @@ function FullApp() {
                 <div className="App-header-container-right">
                   <AppHeaderUser
                     HeaderLink={HeaderLink}
-                    disconnectAccountAndCloseSettings={
-                      disconnectAccountAndCloseSettings
-                    }
+                    disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                     openSettings={openSettings}
                     small
                     setActivatingConnector={setActivatingConnector}
@@ -790,8 +741,8 @@ function FullApp() {
               </div>
             </div>
           </header>
-          <AnimatePresence>
-            {isDrawerVisible && (
+          {isDrawerVisible && (
+            <AnimatePresence>
               <motion.div
                 onClick={() => setIsDrawerVisible(false)}
                 className="App-header-links-container App-header-drawer"
@@ -808,8 +759,8 @@ function FullApp() {
                   clickCloseIcon={() => setIsDrawerVisible(false)}
                 />
               </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>
+          )}
           <Switch>
             <Route exact path="/">
               <Redirect to="/trade" />
@@ -820,30 +771,23 @@ function FullApp() {
             <Route exact path="/trade">
               <Exchange
                 ref={exchangeRef}
-                savedShowPnlAfterFees={savedShowPnlAfterFees}
-                savedIsPnlInLeverage={savedIsPnlInLeverage}
-                setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
-                savedSlippageAmount={savedSlippageAmount}
-                setPendingTxns={setPendingTxns}
                 pendingTxns={pendingTxns}
+                savedSlippageAmount={savedSlippageAmount}
+                savedIsPnlInLeverage={savedIsPnlInLeverage}
+                savedShowPnlAfterFees={savedShowPnlAfterFees}
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
-                setSavedShouldShowPositionLines={
-                  setSavedShouldShowPositionLines
-                }
+                savedShouldDisableOrderValidation={savedShouldDisableOrderValidation}
                 connectWallet={connectWallet}
-                savedShouldDisableOrderValidation={
-                  savedShouldDisableOrderValidation
-                }
+                setPendingTxns={setPendingTxns}
+                setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
+                setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
               />
             </Route>
             <Route exact path="/dashboard">
               <Dashboard />
             </Route>
             <Route exact path="/earn">
-              <Earn
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-              />
+              <Earn setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
             </Route>
             <Route exact path="/buy_phlp">
               <BuyPhlp
@@ -923,10 +867,7 @@ function FullApp() {
           <img src={coinbaseImg} alt="Coinbase Wallet" />
           <div>Coinbase Wallet</div>
         </button> */}
-        <button
-          className="Wallet-btn WalletConnect-btn"
-          onClick={activateWalletConnect}
-        >
+        <button className="Wallet-btn WalletConnect-btn" onClick={activateWalletConnect}>
           <img src={walletConnectImg} alt="WalletConnect" />
           <div>WalletConnect</div>
         </button>
@@ -945,42 +886,32 @@ function FullApp() {
               className="App-slippage-tolerance-input"
               min="0"
               value={slippageAmount}
-              onChange={(e) => setSlippageAmount(e.target.value)}
+              onChange={(e) => setSlippageAmount(parseInt(e.target.value))}
             />
             <div className="App-slippage-tolerance-input-percent">%</div>
           </div>
         </div>
         <div className="Exchange-settings-row">
-          <Checkbox
-            isChecked={showPnlAfterFees}
-            setIsChecked={setShowPnlAfterFees}
-          >
+          <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
             Display PnL after fees
           </Checkbox>
         </div>
         <div className="Exchange-settings-row">
-          <Checkbox
-            isChecked={isPnlInLeverage}
-            setIsChecked={setIsPnlInLeverage}
-          >
+          <Checkbox isChecked={isPnlInLeverage} setIsChecked={setIsPnlInLeverage}>
             Include PnL in leverage display
           </Checkbox>
         </div>
-        {isDevelopment() && (
+        {isDevelopment() ? (
           <div className="Exchange-settings-row">
-            <Checkbox
-              isChecked={shouldDisableOrderValidation}
-              setIsChecked={setShouldDisableOrderValidation}
-            >
+            <Checkbox isChecked={shouldDisableOrderValidation} setIsChecked={setShouldDisableOrderValidation}>
               Disable order validations
             </Checkbox>
           </div>
+        ) : (
+          <></>
         )}
 
-        <button
-          className="App-cta Exchange-swap-button"
-          onClick={saveAndCloseSettings}
-        >
+        <button className="App-cta Exchange-swap-button" onClick={saveAndCloseSettings}>
           Save
         </button>
       </Modal>
