@@ -49,6 +49,7 @@
     "react-use": "17.3.1",
     "recharts": "2.1.8",
     "swr": "0.4.2",
+    "typescript": "^4.9.5",
     "web-vitals": "1.1.2"
   },
   "resolutions": {
@@ -67,8 +68,8 @@
     "lint": "node node_modules/.bin/eslint src",
     "pre-commit": "npm run test -- --watchAll=false && npm run lint",
     "prepare": "husky install",
-    "eslint-fix": "eslint --fix \"./src/**/*.js\"",
-    "pretty": "prettier --write \"./src/**/*.js\""
+    "eslint-fix": "eslint --fix \"./src/**/*.{js, jsx, ts, tsx}\"",
+    "pretty": "prettier --write \"./src/**/*.{js, jsx, ts, tsx}\""
   },
   "eslintConfig": {
     "extends": [
@@ -89,6 +90,10 @@
     ]
   },
   "devDependencies": {
+    "@types/body-scroll-lock": "^3.1.0",
+    "@types/lodash": "^4.14.191",
+    "@types/react-dom": "^18.0.11",
+    "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "eslint": "7.32.0",
