@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 export default function useScrollToTop() {
   const history = useHistory();

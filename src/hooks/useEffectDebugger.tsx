@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { usePrevious } from "../Helpers";
+import { useEffect } from 'react';
+import { usePrevious } from '../utils/Helpers';
 
-const useEffectDebugger = (effectHook, dependencies, dependencyNames = []) => {
-  const previousDeps = usePrevious(dependencies, []);
+const useEffectDebugger = (effectHook: () => void, dependencies: any, dependencyNames = []) => {
+  const previousDeps = usePrevious(dependencies);
 
-  const changedDeps = dependencies.reduce((accum, dependency, index) => {
+  const changedDeps = dependencies.reduce((accum: any, dependency: any, index: number) => {
     if (dependency !== previousDeps[index]) {
       const keyName = dependencyNames[index] || index;
       return {
@@ -20,7 +20,7 @@ const useEffectDebugger = (effectHook, dependencies, dependencyNames = []) => {
   }, {});
 
   if (Object.keys(changedDeps).length) {
-    console.log("[use-effect-debugger] ", changedDeps);
+    console.log('[use-effect-debugger] ', changedDeps);
   }
 
   useEffect(effectHook, [...dependencies, effectHook]);
