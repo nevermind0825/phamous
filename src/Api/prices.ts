@@ -1,23 +1,24 @@
-import { useMemo } from "react";
-import { gql } from "@apollo/client";
-import useSWR from "swr";
-import { ethers } from "ethers";
-import { TOKENS } from "../data/Tokens";
+import { useMemo } from 'react';
+import { gql } from '@apollo/client';
+import useSWR from 'swr';
+import { ethers } from 'ethers';
+import { TOKENS } from '../data/Tokens';
 
 import {
   USD_DECIMALS,
   CHART_PERIODS,
   formatAmount,
   // sleep
-} from "../Helpers";
-import { phamousGraphClient } from "./common";
-import { PLS_TESTNET_V2 } from "../Constants";
+} from '../utils/Helpers';
+import { phamousGraphClient } from './common';
+import { PLS_TESTNET_V2 } from '../config/Constants';
+import { ChainId, Period } from '../utils/types';
 
 const BigNumber = ethers.BigNumber;
 
 const timezoneOffset = -new Date().getTimezoneOffset() * 60;
 
-function fillGaps(prices, periodSeconds) {
+function fillGaps(prices: any[], periodSeconds: number) {
   if (prices.length < 2) {
     return prices;
   }
@@ -47,7 +48,7 @@ function fillGaps(prices, periodSeconds) {
   return newPrices;
 }
 
-function getCandlesFromPrices(prices, period) {
+function getCandlesFromPrices(prices: string | any[], period: Period) {
   const periodTime = CHART_PERIODS[period];
 
   if (prices.length < 2) {
@@ -86,13 +87,13 @@ function getCandlesFromPrices(prices, period) {
   }));
 }
 
-function getChartPricesFromGraph(tokenSymbol, chainId, period) {
-  if (chainId === PLS_TESTNET_V2 && tokenSymbol === "tPLS") {
-    tokenSymbol = "PLS";
+function getChartPricesFromGraph(tokenSymbol: string, chainId: ChainId, period: Period) {
+  if (chainId === PLS_TESTNET_V2 && tokenSymbol === 'tPLS') {
+    tokenSymbol = 'PLS';
   }
   let network;
   if (chainId === PLS_TESTNET_V2) {
-    network = "plstestv2";
+    network = 'plstestv2';
   }
   let tokenAddress;
   if (TOKENS[chainId]) {
@@ -137,19 +138,16 @@ function getChartPricesFromGraph(tokenSymbol, chainId, period) {
 
   return Promise.all(requests)
     .then((chunks) => {
-      let prices = [];
+      let prices: any[] = [];
       const uniqTs = new Set();
       chunks.forEach((chunk) => {
-        chunk.data.phamousPriceUpdates.edges.forEach((item) => {
+        chunk.data.phamousPriceUpdates.edges.forEach((item: { node: { timestamp: number; price: any } }) => {
           if (uniqTs.has(item.node.timestamp)) {
             return;
           }
 
           uniqTs.add(item.node.timestamp);
-          prices.push([
-            Math.floor(new Date(item.node.timestamp) / 1000),
-            Number(item.node.price),
-          ]);
+          prices.push([Math.floor(new Date(item.node.timestamp).getTime() / 1000), Number(item.node.price)]);
         });
       });
 
@@ -162,15 +160,11 @@ function getChartPricesFromGraph(tokenSymbol, chainId, period) {
     });
 }
 
-function appendCurrentAveragePrice(prices, currentAveragePrice, period) {
+function appendCurrentAveragePrice(prices: any[], currentAveragePrice: number | ethers.BigNumber, period: Period) {
   const periodSeconds = CHART_PERIODS[period];
-  const currentCandleTime =
-    Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds +
-    timezoneOffset;
+  const currentCandleTime = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds + timezoneOffset;
   const last = prices[prices.length - 1];
-  const averagePriceValue = parseFloat(
-    formatAmount(currentAveragePrice, USD_DECIMALS, 10)
-  );
+  const averagePriceValue = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, 10));
   if (currentCandleTime === last.time) {
     last.close = averagePriceValue;
     last.high = Math.max(last.high, averagePriceValue);
@@ -188,7 +182,7 @@ function appendCurrentAveragePrice(prices, currentAveragePrice, period) {
   }
 }
 
-function getStablePriceData(period) {
+function getStablePriceData(period: Period) {
   const periodSeconds = CHART_PERIODS[period];
   const now = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds;
   const priceData = [];
@@ -205,17 +199,17 @@ function getStablePriceData(period) {
 }
 
 export function useChartPrices(
-  chainId,
-  symbol,
-  isStable,
-  period,
-  currentAveragePrice
-) {
-  const swrKey =
-    !isStable && symbol ? ["getChartCandles", chainId, symbol, period] : null;
+  chainId: ChainId,
+  symbol: string | undefined,
+  isStable: boolean | undefined,
+  period: Period,
+  currentAveragePrice: any,
+): [any[], any] {
+  const swrKey = !isStable && symbol ? ['getChartCandles', chainId, symbol, period] : null;
   const { data: prices, mutate: updatePrices } = useSWR(swrKey, {
     fetcher: async (...args) => {
       try {
+        if (!symbol) return [];
         return await getChartPricesFromGraph(symbol, chainId, period);
       } catch (error) {
         console.error(error);
@@ -226,8 +220,7 @@ export function useChartPrices(
     focusThrottleInterval: 60000 * 10,
   });
 
-  const currentAveragePriceString =
-    currentAveragePrice && currentAveragePrice.toString();
+  const currentAveragePriceString = currentAveragePrice && currentAveragePrice.toString();
   const retPrices = useMemo(() => {
     if (isStable) {
       return getStablePriceData(period);
@@ -239,11 +232,7 @@ export function useChartPrices(
 
     let _prices = [...prices];
     if (currentAveragePriceString && prices.length) {
-      _prices = appendCurrentAveragePrice(
-        _prices,
-        BigNumber.from(currentAveragePriceString),
-        period
-      );
+      _prices = appendCurrentAveragePrice(_prices, BigNumber.from(currentAveragePriceString), period);
     }
 
     return fillGaps(_prices, CHART_PERIODS[period]);
