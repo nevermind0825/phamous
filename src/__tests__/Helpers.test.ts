@@ -1,6 +1,6 @@
-import { getLiquidationPrice, bigNumberify, expandDecimals } from "../Helpers";
+import { getLiquidationPrice, bigNumberify, expandDecimals } from '../utils/Helpers';
 
-describe("Helpers", function () {
+describe('Helpers', function () {
   const cases = [
     {
       // simple by max leverage
@@ -97,7 +97,7 @@ describe("Helpers", function () {
       increaseCollateral: true,
     },
   ];
-  it("getLiquidationPrice", function () {
+  it('getLiquidationPrice', function () {
     for (const case_ of cases) {
       const liqPrice = getLiquidationPrice(case_);
       expect(liqPrice).toEqual(case_.expected);
