@@ -1,15 +1,15 @@
-import React from "react";
-import { Title } from "react-head";
+import React from 'react';
+import { Title } from 'react-head';
 
-import Footer from "../../Footer";
+import Footer from '../../Footer';
 import {
   getPageTitle,
   // PLS_TESTNET_V2
-} from "../../Helpers";
+} from '../../utils/Helpers';
 
 // import plsIcon from "../../img/ic_pulsechain_16.svg";
 
-import "./Ecosystem.css";
+import './Ecosystem.css';
 
 // const NETWORK_ICONS = {
 //   [PLS_TESTNET_V2]: plsIcon,
@@ -22,25 +22,25 @@ import "./Ecosystem.css";
 export default function Ecosystem() {
   const telegramGroups = [
     {
-      title: "Phatty",
-      link: "https://phatty.io",
-      about: "DeFi and Web3 Dashboard",
+      title: 'Phatty',
+      link: 'https://phatty.io',
+      about: 'DeFi and Web3 Dashboard',
     },
     {
-      title: "Phiat",
-      link: "https://phiat.io",
-      about: "Decentralized Lending Protocol",
+      title: 'Phiat',
+      link: 'https://phiat.io',
+      about: 'Decentralized Lending Protocol',
     },
     {
-      title: "Phamous Telegram",
-      link: "https://t.me/phamousX",
-      about: "Telegram Group",
+      title: 'Phamous Telegram',
+      link: 'https://t.me/phamousX',
+      about: 'Telegram Group',
     },
   ];
 
   return (
     <div className="default-container page-layout">
-      <Title>{getPageTitle("Ecosystem")}</Title>
+      <Title>{getPageTitle('Ecosystem')}</Title>
       <div>
         <div className="section-title-block">
           <div className="section-title-icon"></div>
@@ -168,13 +168,10 @@ export default function Ecosystem() {
           </div> */}
         <div className="Tab-title-section">
           <div className="Page-title">Ecosystem Groups</div>
-          <div className="Page-description">
-            A true DeFi ecosystem for Hexicans
-          </div>
+          <div className="Page-description">A true DeFi ecosystem for Hexicans</div>
         </div>
         <div className="DashboardV2-projects">
           {telegramGroups.map((item) => {
-            const linkLabel = item.linkLabel ? item.linkLabel : item.link;
             return (
               <div className="App-card" key={item.link}>
                 <div className="App-card-title">{item.title}</div>
@@ -183,12 +180,8 @@ export default function Ecosystem() {
                   <div className="App-card-row">
                     <div className="label">Link</div>
                     <div>
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {linkLabel}
+                      <a href={item.link} target="_blank" rel="noopener noreferrer">
+                        {item.link}
                       </a>
                     </div>
                   </div>
