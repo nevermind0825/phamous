@@ -1,28 +1,38 @@
-import React, { useRef, useEffect } from "react";
-import cx from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef, useEffect } from 'react';
+import cx from 'classnames';
+import { motion, AnimatePresence } from 'framer-motion';
 
-import { MdClose } from "react-icons/md";
+import { MdClose } from 'react-icons/md';
 
-import "./Modal.css";
-import useLockBodyScroll from "../../hooks/useLockBodyScroll";
+import './Modal.css';
+import useLockBodyScroll from '../../hooks/useLockBodyScroll';
 
-export default function Modal(props) {
+interface IProps {
+  children: string | JSX.Element | JSX.Element[];
+  label: string;
+  isVisible: boolean;
+  setIsVisible: (_: boolean) => void;
+  className?: string;
+  zIndex?: number;
+  onAfterOpen?: () => void;
+}
+
+export default function Modal(props: IProps) {
   const { isVisible, setIsVisible, className, zIndex, onAfterOpen } = props;
   const modalRef = useRef(null);
   useLockBodyScroll(modalRef, isVisible);
   useEffect(() => {
-    function close(e) {
+    function close(e: KeyboardEvent) {
       if (e.keyCode === 27) {
         setIsVisible(false);
       }
     }
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
+    window.addEventListener('keydown', close);
+    return () => window.removeEventListener('keydown', close);
   }, [setIsVisible]);
 
   useEffect(() => {
-    if (typeof onAfterOpen === "function") onAfterOpen();
+    if (typeof onAfterOpen === 'function') onAfterOpen();
   }, [onAfterOpen]);
 
   const fadeVariants = {
@@ -34,7 +44,7 @@ export default function Modal(props) {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className={cx("Modal", className)}
+          className={cx('Modal', className)}
           style={{ zIndex }}
           initial="hidden"
           animate="visible"
@@ -45,18 +55,15 @@ export default function Modal(props) {
           <div
             className="Modal-backdrop"
             style={{
-              overflow: isVisible ? "hidden" : "visible",
-              position: "fixed",
+              overflow: isVisible ? 'hidden' : 'visible',
+              position: 'fixed',
             }}
             onClick={() => setIsVisible(false)}
           ></div>
           <div className="Modal-content">
             <div className="Modal-title-bar">
               <div className="Modal-title">{props.label}</div>
-              <div
-                className="Modal-close-button"
-                onClick={() => setIsVisible(false)}
-              >
+              <div className="Modal-close-button" onClick={() => setIsVisible(false)}>
                 <MdClose fontSize={20} className="Modal-close-icon" />
               </div>
             </div>

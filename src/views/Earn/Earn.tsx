@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { Title } from "react-head";
-import { useWeb3React } from "@web3-react/core";
+import React, { useState } from 'react';
+import { Title } from 'react-head';
+import { useWeb3React } from '@web3-react/core';
 
-import phameBigIcon from "../../img/ic_phame_custom.svg";
-import phlpBigIcon from "../../img/ic_phlp_custom.svg";
+import phameBigIcon from '../../img/ic_phame_custom.svg';
+import phlpBigIcon from '../../img/ic_phlp_custom.svg';
 
-import Modal from "../../components/Modal/Modal";
-import TokenCard from "../../components/TokenCard/TokenCard";
-import TooltipComponent from "../../components/Tooltip/Tooltip";
-import Footer from "../../Footer";
+import Modal from '../../components/Modal/Modal';
+import TokenCard from '../../components/TokenCard/TokenCard';
+import TooltipComponent from '../../components/Tooltip/Tooltip';
+import Footer from '../../Footer';
 
-import IERC20Metadata from "../../abis/IERC20Metadata.json";
-import PhamousUiStakeDataProvider from "../../abis/PhamousUiStakeDataProvider.json";
-import PhamousFeeDistribution from "../../abis/PhamousFeeDistribution.json";
+import IERC20Metadata from '../../abis/IERC20Metadata.json';
+import PhamousUiStakeDataProvider from '../../abis/PhamousUiStakeDataProvider.json';
+import PhamousFeeDistribution from '../../abis/PhamousFeeDistribution.json';
 
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
 import {
   bigNumberify,
   toBigNumber,
@@ -30,69 +30,75 @@ import {
   PHLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
   getPageTitle,
-} from "../../Helpers";
-import { useInfoTokens, callContract } from "../../Api";
+} from '../../utils/Helpers';
+import { useInfoTokens, callContract } from '../../Api';
 
-import useSWR from "swr";
+import useSWR from 'swr';
 
-import { getContract } from "../../Addresses";
+import { getContract } from '../../config/Addresses';
 
-import "./Earn.css";
+import './Earn.css';
+import { ChainId, ITokenInfo } from '../../utils/types';
+import { BigNumber } from 'bignumber.js';
 
-export function processStakingData(stakingData, infoTokens) {
-  const stakingTokenPrecision = stakingData
-    ? stakingData.data.stakingTokenPrecision.toString().length - 1
-    : 18;
+export function processStakingData(stakingData: any, infoTokens: { [x: string]: ITokenInfo }) {
+  const stakingTokenPrecision = stakingData ? stakingData.data.stakingTokenPrecision.toString().length - 1 : 18;
 
-  let userStakedPct = "";
+  let userStakedPct = '';
   const userSeaCreature = {
-    icon: "",
-    name: "",
+    icon: '',
+    name: '',
   };
   if (stakingData) {
     const pct = toBigNumber(stakingData.userData.stakedBalance)
       .div(toBigNumber(stakingData.data.totalSupply))
       .multipliedBy(100);
     if (pct.lte(0.000001)) {
-      userSeaCreature.icon = "🐚";
-      userSeaCreature.name = "Shell";
+      userSeaCreature.icon = '🐚';
+      userSeaCreature.name = 'Shell';
       userStakedPct = pct.toFixed(7);
     } else if (pct.lte(0.00001)) {
-      userSeaCreature.icon = "🦐";
-      userSeaCreature.name = "Shrimp";
+      userSeaCreature.icon = '🦐';
+      userSeaCreature.name = 'Shrimp';
       userStakedPct = pct.toFixed(6);
     } else if (pct.lte(0.0001)) {
-      userSeaCreature.icon = "🦀";
-      userSeaCreature.name = "Crab";
+      userSeaCreature.icon = '🦀';
+      userSeaCreature.name = 'Crab';
       userStakedPct = pct.toFixed(5);
     } else if (pct.lte(0.001)) {
-      userSeaCreature.icon = "🐢";
-      userSeaCreature.name = "Turtle";
+      userSeaCreature.icon = '🐢';
+      userSeaCreature.name = 'Turtle';
       userStakedPct = pct.toFixed(4);
     } else if (pct.lte(0.01)) {
-      userSeaCreature.icon = "🦑";
-      userSeaCreature.name = "Squid";
+      userSeaCreature.icon = '🦑';
+      userSeaCreature.name = 'Squid';
       userStakedPct = pct.toFixed(3);
     } else if (pct.lte(0.1)) {
-      userSeaCreature.icon = "🐬";
-      userSeaCreature.name = "Dolphin";
+      userSeaCreature.icon = '🐬';
+      userSeaCreature.name = 'Dolphin';
       userStakedPct = pct.toFixed(2);
     } else if (pct.lte(1)) {
-      userSeaCreature.icon = "🦈";
-      userSeaCreature.name = "Shark";
+      userSeaCreature.icon = '🦈';
+      userSeaCreature.name = 'Shark';
       userStakedPct = pct.toFixed(2);
     } else if (pct.lte(10)) {
-      userSeaCreature.icon = "🐋";
-      userSeaCreature.name = "Whale";
+      userSeaCreature.icon = '🐋';
+      userSeaCreature.name = 'Whale';
       userStakedPct = pct.toFixed(2);
     } else {
-      userSeaCreature.icon = "🔱";
-      userSeaCreature.name = "Poseidon";
+      userSeaCreature.icon = '🔱';
+      userSeaCreature.name = 'Poseidon';
       userStakedPct = pct.toFixed(2);
     }
   }
 
-  const rewards = [];
+  interface IReward {
+    tokenSymbol: string;
+    amount: string;
+    amountInUsd: string;
+  }
+
+  const rewards: IReward[] = [];
   let totalRewardsInUsd = toBigNumber(0);
   let plsUsdPrice;
   if (stakingData) {
@@ -101,38 +107,25 @@ export function processStakingData(stakingData, infoTokens) {
         let amount;
         if (stakingData) {
           const tokenReward = stakingData.userData.claimableRewards.filter(
-            ({ token }) => token === tokenInfo.address
+            ({ token }: { token: string }) => token === tokenInfo.address,
           );
           amount = tokenReward.length === 1 ? tokenReward[0].amount : undefined;
         }
         const tokenAmount = amount
-          ? toBigNumber(amount).dividedBy(
-              toBigNumber(10).exponentiatedBy(tokenInfo.decimals)
-            )
+          ? toBigNumber(amount).dividedBy(toBigNumber(10).exponentiatedBy(tokenInfo.decimals))
           : undefined;
-        const reward = {
+        const reward: IReward = {
           tokenSymbol: tokenInfo.symbol,
-          amount: amount
-            ? formatAmount(amount, tokenInfo.decimals, 4, true, undefined, 0)
-            : "-",
-          amountInUsd: "-",
+          amount: amount ? formatAmount(amount, tokenInfo.decimals, 4, true, undefined, 0) : '-',
+          amountInUsd: '-',
         };
         if (tokenInfo.maxPrice && tokenAmount) {
-          const price = toBigNumber(tokenInfo.maxPrice).dividedBy(
-            toBigNumber(10).exponentiatedBy(USD_DECIMALS)
-          );
-          if (tokenInfo.symbol === "PLS") {
+          const price = toBigNumber(tokenInfo.maxPrice).dividedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS));
+          if (tokenInfo.symbol === 'PLS') {
             plsUsdPrice = price;
           }
           const amountInUsd = tokenAmount.multipliedBy(price);
-          reward.amountInUsd = formatAmount(
-            amountInUsd.multipliedBy(1e4).toFixed(0),
-            4,
-            2,
-            true,
-            undefined,
-            0
-          );
+          reward.amountInUsd = formatAmount(amountInUsd.multipliedBy(1e4).toFixed(0), 4, 2, true, undefined, 0);
           totalRewardsInUsd = totalRewardsInUsd.plus(amountInUsd);
         }
         rewards.push(reward);
@@ -140,14 +133,8 @@ export function processStakingData(stakingData, infoTokens) {
     });
   }
   let stakingTokenPrice;
-  if (
-    plsUsdPrice &&
-    stakingData &&
-    stakingData.data.stakingTokenTotalSupplyInPls.gt(0)
-  ) {
-    stakingTokenPrice = toBigNumber(
-      stakingData.data.stakingTokenTotalSupplyInPls
-    )
+  if (plsUsdPrice && stakingData && stakingData.data.stakingTokenTotalSupplyInPls.gt(0)) {
+    stakingTokenPrice = toBigNumber(stakingData.data.stakingTokenTotalSupplyInPls)
       .dividedBy(toBigNumber(stakingData.data.totalSupply))
       .dividedBy(toBigNumber(10).exponentiatedBy(18 - stakingTokenPrecision))
       .multipliedBy(plsUsdPrice);
@@ -155,23 +142,11 @@ export function processStakingData(stakingData, infoTokens) {
   return {
     stakingTokenPrecision: stakingTokenPrecision,
     stakingTokenPrice: stakingTokenPrice
-      ? formatAmount(
-          stakingTokenPrice.multipliedBy(1e10).toFixed(0),
-          10,
-          4,
-          true
-        )
-      : "-",
+      ? formatAmount(stakingTokenPrice.multipliedBy(1e10).toFixed(0), 10, 4, true)
+      : '-',
     totalSupply: stakingData
-      ? formatAmount(
-          stakingData.data.totalSupply,
-          stakingTokenPrecision,
-          0,
-          true,
-          undefined,
-          0
-        )
-      : "55,555,000",
+      ? formatAmount(stakingData.data.totalSupply, stakingTokenPrecision, 0, true, undefined, 0)
+      : '55,555,000',
     totalSupplyInUsd: stakingTokenPrice
       ? formatAmount(
           toBigNumber(stakingData ? stakingData.data.totalSupply : 55_555_000)
@@ -181,98 +156,67 @@ export function processStakingData(stakingData, infoTokens) {
           0,
           true,
           undefined,
-          0
-        )
-      : "-",
-    totalStakedSupply: stakingData
-      ? formatAmount(
-          stakingData.data.totalStakedSupply,
-          stakingTokenPrecision,
           0,
-          true,
-          undefined,
-          0
         )
-      : "-",
+      : '-',
+    totalStakedSupply: stakingData
+      ? formatAmount(stakingData.data.totalStakedSupply, stakingTokenPrecision, 0, true, undefined, 0)
+      : '-',
     totalStakedSupplyInUsd:
       stakingTokenPrice && stakingData
         ? formatAmount(
-            toBigNumber(stakingData.data.totalStakedSupply)
-              .multipliedBy(stakingTokenPrice)
-              .toFixed(0),
+            toBigNumber(stakingData.data.totalStakedSupply).multipliedBy(stakingTokenPrice).toFixed(0),
             stakingTokenPrecision,
             0,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
+        : '-',
     totalStakedPercentage: stakingData
       ? toBigNumber(stakingData.data.totalStakedSupply)
           .dividedBy(toBigNumber(stakingData.data.totalSupply))
           .multipliedBy(100)
           .toFixed(2)
-      : "-",
+      : '-',
     stakeAPR: stakingData
       ? toBigNumber(stakingData.data.rewardDurationReturn)
           .multipliedBy(3600 * 24 * 365)
           .dividedBy(toBigNumber(stakingData.data.rewardDuration))
-          .dividedBy("1e16")
+          .dividedBy('1e16')
           .toFixed(2)
-      : "-",
-    stakeUnlockDays: stakingData
-      ? stakingData.data.unstakeDuration.toNumber() / 24 / 3600
-      : 14,
-    stakeWithdrawDays: stakingData
-      ? stakingData.data.withdrawDuration.toNumber() / 24 / 3600
-      : 7,
+      : '-',
+    stakeUnlockDays: stakingData ? stakingData.data.unstakeDuration.toNumber() / 24 / 3600 : 14,
+    stakeWithdrawDays: stakingData ? stakingData.data.withdrawDuration.toNumber() / 24 / 3600 : 7,
 
     userWalletBalance: stakingData
-      ? formatAmount(
-          stakingData.userData.walletBalance,
-          stakingTokenPrecision,
-          4,
-          true,
-          undefined,
-          0
-        )
-      : "-",
+      ? formatAmount(stakingData.userData.walletBalance, stakingTokenPrecision, 4, true, undefined, 0)
+      : '-',
     userWalletBalanceInUsd:
       stakingTokenPrice && stakingData
         ? formatAmount(
-            toBigNumber(stakingData.userData.walletBalance)
-              .multipliedBy(stakingTokenPrice)
-              .toFixed(0),
+            toBigNumber(stakingData.userData.walletBalance).multipliedBy(stakingTokenPrice).toFixed(0),
             stakingTokenPrecision,
             2,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
+        : '-',
     userStakedBalance: stakingData
-      ? formatAmount(
-          stakingData.userData.stakedBalance,
-          stakingTokenPrecision,
-          4,
-          true,
-          undefined,
-          0
-        )
-      : "-",
+      ? formatAmount(stakingData.userData.stakedBalance, stakingTokenPrecision, 4, true, undefined, 0)
+      : '-',
     userStakedBalanceInUsd:
       stakingTokenPrice && stakingData
         ? formatAmount(
-            toBigNumber(stakingData.userData.stakedBalance)
-              .multipliedBy(stakingTokenPrice)
-              .toFixed(0),
+            toBigNumber(stakingData.userData.stakedBalance).multipliedBy(stakingTokenPrice).toFixed(0),
             stakingTokenPrecision,
             2,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
+        : '-',
     userStakeBalanceInUsdValue:
       stakingTokenPrice && stakingData
         ? toBigNumber(stakingData.userData.stakedBalance)
@@ -282,138 +226,106 @@ export function processStakingData(stakingData, infoTokens) {
     userStakedPct: userStakedPct,
     userSeaCreature: userSeaCreature,
     userUnstakedBalance: stakingData
-      ? formatAmount(
-          stakingData.userData.unstakedBalance,
-          stakingTokenPrecision,
-          4,
-          true,
-          undefined,
-          0
-        )
-      : "-",
+      ? formatAmount(stakingData.userData.unstakedBalance, stakingTokenPrecision, 4, true, undefined, 0)
+      : '-',
     userUnstakedBalanceInUsd:
       stakingTokenPrice && stakingData
         ? formatAmount(
-            toBigNumber(stakingData.userData.unstakedBalance)
-              .multipliedBy(stakingTokenPrice)
-              .toFixed(0),
+            toBigNumber(stakingData.userData.unstakedBalance).multipliedBy(stakingTokenPrice).toFixed(0),
             stakingTokenPrecision,
             2,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
+        : '-',
     userWithdrawableBalance: stakingData
-      ? formatAmount(
-          stakingData.userData.withdrawableBalance,
-          stakingTokenPrecision,
-          4,
-          true,
-          undefined,
-          0
-        )
-      : "-",
+      ? formatAmount(stakingData.userData.withdrawableBalance, stakingTokenPrecision, 4, true, undefined, 0)
+      : '-',
     userWithdrawableBalanceInUsd:
       stakingTokenPrice && stakingData
         ? formatAmount(
-            toBigNumber(stakingData.userData.withdrawableBalance)
-              .multipliedBy(stakingTokenPrice)
-              .toFixed(0),
+            toBigNumber(stakingData.userData.withdrawableBalance).multipliedBy(stakingTokenPrice).toFixed(0),
             stakingTokenPrecision,
             2,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
+        : '-',
     userCanClaim: stakingData
-      ? stakingData.userData.claimableRewards.some(({ amount }) => amount.gt(0))
+      ? stakingData.userData.claimableRewards.some(({ amount }: { amount: ethers.BigNumber }) => amount.gt(0))
       : false,
-    userCanStake: stakingData
-      ? stakingData.userData.walletBalance.gt(0)
-      : false,
+    userCanStake: stakingData ? stakingData.userData.walletBalance.gt(0) : false,
     userCanUnstake: stakingData
       ? stakingData.userData.stakedBalance.gt(0) &&
         stakingData.userData.unstakedBalance.eq(0) &&
         stakingData.userData.withdrawableBalance.eq(0)
       : false,
-    userCanCancel: stakingData
-      ? stakingData.userData.unstakedBalance.gt(0)
-      : false,
-    userCanWithdraw: stakingData
-      ? stakingData.userData.withdrawableBalance.gt(0)
-      : false,
+    userCanCancel: stakingData ? stakingData.userData.unstakedBalance.gt(0) : false,
+    userCanWithdraw: stakingData ? stakingData.userData.withdrawableBalance.gt(0) : false,
     userWithdrawTimestamp: stakingData
-      ? new Date(
-          stakingData.userData.withdrawTimestamp.toNumber() * 1000
-        ).toLocaleString()
-      : "-",
+      ? new Date(stakingData.userData.withdrawTimestamp.toNumber() * 1000).toLocaleString()
+      : '-',
     userExpirationTimestamp: stakingData
-      ? new Date(
-          stakingData.userData.expirationTimestamp.toNumber() * 1000
-        ).toLocaleString()
-      : "-",
+      ? new Date(stakingData.userData.expirationTimestamp.toNumber() * 1000).toLocaleString()
+      : '-',
     userRewards: rewards,
     userTotalRewardsInUsd: formatAmount(
-      totalRewardsInUsd
-        .multipliedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS))
-        .toFixed(0),
+      totalRewardsInUsd.multipliedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS)).toFixed(0),
       USD_DECIMALS,
       totalRewardsInUsd.gt(1) ? 2 : 10,
       true,
       undefined,
-      0
+      0,
     ),
   };
 }
 
-export function processPhlpData(phlpData, infoTokens) {
-  let pct;
-  let userPct = "";
+export function processPhlpData(phlpData: any, infoTokens: { [x: string]: ITokenInfo }) {
+  let pct: BigNumber;
+  let userPct = '';
   const userSeaCreature = {
-    icon: "",
-    name: "",
+    icon: '',
+    name: '',
   };
   if (phlpData) {
-    pct = toBigNumber(phlpData.walletBalance)
-      .div(toBigNumber(phlpData.totalSupply))
-      .multipliedBy(100);
+    pct = toBigNumber(phlpData.walletBalance).div(toBigNumber(phlpData.totalSupply)).multipliedBy(100);
     if (pct.lte(0.000001)) {
-      userSeaCreature.icon = "🐚";
-      userSeaCreature.name = "Shell";
+      userSeaCreature.icon = '🐚';
+      userSeaCreature.name = 'Shell';
       userPct = pct.toFixed(7);
     } else if (pct.lte(0.00001)) {
-      userSeaCreature.icon = "🦐";
-      userSeaCreature.name = "Shrimp";
+      userSeaCreature.icon = '🦐';
+      userSeaCreature.name = 'Shrimp';
       userPct = pct.toFixed(6);
     } else if (pct.lte(0.0001)) {
-      userSeaCreature.icon = "🦀";
-      userSeaCreature.name = "Crab";
+      userSeaCreature.icon = '🦀';
+      userSeaCreature.name = 'Crab';
       userPct = pct.toFixed(5);
     } else if (pct.lte(0.001)) {
-      userSeaCreature.icon = "🐢";
-      userSeaCreature.name = "Turtle";
+      userSeaCreature.icon = '🐢';
+      userSeaCreature.name = 'Turtle';
       userPct = pct.toFixed(4);
     } else if (pct.lte(0.01)) {
-      userSeaCreature.icon = "🦑";
-      userSeaCreature.name = "Squid";
+      userSeaCreature.icon = '🦑';
+      userSeaCreature.name = 'Squid';
       userPct = pct.toFixed(3);
     } else if (pct.lte(0.1)) {
-      userSeaCreature.icon = "🐬";
-      userSeaCreature.name = "Dolphin";
+      userSeaCreature.icon = '🐬';
+      userSeaCreature.name = 'Dolphin';
       userPct = pct.toFixed(2);
     } else if (pct.lte(1)) {
-      userSeaCreature.icon = "🦈";
-      userSeaCreature.name = "Shark";
+      userSeaCreature.icon = '🦈';
+      userSeaCreature.name = 'Shark';
       userPct = pct.toFixed(2);
     } else if (pct.lte(10)) {
-      userSeaCreature.icon = "🐋";
-      userSeaCreature.name = "Whale";
+      userSeaCreature.icon = '🐋';
+      userSeaCreature.name = 'Whale';
       userPct = pct.toFixed(2);
     } else {
-      userSeaCreature.icon = "🔱";
-      userSeaCreature.name = "Poseidon";
+      userSeaCreature.icon = '🔱';
+      userSeaCreature.name = 'Poseidon';
       userPct = pct.toFixed(2);
     }
   }
@@ -424,7 +336,15 @@ export function processPhlpData(phlpData, infoTokens) {
       .multipliedBy(toBigNumber(10).exponentiatedBy(PHLP_DECIMALS))
       .dividedBy(toBigNumber(phlpData.totalSupply));
   }
-  const compositions = [];
+
+  interface IComposition {
+    tokenSymbol: string;
+    amount: string;
+    amountInUsd: string;
+    weight: string;
+  }
+
+  const compositions: IComposition[] = [];
   if (infoTokens) {
     let totalManagedUsd = bigNumberify(0);
     Object.values(infoTokens).forEach((tokenInfo) => {
@@ -439,56 +359,44 @@ export function processPhlpData(phlpData, infoTokens) {
           amount:
             tokenInfo.managedAmount && pct
               ? formatAmount(
-                  toBigNumber(tokenInfo.managedAmount)
-                    .multipliedBy(pct)
-                    .dividedBy(100)
-                    .toFixed(0),
+                  toBigNumber(tokenInfo.managedAmount).multipliedBy(pct).dividedBy(100).toFixed(0),
                   tokenInfo.decimals,
                   4,
                   true,
                   undefined,
-                  0
+                  0,
                 )
-              : "-",
+              : '-',
           amountInUsd:
             tokenInfo.managedUsd && pct
               ? formatAmount(
-                  toBigNumber(tokenInfo.managedUsd)
-                    .multipliedBy(pct)
-                    .dividedBy(100)
-                    .toFixed(0),
+                  toBigNumber(tokenInfo.managedUsd).multipliedBy(pct).dividedBy(100).toFixed(0),
                   USD_DECIMALS,
                   2,
                   true,
                   undefined,
-                  0
+                  0,
                 )
-              : "-",
+              : '-',
           weight:
             tokenInfo.managedUsd && totalManagedUsd.gt(0)
               ? formatAmount(
-                  tokenInfo.managedUsd
-                    .mul(BASIS_POINTS_DIVISOR)
-                    .div(totalManagedUsd),
+                  tokenInfo.managedUsd.mul(BASIS_POINTS_DIVISOR).div(totalManagedUsd),
                   2,
                   2,
                   true,
                   undefined,
-                  0
+                  0,
                 )
-              : "-",
+              : '-',
         });
       }
     });
   }
 
   return {
-    price: price
-      ? formatAmount(price.toFixed(0), USD_DECIMALS, 4, true)
-      : "1.0000",
-    totalSupply: phlpData
-      ? formatAmount(phlpData.totalSupply, PHLP_DECIMALS, 0, true, undefined, 0)
-      : "-",
+    price: price ? formatAmount(price.toFixed(0), USD_DECIMALS, 4, true) : '1.0000',
+    totalSupply: phlpData ? formatAmount(phlpData.totalSupply, PHLP_DECIMALS, 0, true, undefined, 0) : '-',
     totalSupplyInUsd:
       price && phlpData
         ? formatAmount(
@@ -497,19 +405,10 @@ export function processPhlpData(phlpData, infoTokens) {
             0,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
-    userWalletBalance: phlpData
-      ? formatAmount(
-          phlpData.walletBalance,
-          PHLP_DECIMALS,
-          4,
-          true,
-          undefined,
-          0
-        )
-      : "-",
+        : '-',
+    userWalletBalance: phlpData ? formatAmount(phlpData.walletBalance, PHLP_DECIMALS, 4, true, undefined, 0) : '-',
     userWalletBalanceInUsd:
       price && phlpData
         ? formatAmount(
@@ -518,16 +417,14 @@ export function processPhlpData(phlpData, infoTokens) {
             2,
             true,
             undefined,
-            0
+            0,
           )
-        : "-",
+        : '-',
     userWalletBalanceInUsdValue:
       price && phlpData
         ? toBigNumber(phlpData.walletBalance)
             .multipliedBy(price)
-            .dividedBy(
-              toBigNumber(10).exponentiatedBy(USD_DECIMALS + PHLP_DECIMALS)
-            )
+            .dividedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS + PHLP_DECIMALS))
         : undefined,
     userPct: userPct,
     userSeaCreature: userSeaCreature,
@@ -535,31 +432,47 @@ export function processPhlpData(phlpData, infoTokens) {
   };
 }
 
-function StakeInfo(props) {
+function StakeInfo() {
   return (
     <>
-      Unstaking Your PHAME token will incur a two-week unlocking period. You can
-      only withdraw your PHAME after the unlocking period ends and the withdraw
-      window is then activated.
+      Unstaking Your PHAME token will incur a two-week unlocking period. You can only withdraw your PHAME after the
+      unlocking period ends and the withdraw window is then activated.
       <br></br>
       <br></br>
-      Once unstaking is initiated no additional unstaking is permitted until the
-      end of the unstaking period. You may cancel unstaking at anytime, but you
-      would then need to restart the two-week period to adjust your unstake
-      amount.
+      Once unstaking is initiated no additional unstaking is permitted until the end of the unstaking period. You may
+      cancel unstaking at anytime, but you would then need to restart the two-week period to adjust your unstake amount.
       <br></br>
       <br></br>
-      Should you forget and not withdraw your PHAME during the withdraw window,
-      unstaking will end automatically.
+      Should you forget and not withdraw your PHAME during the withdraw window, unstaking will end automatically.
       <br></br>
       <br></br>
-      Locked and withdrawable PHAME are still staked, counted in the staked
-      balance, and earning fees.
+      Locked and withdrawable PHAME are still staked, counted in the staked balance, and earning fees.
     </>
   );
 }
 
-function StakeModal(props) {
+interface IModalProps {
+  isVisible: boolean;
+  setIsVisible: (_: boolean) => void;
+  chainId: ChainId;
+  title: string;
+  description: string | JSX.Element | undefined;
+  library: any;
+  feeDistributionAddress: string;
+  setPendingTxns: (_: any) => void;
+}
+
+interface IStakeModalProps extends IModalProps {
+  maxAmount: ethers.BigNumber | undefined;
+  value: string;
+  setValue: (_: string) => void;
+  active: boolean;
+  account: string | null | undefined;
+  stakingTokenSymbol: string;
+  stakingTokenAddress: string;
+}
+
+function StakeModal(props: IStakeModalProps) {
   const {
     isVisible,
     setIsVisible,
@@ -581,18 +494,12 @@ function StakeModal(props) {
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active &&
-      stakingTokenAddress && [
-        active,
-        chainId,
-        stakingTokenAddress,
-        "allowance",
-        account,
-        feeDistributionAddress,
-      ],
+    active && stakingTokenAddress
+      ? [active, chainId, stakingTokenAddress, 'allowance', account, feeDistributionAddress]
+      : [],
     {
       fetcher: fetcher(library, IERC20Metadata),
-    }
+    },
   );
 
   let amount = parseValue(value, 18);
@@ -600,10 +507,10 @@ function StakeModal(props) {
 
   const getError = () => {
     if (!amount || amount.eq(0)) {
-      return "Enter an amount";
+      return 'Enter an amount';
     }
     if (maxAmount && amount.gt(maxAmount)) {
-      return "Max amount exceeded";
+      return 'Max amount exceeded';
     }
   };
 
@@ -620,15 +527,11 @@ function StakeModal(props) {
     }
 
     setIsStaking(true);
-    const contract = new ethers.Contract(
-      feeDistributionAddress,
-      PhamousFeeDistribution.abi,
-      library.getSigner()
-    );
+    const contract = new ethers.Contract(feeDistributionAddress, PhamousFeeDistribution.abi, library.getSigner());
 
-    callContract(chainId, contract, "stake", [amount], {
-      sentMsg: "Stake submitted!",
-      failMsg: "Stake failed.",
+    callContract(chainId, contract, 'stake', [amount], {
+      sentMsg: 'Stake submitted!',
+      failMsg: 'Stake failed.',
       setPendingTxns,
     })
       .then(async (res) => {
@@ -665,24 +568,21 @@ function StakeModal(props) {
       return `Approve ${stakingTokenSymbol}`;
     }
     if (isStaking) {
-      return "Staking...";
+      return 'Staking...';
     }
-    return "Stake";
+    return 'Stake';
   };
 
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-        <div style={{ marginBottom: "1rem" }}>{description}</div>
+        <div style={{ marginBottom: '1rem' }}>{description}</div>
         <div className="Exchange-swap-section">
           <div className="Exchange-swap-section-top">
             <div className="muted">
               <div className="Exchange-swap-usd">Stake</div>
             </div>
-            <div
-              className="muted align-right clickable"
-              onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}
-            >
+            <div className="muted align-right clickable" onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}>
               Max: {formatAmount(maxAmount, 18, 4, true, undefined, 0)}
             </div>
           </div>
@@ -696,17 +596,11 @@ function StakeModal(props) {
                 onChange={(e) => setValue(e.target.value)}
               />
             </div>
-            <div className="PositionEditor-token-symbol">
-              {stakingTokenSymbol}
-            </div>
+            <div className="PositionEditor-token-symbol">{stakingTokenSymbol}</div>
           </div>
         </div>
         <div className="Exchange-swap-button-container">
-          <button
-            className="App-cta Exchange-swap-button"
-            onClick={onClickPrimary}
-            disabled={!isPrimaryEnabled()}
-          >
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
             {getPrimaryText()}
           </button>
         </div>
@@ -715,7 +609,14 @@ function StakeModal(props) {
   );
 }
 
-function UnstakeModal(props) {
+interface IUnstakeModalProps extends IModalProps {
+  maxAmount: ethers.BigNumber | undefined;
+  value: string;
+  setValue: (_: string) => void;
+  unstakingTokenSymbol: string;
+}
+
+function UnstakeModal(props: IUnstakeModalProps) {
   const {
     isVisible,
     setIsVisible,
@@ -734,25 +635,21 @@ function UnstakeModal(props) {
 
   let amount = parseValue(value, 18);
   const getError = () => {
-    if (!amount) {
-      return "Enter an amount";
+    if (!amount || !maxAmount) {
+      return 'Enter an amount';
     }
     if (amount.gt(maxAmount)) {
-      return "Max amount exceeded";
+      return 'Max amount exceeded';
     }
   };
 
   const onClickPrimary = () => {
     setIsUnstaking(true);
-    const contract = new ethers.Contract(
-      feeDistributionAddress,
-      PhamousFeeDistribution.abi,
-      library.getSigner()
-    );
-    callContract(chainId, contract, "unstake", [amount], {
-      sentMsg: "Unstake submitted!",
-      failMsg: "Unstake failed.",
-      successMsg: "Unstake completed!",
+    const contract = new ethers.Contract(feeDistributionAddress, PhamousFeeDistribution.abi, library.getSigner());
+    callContract(chainId, contract, 'unstake', [amount], {
+      sentMsg: 'Unstake submitted!',
+      failMsg: 'Unstake failed.',
+      successMsg: 'Unstake completed!',
       setPendingTxns,
     })
       .then(async (res) => {
@@ -780,24 +677,21 @@ function UnstakeModal(props) {
       return error;
     }
     if (isUnstaking) {
-      return "Unstaking...";
+      return 'Unstaking...';
     }
-    return "Unstake";
+    return 'Unstake';
   };
 
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-        <div style={{ marginBottom: "1rem" }}>{description}</div>
+        <div style={{ marginBottom: '1rem' }}>{description}</div>
         <div className="Exchange-swap-section">
           <div className="Exchange-swap-section-top">
             <div className="muted">
               <div className="Exchange-swap-usd">Unstake</div>
             </div>
-            <div
-              className="muted align-right clickable"
-              onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}
-            >
+            <div className="muted align-right clickable" onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}>
               Max: {formatAmount(maxAmount, 18, 4, true, undefined, 0)}
             </div>
           </div>
@@ -811,17 +705,11 @@ function UnstakeModal(props) {
                 onChange={(e) => setValue(e.target.value)}
               />
             </div>
-            <div className="PositionEditor-token-symbol">
-              {unstakingTokenSymbol}
-            </div>
+            <div className="PositionEditor-token-symbol">{unstakingTokenSymbol}</div>
           </div>
         </div>
         <div className="Exchange-swap-button-container">
-          <button
-            className="App-cta Exchange-swap-button"
-            onClick={onClickPrimary}
-            disabled={!isPrimaryEnabled()}
-          >
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
             {getPrimaryText()}
           </button>
         </div>
@@ -830,31 +718,19 @@ function UnstakeModal(props) {
   );
 }
 
-function CancelUnlockingModal(props) {
-  const {
-    isVisible,
-    setIsVisible,
-    chainId,
-    title,
-    description,
-    library,
-    feeDistributionAddress,
-    setPendingTxns,
-  } = props;
+function CancelUnlockingModal(props: IModalProps) {
+  const { isVisible, setIsVisible, chainId, title, description, library, feeDistributionAddress, setPendingTxns } =
+    props;
   const [isCanceling, setIsCanceling] = useState(false);
 
   const onClickPrimary = () => {
     setIsCanceling(true);
-    const contract = new ethers.Contract(
-      feeDistributionAddress,
-      PhamousFeeDistribution.abi,
-      library.getSigner()
-    );
+    const contract = new ethers.Contract(feeDistributionAddress, PhamousFeeDistribution.abi, library.getSigner());
 
-    callContract(chainId, contract, "cancelUnstake", [], {
-      sentMsg: "Unlocking cancellation submitted.",
-      failMsg: "Unlocking cancellation failed.",
-      successMsg: "Canceled!",
+    callContract(chainId, contract, 'cancelUnstake', [], {
+      sentMsg: 'Unlocking cancellation submitted.',
+      failMsg: 'Unlocking cancellation failed.',
+      successMsg: 'Canceled!',
       setPendingTxns,
     })
       .then(async (res) => {
@@ -868,15 +744,11 @@ function CancelUnlockingModal(props) {
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-        <div style={{ marginBottom: "1rem" }}>{description}</div>
+        <div style={{ marginBottom: '1rem' }}>{description}</div>
         <div className="Exchange-swap-button-container">
-          <button
-            className="App-cta Exchange-swap-button"
-            onClick={onClickPrimary}
-            disabled={isCanceling}
-          >
-            {!isCanceling && "Confirm Cancellation"}
-            {isCanceling && "Confirming..."}
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={isCanceling}>
+            {!isCanceling && 'Confirm Cancellation'}
+            {isCanceling && 'Confirming...'}
           </button>
         </div>
       </Modal>
@@ -884,31 +756,19 @@ function CancelUnlockingModal(props) {
   );
 }
 
-function WithdrawModal(props) {
-  const {
-    isVisible,
-    setIsVisible,
-    chainId,
-    title,
-    description,
-    library,
-    feeDistributionAddress,
-    setPendingTxns,
-  } = props;
+function WithdrawModal(props: IModalProps) {
+  const { isVisible, setIsVisible, chainId, title, description, library, feeDistributionAddress, setPendingTxns } =
+    props;
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const onClickPrimary = () => {
     setIsWithdrawing(true);
-    const contract = new ethers.Contract(
-      feeDistributionAddress,
-      PhamousFeeDistribution.abi,
-      library.getSigner()
-    );
+    const contract = new ethers.Contract(feeDistributionAddress, PhamousFeeDistribution.abi, library.getSigner());
 
-    callContract(chainId, contract, "withdraw", [], {
-      sentMsg: "Withdraw submitted.",
-      failMsg: "Withdraw failed.",
-      successMsg: "Withdrawn!",
+    callContract(chainId, contract, 'withdraw', [], {
+      sentMsg: 'Withdraw submitted.',
+      failMsg: 'Withdraw failed.',
+      successMsg: 'Withdrawn!',
       setPendingTxns,
     })
       .then(async (res) => {
@@ -922,46 +782,31 @@ function WithdrawModal(props) {
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-        <div style={{ marginBottom: "1rem" }}>{description}</div>
+        <div style={{ marginBottom: '1rem' }}>{description}</div>
         <div className="Exchange-swap-button-container">
-          <button
-            className="App-cta Exchange-swap-button"
-            onClick={onClickPrimary}
-            disabled={isWithdrawing}
-          >
-            {!isWithdrawing && "Confirm withdraw"}
-            {isWithdrawing && "Confirming..."}
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={isWithdrawing}>
+            {!isWithdrawing && 'Confirm withdraw'}
+            {isWithdrawing && 'Confirming...'}
           </button>
         </div>
       </Modal>
     </div>
   );
 }
-function ClaimModal(props) {
-  const {
-    isVisible,
-    setIsVisible,
-    chainId,
-    title,
-    description,
-    library,
-    feeDistributionAddress,
-    setPendingTxns,
-  } = props;
+
+function ClaimModal(props: IModalProps) {
+  const { isVisible, setIsVisible, chainId, title, description, library, feeDistributionAddress, setPendingTxns } =
+    props;
   const [isClaiming, setIsClaiming] = useState(false);
 
   const onClickPrimary = () => {
     setIsClaiming(true);
-    const contract = new ethers.Contract(
-      feeDistributionAddress,
-      PhamousFeeDistribution.abi,
-      library.getSigner()
-    );
+    const contract = new ethers.Contract(feeDistributionAddress, PhamousFeeDistribution.abi, library.getSigner());
 
-    callContract(chainId, contract, "getReward", [], {
-      sentMsg: "Claim submitted.",
-      failMsg: "Claim failed.",
-      successMsg: "Claim completed!",
+    callContract(chainId, contract, 'getReward', [], {
+      sentMsg: 'Claim submitted.',
+      failMsg: 'Claim failed.',
+      successMsg: 'Claim completed!',
       setPendingTxns,
     })
       .then(async (res) => {
@@ -975,15 +820,11 @@ function ClaimModal(props) {
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-        <div style={{ marginBottom: "1rem" }}>{description}</div>
+        <div style={{ marginBottom: '1rem' }}>{description}</div>
         <div className="Exchange-swap-button-container">
-          <button
-            className="App-cta Exchange-swap-button"
-            onClick={onClickPrimary}
-            disabled={isClaiming}
-          >
-            {!isClaiming && "Claim"}
-            {isClaiming && "Claiming..."}
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={isClaiming}>
+            {!isClaiming && 'Claim'}
+            {isClaiming && 'Claiming...'}
           </button>
         </div>
       </Modal>
@@ -991,76 +832,67 @@ function ClaimModal(props) {
   );
 }
 
-export default function Earn({ setPendingTxns, connectWallet }) {
+interface IEarnProps {
+  setPendingTxns: (_: any) => void;
+  connectWallet: () => void;
+}
+
+export default function Earn({ setPendingTxns, connectWallet }: IEarnProps) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
-  const dataProviderAddress = getContract(
-    chainId,
-    "PhamousUiStakeDataProvider"
-  );
-  const feeDistributionAddress = getContract(chainId, "PhamousFeeDistribution");
-  const addressesProviderAddress = getContract(chainId, "AddressesProvider");
-  const phameAddress = getContract(chainId, "PHAME");
+  const dataProviderAddress = getContract(chainId, 'PhamousUiStakeDataProvider');
+  const feeDistributionAddress = getContract(chainId, 'PhamousFeeDistribution');
+  const addressesProviderAddress = getContract(chainId, 'AddressesProvider');
+  const phameAddress = getContract(chainId, 'PHAME');
 
   const { data: stakingData } = useSWR(
     [
       `Stake:data:${active}`,
       chainId,
       dataProviderAddress,
-      "getStakingUserData",
+      'getStakingUserData',
       feeDistributionAddress,
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
       fetcher: fetcher(library, PhamousUiStakeDataProvider),
-    }
+    },
   );
   const { data: phlpData } = useSWR(
     [
       `Stake:phlp:${active}`,
       chainId,
       dataProviderAddress,
-      "getPhlpUserData",
+      'getPhlpUserData',
       addressesProviderAddress,
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
       fetcher: fetcher(library, PhamousUiStakeDataProvider),
-    }
+    },
   );
-  const { infoTokens } = useInfoTokens(
-    library,
-    chainId,
-    active,
-    undefined,
-    undefined
-  );
+  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
   const processedStakingData = processStakingData(stakingData, infoTokens);
   const processedPhlpData = processPhlpData(phlpData, infoTokens);
 
   const [isStakeModalVisible, setIsStakeModalVisible] = useState(false);
   const [stakeModalMaxAmount, setStakeModalMaxAmount] = useState(undefined);
-  const [stakeValue, setStakeValue] = useState("");
+  const [stakeValue, setStakeValue] = useState('');
   const showStakeModal = () => {
     setIsStakeModalVisible(true);
-    setStakeModalMaxAmount(
-      stakingData ? stakingData.userData.walletBalance : 0
-    );
+    setStakeModalMaxAmount(stakingData ? stakingData.userData.walletBalance : 0);
   };
 
   const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
   const [unstakeModalMaxAmount, setUnstakeModalMaxAmount] = useState(undefined);
-  const [unstakeValue, setUnstakeValue] = useState("");
+  const [unstakeValue, setUnstakeValue] = useState('');
   const showUnstakeModal = () => {
     setIsUnstakeModalVisible(true);
-    setUnstakeModalMaxAmount(
-      stakingData ? stakingData.userData.stakedBalance : 0
-    );
+    setUnstakeModalMaxAmount(stakingData ? stakingData.userData.stakedBalance : 0);
   };
 
-  const [isCancelUnlockingModalVisible, setIsCancelUnlockingModalVisible] =
-    useState(false);
+  const [isCancelUnlockingModalVisible, setIsCancelUnlockingModalVisible] = useState(false);
   const showCancelUnlockingModal = () => {
     setIsCancelUnlockingModalVisible(true);
   };
@@ -1077,20 +909,20 @@ export default function Earn({ setPendingTxns, connectWallet }) {
 
   return (
     <div className="default-container page-layout">
-      <Title>{getPageTitle("Earn")}</Title>
+      <Title>{getPageTitle('Earn')}</Title>
       <StakeModal
         isVisible={isStakeModalVisible}
         setIsVisible={setIsStakeModalVisible}
         chainId={chainId}
-        title={"Stake PHAME"}
-        description={"You can stake PHAME for protocol revenue sharing."}
+        title={'Stake PHAME'}
+        description={'You can stake PHAME for protocol revenue sharing.'}
         maxAmount={stakeModalMaxAmount}
         value={stakeValue}
         setValue={setStakeValue}
         active={active}
         account={account}
         library={library}
-        stakingTokenSymbol={"PHAME"}
+        stakingTokenSymbol={'PHAME'}
         stakingTokenAddress={phameAddress}
         feeDistributionAddress={feeDistributionAddress}
         setPendingTxns={setPendingTxns}
@@ -1099,13 +931,13 @@ export default function Earn({ setPendingTxns, connectWallet }) {
         isVisible={isUnstakeModalVisible}
         setIsVisible={setIsUnstakeModalVisible}
         chainId={chainId}
-        title={"Unstake PHAME"}
+        title={'Unstake PHAME'}
         description={<StakeInfo />}
         maxAmount={unstakeModalMaxAmount}
         value={unstakeValue}
         setValue={setUnstakeValue}
         library={library}
-        unstakingTokenSymbol={"PHAME"}
+        unstakingTokenSymbol={'PHAME'}
         feeDistributionAddress={feeDistributionAddress}
         setPendingTxns={setPendingTxns}
       />
@@ -1113,7 +945,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
         isVisible={isCancelUnlockingModalVisible}
         setIsVisible={setIsCancelUnlockingModalVisible}
         chainId={chainId}
-        title={"Cancel Unlocking PHAME"}
+        title={'Cancel Unlocking PHAME'}
         description={<StakeInfo />}
         library={library}
         feeDistributionAddress={feeDistributionAddress}
@@ -1123,7 +955,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
         isVisible={isWithdrawModalVisible}
         setIsVisible={setIsWithdrawModalVisible}
         chainId={chainId}
-        title={"Withdraw PHAME"}
+        title={'Withdraw PHAME'}
         description={<StakeInfo />}
         library={library}
         feeDistributionAddress={feeDistributionAddress}
@@ -1133,10 +965,8 @@ export default function Earn({ setPendingTxns, connectWallet }) {
         isVisible={isClaimModalVisible}
         setIsVisible={setIsClaimModalVisible}
         chainId={chainId}
-        title={"Claim Rewards"}
-        description={
-          "Claiming will transfer any pending rewards to your wallet."
-        }
+        title={'Claim Rewards'}
+        description={'Claiming will transfer any pending rewards to your wallet.'}
         library={library}
         feeDistributionAddress={feeDistributionAddress}
         setPendingTxns={setPendingTxns}
@@ -1144,9 +974,8 @@ export default function Earn({ setPendingTxns, connectWallet }) {
       <div className="BuyPHAMEPHLP-container default-container">
         <TokenCard />
         <div className="PHAMEPHLP-Assets">
-          Your Assets on Phamous:{" "}
-          {processedStakingData.userStakeBalanceInUsdValue &&
-          processedPhlpData.userWalletBalanceInUsdValue ? (
+          Your Assets on Phamous:{' '}
+          {processedStakingData.userStakeBalanceInUsdValue && processedPhlpData.userWalletBalanceInUsdValue ? (
             <TooltipComponent
               handle={`$${formatAmount(
                 processedStakingData.userStakeBalanceInUsdValue
@@ -1157,7 +986,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 2,
                 true,
                 undefined,
-                0
+                0,
               )}`}
               position="right-bottom"
               renderContent={() => {
@@ -1167,30 +996,26 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                       <span className="label">Staked PHAME:</span>$
                       {formatAmount(
                         processedStakingData.userStakeBalanceInUsdValue
-                          .multipliedBy(
-                            toBigNumber(10).exponentiatedBy(USD_DECIMALS)
-                          )
+                          ?.multipliedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS))
                           .toFixed(0),
                         USD_DECIMALS,
                         2,
                         true,
                         undefined,
-                        0
+                        0,
                       )}
                     </div>
                     <div className="Tooltip-row">
                       <span className="label">PHLP in Wallet:</span>$
                       {formatAmount(
                         processedPhlpData.userWalletBalanceInUsdValue
-                          .multipliedBy(
-                            toBigNumber(10).exponentiatedBy(USD_DECIMALS)
-                          )
+                          ?.multipliedBy(toBigNumber(10).exponentiatedBy(USD_DECIMALS))
                           .toFixed(0),
                         USD_DECIMALS,
                         2,
                         true,
                         undefined,
-                        0
+                        0,
                       )}
                     </div>
                   </>
@@ -1198,7 +1023,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
               }}
             />
           ) : (
-            "-"
+            '-'
           )}
         </div>
       </div>
@@ -1207,7 +1032,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
           <div className="App-card">
             <div className="App-card-title">
               PHAME
-              <img src={phameBigIcon} alt={"PHAME"} width="21px" />
+              <img src={phameBigIcon} alt={'PHAME'} width="21px" />
             </div>
             <div className="App-card-divider"></div>
             <div className="App-card-content">
@@ -1219,32 +1044,32 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 <div className="label">Total Supply</div>
                 <div>
                   {processedStakingData.totalSupply}
-                  {" PHAME ($"}
+                  {' PHAME ($'}
                   {processedStakingData.totalSupplyInUsd}
-                  {")"}
+                  {')'}
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
                   {processedStakingData.totalStakedSupply}
-                  {" PHAME ($"}
+                  {' PHAME ($'}
                   {processedStakingData.totalStakedSupplyInUsd}
-                  {")"}
+                  {')'}
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked Percentage</div>
                 <div>
                   {processedStakingData.totalStakedPercentage}
-                  {" %"}
+                  {' %'}
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staking APR</div>
                 <div>
                   {processedStakingData.stakeAPR}
-                  {" %"}
+                  {' %'}
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1252,14 +1077,14 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 <div className="label">Unlocking Period</div>
                 <div>
                   {processedStakingData.stakeUnlockDays}
-                  {" Days"}
+                  {' Days'}
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Withdraw Window</div>
                 <div>
                   {processedStakingData.stakeWithdrawDays}
-                  {" Days"}
+                  {' Days'}
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1267,18 +1092,18 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 <div className="label">Wallet</div>
                 <div>
                   {processedStakingData.userWalletBalance}
-                  {" PHAME ($"}
+                  {' PHAME ($'}
                   {processedStakingData.userWalletBalanceInUsd}
-                  {")"}
+                  {')'}
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
                   {processedStakingData.userStakedBalance}
-                  {" PHAME ($"}
+                  {' PHAME ($'}
                   {processedStakingData.userStakedBalanceInUsd}
-                  {")"}
+                  {')'}
                 </div>
               </div>
               <div className="App-card-row">
@@ -1288,7 +1113,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   {processedStakingData.userStakedPct}
-                  {" %"}
+                  {' %'}
                 </div>
               </div>
               {processedStakingData.userCanCancel && (
@@ -1297,9 +1122,9 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                     <div className="label">Unlocking</div>
                     <div>
                       {processedStakingData.userUnstakedBalance}
-                      {" PHAME ($"}
+                      {' PHAME ($'}
                       {processedStakingData.userUnstakedBalanceInUsd}
-                      {")"}
+                      {')'}
                     </div>
                   </div>
                   <div className="App-card-row">
@@ -1314,9 +1139,9 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                     <div className="label">Withdrawable</div>
                     <div>
                       {processedStakingData.userWithdrawableBalance}
-                      {" PHAME ($"}
+                      {' PHAME ($'}
                       {processedStakingData.userWithdrawableBalanceInUsd}
-                      {")"}
+                      {')'}
                     </div>
                   </div>
                   <div className="App-card-row">
@@ -1333,14 +1158,10 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                     <button className="default-btn staking-btn">Unstake</button>
                   )}
                   {active && processedStakingData.userCanCancel && (
-                    <button className="default-btn staking-btn">
-                      Cancel Unlocking
-                    </button>
+                    <button className="default-btn staking-btn">Cancel Unlocking</button>
                   )}
                   {active && processedStakingData.userCanWithdraw && (
-                    <button className="default-btn staking-btn">
-                      Withdraw
-                    </button>
+                    <button className="default-btn staking-btn">Withdraw</button>
                   )}
                 </div>
               </div>
@@ -1355,26 +1176,17 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                     Stake
                   </button>
                   {active && processedStakingData.userCanUnstake && (
-                    <button
-                      className="default-btn staking-btn"
-                      onClick={() => showUnstakeModal()}
-                    >
+                    <button className="default-btn staking-btn" onClick={() => showUnstakeModal()}>
                       Unstake
                     </button>
                   )}
                   {active && processedStakingData.userCanCancel && (
-                    <button
-                      className="default-btn staking-btn"
-                      onClick={() => showCancelUnlockingModal()}
-                    >
+                    <button className="default-btn staking-btn" onClick={() => showCancelUnlockingModal()}>
                       Cancel Unlocking
                     </button>
                   )}
                   {active && processedStakingData.userCanWithdraw && (
-                    <button
-                      className="default-btn staking-btn"
-                      onClick={() => showWithdrawModal()}
-                    >
+                    <button className="default-btn staking-btn" onClick={() => showWithdrawModal()}>
                       Withdraw
                     </button>
                   )}
@@ -1396,16 +1208,14 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                         width="20px"
                         height="20px"
                       />
-                      <div className="token-symbol-text">
-                        {reward.tokenSymbol}
-                      </div>
+                      <div className="token-symbol-text">{reward.tokenSymbol}</div>
                     </div>
                   </div>
                   <div>
                     {reward.amount}
-                    {" ($"}
-                    {reward.amountInUsd ? reward.amountInUsd : "-"}
-                    {")"}
+                    {' ($'}
+                    {reward.amountInUsd ? reward.amountInUsd : '-'}
+                    {')'}
                   </div>
                 </div>
               ))}
@@ -1417,16 +1227,8 @@ export default function Earn({ setPendingTxns, connectWallet }) {
               <div className="App-card-bottom-placeholder">
                 <div className="App-card-divider"></div>
                 <div className="App-card-options">
-                  {active && (
-                    <button className="default-btn staking-btn">
-                      Claim Rewards
-                    </button>
-                  )}
-                  {!active && (
-                    <button className="default-btn staking-btn">
-                      Connect Wallet
-                    </button>
-                  )}
+                  {active && <button className="default-btn staking-btn">Claim Rewards</button>}
+                  {!active && <button className="default-btn staking-btn">Connect Wallet</button>}
                 </div>
               </div>
               <div className="App-card-bottom">
@@ -1442,10 +1244,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                     </button>
                   )}
                   {!active && (
-                    <button
-                      className="default-btn staking-btn"
-                      onClick={() => connectWallet()}
-                    >
+                    <button className="default-btn staking-btn" onClick={() => connectWallet()}>
                       Connect Wallet
                     </button>
                   )}
@@ -1456,7 +1255,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
           <div className="App-card">
             <div className="App-card-title">
               PHLP
-              <img src={phlpBigIcon} alt={"PHLP"} width="21px" />
+              <img src={phlpBigIcon} alt={'PHLP'} width="21px" />
             </div>
             <div className="App-card-divider"></div>
             <div className="App-card-content">
@@ -1468,9 +1267,9 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 <div className="label">Total Supply</div>
                 <div>
                   {processedPhlpData.totalSupply}
-                  {" PHLP ($"}
+                  {' PHLP ($'}
                   {processedPhlpData.totalSupplyInUsd}
-                  {")"}
+                  {')'}
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1478,9 +1277,9 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 <div className="label">Wallet</div>
                 <div>
                   {processedPhlpData.userWalletBalance}
-                  {" PHLP ($"}
+                  {' PHLP ($'}
                   {processedPhlpData.userWalletBalanceInUsd}
-                  {")"}
+                  {')'}
                 </div>
               </div>
               <div className="App-card-row">
@@ -1490,7 +1289,7 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                 </div>
                 <div>
                   {processedPhlpData.userPct}
-                  {" %"}
+                  {' %'}
                 </div>
               </div>
             </div>
@@ -1509,16 +1308,14 @@ export default function Earn({ setPendingTxns, connectWallet }) {
                         width="20px"
                         height="20px"
                       />
-                      <div className="token-symbol-text">
-                        {composition.tokenSymbol}
-                      </div>
+                      <div className="token-symbol-text">{composition.tokenSymbol}</div>
                     </div>
                   </div>
                   <div>
                     ${composition.amountInUsd}
-                    {" ("}
+                    {' ('}
                     {composition.weight}
-                    {"%)"}
+                    {'%)'}
                   </div>
                 </div>
               ))}

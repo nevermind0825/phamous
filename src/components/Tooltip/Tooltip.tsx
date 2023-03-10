@@ -1,23 +1,34 @@
-import cx from "classnames";
-import { useCallback, useState, useRef } from "react";
+import cx from 'classnames';
+import { useCallback, useState, useRef } from 'react';
 
-import "./Tooltip.css";
+import './Tooltip.css';
 
-const isTouch = "ontouchstart" in window;
+const isTouch = 'ontouchstart' in window;
 
 const OPEN_DELAY = 0;
 const CLOSE_DELAY = 100;
 
-export default function Tooltip(props) {
-  const [visible, setVisible] = useState(false);
-  const intervalCloseRef = useRef(null);
-  const intervalOpenRef = useRef(null);
+interface IProps {
+  position: string;
+  trigger?: string;
+  className?: string;
+  disableHandleStyle?: string;
+  handleClassName?: string;
+  handle?: string | JSX.Element;
+  renderContent: () => string | JSX.Element;
+  children?: string | JSX.Element;
+}
 
-  const position = props.position ?? "left-bottom";
-  const trigger = props.trigger ?? "hover";
+export default function Tooltip(props: IProps) {
+  const [visible, setVisible] = useState(false);
+  const intervalCloseRef = useRef<any>(null);
+  const intervalOpenRef = useRef<any>(null);
+
+  const position = props.position ?? 'left-bottom';
+  const trigger = props.trigger ?? 'hover';
 
   const onMouseEnter = useCallback(() => {
-    if (trigger !== "hover" || isTouch) return;
+    if (trigger !== 'hover' || isTouch) return;
 
     if (intervalCloseRef.current) {
       clearInterval(intervalCloseRef.current);
@@ -32,7 +43,7 @@ export default function Tooltip(props) {
   }, [setVisible, intervalCloseRef, intervalOpenRef, trigger]);
 
   const onMouseClick = useCallback(() => {
-    if (trigger !== "click" && !isTouch) return;
+    if (trigger !== 'click' && !isTouch) return;
     if (intervalCloseRef.current) {
       clearInterval(intervalCloseRef.current);
       intervalCloseRef.current = null;
@@ -55,28 +66,15 @@ export default function Tooltip(props) {
     }
   }, [setVisible, intervalCloseRef]);
 
-  const className = cx("Tooltip", props.className);
+  const className = cx('Tooltip', props.className);
   return (
-    <span
-      className={className}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onClick={onMouseClick}
-    >
+    <span className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onMouseClick}>
       <span
-        className={cx(
-          { "Tooltip-handle": !props.disableHandleStyle },
-          [props.handleClassName],
-          { active: visible }
-        )}
+        className={cx({ 'Tooltip-handle': !props.disableHandleStyle }, [props.handleClassName], { active: visible })}
       >
         {props.handle}
       </span>
-      {visible && (
-        <div className={cx(["Tooltip-popup", position])}>
-          {props.renderContent()}
-        </div>
-      )}
+      {visible && <div className={cx(['Tooltip-popup', position])}>{props.renderContent()}</div>}
     </span>
   );
 }
