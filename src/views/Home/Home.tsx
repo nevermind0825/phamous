@@ -1,21 +1,21 @@
-import React, { useCallback } from "react";
-import { Link } from "react-router-dom";
-import { useWeb3React } from "@web3-react/core";
+import React, { useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { useWeb3React } from '@web3-react/core';
 
-import Footer from "../../Footer";
+import Footer from '../../Footer';
 
-import cx from "classnames";
+import cx from 'classnames';
 
-import "./Home.css";
+import './Home.css';
 
-import simpleSwapIcon from "../../img/ic_simpleswaps.svg";
-import costIcon from "../../img/ic_cost.svg";
-import liquidityIcon from "../../img/ic_liquidity.svg";
+import simpleSwapIcon from '../../img/ic_simpleswaps.svg';
+import costIcon from '../../img/ic_cost.svg';
+import liquidityIcon from '../../img/ic_liquidity.svg';
 // import totaluserIcon from "../../img/ic_totaluser.svg";
 // import statsIcon from "../../img/ic_stats.svg";
 // import tradingIcon from "../../img/ic_trading.svg";
 
-import plsIcon from "../../img/ic_pulsechain_96.svg";
+import plsIcon from '../../img/ic_pulsechain_96.svg';
 
 // import useSWR from "swr";
 
@@ -29,14 +29,19 @@ import {
   // getTotalVolumeSum,
   switchNetwork,
   useChainId,
-} from "../../Helpers";
+} from '../../utils/Helpers';
 
 // import { useUserStat } from "../../Api";
 
-import TokenCard from "../../components/TokenCard/TokenCard";
-import { PLS_TESTNET_V2 } from "../../Constants";
+import TokenCard from '../../components/TokenCard/TokenCard';
+import { PLS_TESTNET_V2 } from '../../config/Constants';
+import { ChainId } from '../../utils/types';
 
-export default function Home({ showRedirectModal }) {
+interface IProps {
+  showRedirectModal: boolean;
+}
+
+export default function Home({ showRedirectModal }: IProps) {
   // const [openedFAQIndex, setOpenedFAQIndex] = useState(null)
   // const faqContent = [{
   //   id: 1,
@@ -108,7 +113,7 @@ export default function Home({ showRedirectModal }) {
     const { active } = useWeb3React();
 
     const changeNetwork = useCallback(
-      (network) => {
+      (network: ChainId) => {
         if (network === chainId) {
           return;
         }
@@ -120,15 +125,11 @@ export default function Home({ showRedirectModal }) {
           return switchNetwork(network, active);
         }
       },
-      [chainId, active]
+      [chainId, active],
     );
 
     return (
-      <Link
-        to="/trade"
-        className={cx("default-btn")}
-        onClick={() => changeNetwork(PLS_TESTNET_V2)}
-      >
+      <Link to="/trade" className={cx('default-btn')} onClick={() => changeNetwork(PLS_TESTNET_V2)}>
         Launch Exchange
       </Link>
     );
@@ -146,8 +147,7 @@ export default function Home({ showRedirectModal }) {
               Perpetual Exchange
             </div>
             <div className="Home-description">
-              Trade tPLS, HEX, USDC, and other top cryptocurrencies with up to
-              50x leverage directly from your wallet
+              Trade tPLS, HEX, USDC, and other top cryptocurrencies with up to 50x leverage directly from your wallet
             </div>
             <LaunchExchangeButton />
           </div>
@@ -200,45 +200,32 @@ export default function Home({ showRedirectModal }) {
         <div className="Home-benefits default-container">
           <div className="Home-benefit">
             <div className="Home-benefit-icon">
-              <img
-                src={liquidityIcon}
-                alt="liquidity"
-                className="Home-benefit-icon-symbol"
-              />
+              <img src={liquidityIcon} alt="liquidity" className="Home-benefit-icon-symbol" />
               <div className="Home-benefit-title">Reduce Liquidation Risks</div>
             </div>
             <div className="Home-benefit-description">
-              An aggregate of high-quality price feeds determine when
-              liquidations occur. This keeps positions safe from temporary
-              wicks.
+              An aggregate of high-quality price feeds determine when liquidations occur. This keeps positions safe from
+              temporary wicks.
             </div>
           </div>
           <div className="Home-benefit">
             <div className="Home-benefit-icon">
-              <img
-                src={costIcon}
-                alt="cost"
-                className="Home-benefit-icon-symbol"
-              />
+              <img src={costIcon} alt="cost" className="Home-benefit-icon-symbol" />
               <div className="Home-benefit-title">Save on Costs</div>
             </div>
             <div className="Home-benefit-description">
-              Enter and exit positions with minimal spread and zero price
-              impact. Get the optimal price without incurring additional costs.
+              Enter and exit positions with minimal spread and zero price impact. Get the optimal price without
+              incurring additional costs.
             </div>
           </div>
           <div className="Home-benefit">
             <div className="Home-benefit-icon">
-              <img
-                src={simpleSwapIcon}
-                alt="swap"
-                className="Home-benefit-icon-symbol"
-              />
+              <img src={simpleSwapIcon} alt="swap" className="Home-benefit-icon-symbol" />
               <div className="Home-benefit-title">Simple Swaps</div>
             </div>
             <div className="Home-benefit-description">
-              Open positions through a simple swap interface. Conveniently swap
-              from any supported asset into the position of your choice.
+              Open positions through a simple swap interface. Conveniently swap from any supported asset into the
+              position of your choice.
             </div>
           </div>
         </div>
@@ -246,12 +233,8 @@ export default function Home({ showRedirectModal }) {
       <div className="Home-cta-section">
         <div className="Home-cta-container default-container">
           <div className="Home-cta-info">
-            <div className="Home-cta-info__title">
-              Available on your preferred network
-            </div>
-            <div className="Home-cta-info__description">
-              Phamous is currently live on PulseChain Testnet v2.
-            </div>
+            <div className="Home-cta-info__title">Available on your preferred network</div>
+            <div className="Home-cta-info__description">Phamous is currently live on PulseChain Testnet v2.</div>
           </div>
           <div className="Home-cta-options">
             <div className="Home-cta-option Home-cta-option-pls">
@@ -259,9 +242,7 @@ export default function Home({ showRedirectModal }) {
                 <img src={plsIcon} alt="PLS" />
               </div>
               <div className="Home-cta-option-info">
-                <div className="Home-cta-option-title">
-                  PulseChain Testnet v2
-                </div>
+                <div className="Home-cta-option-title">PulseChain Testnet v2</div>
                 <div className="Home-cta-option-action">
                   <LaunchExchangeButton />
                 </div>
@@ -273,9 +254,7 @@ export default function Home({ showRedirectModal }) {
       <div className="Home-token-card-section">
         <div className="Home-token-card-container default-container">
           <div className="Home-token-card-info">
-            <div className="Home-token-card-info__title">
-              Two tokens create our ecosystem
-            </div>
+            <div className="Home-token-card-info__title">Two tokens create our ecosystem</div>
           </div>
           <TokenCard showRedirectModal={showRedirectModal} />
         </div>
