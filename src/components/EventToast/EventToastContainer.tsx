@@ -1,5 +1,5 @@
-import { Toaster } from "react-hot-toast";
-import { useWindowScroll, createBreakpoint } from "react-use";
+import { Toaster } from 'react-hot-toast';
+import { useWindowScroll, createBreakpoint } from 'react-use';
 
 function EventToastContainer() {
   const { y: scrollY } = useWindowScroll();
@@ -13,9 +13,9 @@ function EventToastContainer() {
       containerClassName="event-toast-container"
       containerStyle={{
         zIndex: 2,
-        transition: "all 200ms",
-        top: scrollY > 60 ? "30px" : `${93 - scrollY}px`,
-        right: breakpoint === "XL" ? "30px" : "1rem",
+        transition: 'all 200ms',
+        top: scrollY > 60 ? '30px' : `${93 - scrollY}px`,
+        right: breakpoint === 'XL' ? '30px' : '1rem',
       }}
       toastOptions={{
         duration: Infinity,

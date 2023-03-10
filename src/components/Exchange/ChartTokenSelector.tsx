@@ -1,12 +1,22 @@
-import React from "react";
-import { Menu } from "@headlessui/react";
-import { FaChevronDown } from "react-icons/fa";
-import cx from "classnames";
-import "./ChartTokenSelector.css";
-import { getTokens, getWhitelistedTokens } from "../../data/Tokens";
-import { LONG, SHORT, SWAP } from "../../Helpers";
+import React from 'react';
+import { Menu } from '@headlessui/react';
+import { FaChevronDown } from 'react-icons/fa';
+import cx from 'classnames';
+import './ChartTokenSelector.css';
+import { getTokens, getWhitelistedTokens } from '../../data/Tokens';
+import { LONG, SHORT, SWAP } from '../../utils/Helpers';
+import { ChainId, ITokenInfo, SwapType } from '../../utils/types';
 
-export default function ChartTokenSelector(props) {
+interface IProps {
+  className: string;
+  chainId: ChainId;
+  selectedToken: ITokenInfo;
+  onSelectToken: (_:ITokenInfo) => void;
+  infoTokens: { [x: string]: ITokenInfo };
+  swapOption: SwapType;
+}
+
+export default function ChartTokenSelector(props: IProps) {
   const { chainId, selectedToken, onSelectToken, swapOption } = props;
 
   const isLong = swapOption === LONG;
@@ -15,9 +25,7 @@ export default function ChartTokenSelector(props) {
 
   let options = getTokens(chainId);
   const whitelistedTokens = getWhitelistedTokens(chainId);
-  const indexTokens = whitelistedTokens.filter(
-    (token) => !token.isStable && !token.isWrapped
-  );
+  const indexTokens = whitelistedTokens.filter((token) => !token.isStable && !token.isWrapped);
   const shortableTokens = indexTokens.filter((token) => token.isShortable);
 
   if (isLong) {
@@ -27,7 +35,7 @@ export default function ChartTokenSelector(props) {
     options = shortableTokens;
   }
 
-  const onSelect = async (token) => {
+  const onSelect = async (token: ITokenInfo) => {
     onSelectToken(token);
   };
 
@@ -35,15 +43,14 @@ export default function ChartTokenSelector(props) {
 
   return (
     <Menu>
-      <Menu.Button as="div" disabled={isSwap}>
+      <Menu.Button as="div">
         <button
-          className={cx("App-cta small transparent chart-token-selector", {
-            "default-cursor": isSwap,
+          className={cx('App-cta small transparent chart-token-selector', {
+            'default-cursor': isSwap,
           })}
+          disabled={isSwap}
         >
-          <span className="chart-token-selector--current">
-            {value.symbol} / USD
-          </span>
+          <span className="chart-token-selector--current">{value.symbol} / USD</span>
           {!isSwap && <FaChevronDown />}
         </button>
       </Menu.Button>

@@ -1,16 +1,9 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
-import { Title } from "react-head";
-import { useWeb3React } from "@web3-react/core";
-import useSWR from "swr";
-import { ethers } from "ethers";
-import cx from "classnames";
+import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { Title } from 'react-head';
+import { useWeb3React } from '@web3-react/core';
+import useSWR from 'swr';
+import { BigNumber, ethers } from 'ethers';
+import cx from 'classnames';
 
 import {
   adjustForDecimals,
@@ -37,45 +30,39 @@ import {
   useChainId,
   // useAccountOrders,
   getPageTitle,
-} from "../../Helpers";
-import { getConstant } from "../../Constants";
-import { approvePlugin, cancelMultipleOrders, useInfoTokens } from "../../Api";
+} from '../../utils/Helpers';
+import { getConstant } from '../../config/Constants';
+import { approvePlugin, cancelMultipleOrders, useInfoTokens } from '../../Api';
 
-import { getContract } from "../../Addresses";
-import {
-  getTokens,
-  getToken,
-  getWhitelistedTokens,
-  getTokenBySymbol,
-} from "../../data/Tokens";
+import { getContract } from '../../config/Addresses';
+import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from '../../data/Tokens';
 
-import PhamousUiDataProvider from "../../abis/PhamousUiDataProvider.json";
-import Vault from "../../abis/Vault.json";
-import Router from "../../abis/Router.json";
-import PhlpManager from "../../abis/PhlpManager.json";
+import PhamousUiDataProvider from '../../abis/PhamousUiDataProvider.json';
+import Vault from '../../abis/Vault.json';
+import Router from '../../abis/Router.json';
+import PhlpManager from '../../abis/PhlpManager.json';
 
-import Checkbox from "../../components/Checkbox/Checkbox";
-import SwapBox from "../../components/Exchange/SwapBox";
-import ExchangeTVChart, {
-  getChartToken,
-} from "../../components/Exchange/ExchangeTVChart";
-import PositionsList from "../../components/Exchange/PositionsList";
+import Checkbox from '../../components/Checkbox/Checkbox';
+import SwapBox from '../../components/Exchange/SwapBox';
+import ExchangeTVChart, { getChartToken } from '../../components/Exchange/ExchangeTVChart';
+import PositionsList from '../../components/Exchange/PositionsList';
 // import OrdersList from "../../components/Exchange/OrdersList";
 // import TradeHistory from "../../components/Exchange/TradeHistory";
-import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
-import ExchangeBanner from "../../components/Exchange/ExchangeBanner";
-import Tab from "../../components/Tab/Tab";
-import Footer from "../../Footer";
+import ExchangeWalletTokens from '../../components/Exchange/ExchangeWalletTokens';
+import ExchangeBanner from '../../components/Exchange/ExchangeBanner';
+import Tab from '../../components/Tab/Tab';
+import Footer from '../../Footer';
 
-import "./Exchange.css";
+import './Exchange.css';
+import { ChainId, IPosition, ITokenInfo, SwapType } from '../../utils/types';
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
 const UPDATED_POSITION_VALID_DURATION = 60 * 1000;
 
-const notifications = {};
+const notifications: { [x: string]: boolean } = {};
 
-function pushSuccessNotification(chainId, message, e) {
+function pushSuccessNotification(chainId: ChainId, message: string, e: any) {
   const { transactionHash } = e;
   const id = ethers.utils.id(message + transactionHash);
   if (notifications[id]) {
@@ -84,18 +71,18 @@ function pushSuccessNotification(chainId, message, e) {
 
   notifications[id] = true;
 
-  const txUrl = getExplorerUrl(chainId) + "tx/" + transactionHash;
+  const txUrl = getExplorerUrl(chainId) + 'tx/' + transactionHash;
   helperToast.success(
     <div>
-      {message}{" "}
+      {message}{' '}
       <a href={txUrl} target="_blank" rel="noopener noreferrer">
         View
       </a>
-    </div>
+    </div>,
   );
 }
 
-function pushErrorNotification(chainId, message, e) {
+function pushErrorNotification(chainId: ChainId, message: string, e: any) {
   const { transactionHash } = e;
   const id = ethers.utils.id(message + transactionHash);
   if (notifications[id]) {
@@ -104,55 +91,51 @@ function pushErrorNotification(chainId, message, e) {
 
   notifications[id] = true;
 
-  const txUrl = getExplorerUrl(chainId) + "tx/" + transactionHash;
+  const txUrl = getExplorerUrl(chainId) + 'tx/' + transactionHash;
   helperToast.error(
     <div>
-      {message}{" "}
+      {message}{' '}
       <a href={txUrl} target="_blank" rel="noopener noreferrer">
         View
       </a>
-    </div>
+    </div>,
   );
 }
 
-function getFundingFee(data) {
+function getFundingFee(data: any): ethers.BigNumber | undefined {
   const { entryFundingRate, cumulativeFundingRate, size } = data;
   if (entryFundingRate && cumulativeFundingRate) {
-    return size
-      .mul(cumulativeFundingRate.sub(entryFundingRate))
-      .div(FUNDING_RATE_PRECISION);
+    return size.mul(cumulativeFundingRate.sub(entryFundingRate)).div(FUNDING_RATE_PRECISION);
   }
+  return undefined;
 }
 
-const getTokenAddress = (token, nativeTokenAddress) => {
+const getTokenAddress = (token: ITokenInfo, nativeTokenAddress: string): string => {
   if (token.address === AddressZero) {
     return nativeTokenAddress;
   }
   return token.address;
 };
 
-function applyPendingChanges(position, pendingPositions) {
+function applyPendingChanges(position: IPosition, pendingPositions: any) {
   if (!pendingPositions) {
     return;
   }
   const { key } = position;
 
   if (
+    key &&
     pendingPositions[key] &&
     pendingPositions[key].updatedAt &&
     pendingPositions[key].pendingChanges &&
-    pendingPositions[key].updatedAt + PENDING_POSITION_VALID_DURATION >
-      Date.now()
+    pendingPositions[key].updatedAt + PENDING_POSITION_VALID_DURATION > Date.now()
   ) {
     const { pendingChanges } = pendingPositions[key];
     if (pendingChanges.size && position.size.eq(pendingChanges.size)) {
       return;
     }
 
-    if (
-      pendingChanges.expectingCollateralChange &&
-      !position.collateral.eq(pendingChanges.collateralSnapshot)
-    ) {
+    if (pendingChanges.expectingCollateralChange && !position.collateral.eq(pendingChanges.collateralSnapshot)) {
       return;
     }
 
@@ -162,53 +145,33 @@ function applyPendingChanges(position, pendingPositions) {
 }
 
 export function getPositions(
-  chainId,
-  positionQuery,
-  positionData,
-  infoTokens,
-  includeDelta,
-  showPnlAfterFees,
-  account,
-  pendingPositions,
-  updatedPositions
+  chainId: ChainId,
+  positionQuery: any,
+  positionData: any,
+  infoTokens: { [x: string]: ITokenInfo },
+  includeDelta: BigNumber | undefined,
+  showPnlAfterFees: BigNumber | undefined,
+  account: string | null | undefined,
+  pendingPositions: any,
+  updatedPositions: any,
 ) {
-  const propsLength = getConstant(chainId, "positionReaderPropsLength");
-  const positions = [];
-  const positionsMap = {};
+  const propsLength = getConstant(chainId, 'positionReaderPropsLength') as number;
+  const positions: IPosition[] = [];
+  const positionsMap: { [x: string]: IPosition } = {};
   if (!positionData) {
     return { positions, positionsMap };
   }
   const { collateralTokens, indexTokens, isLong } = positionQuery;
   for (let i = 0; i < collateralTokens.length; i++) {
-    const collateralToken = getTokenInfo(
-      infoTokens,
-      collateralTokens[i],
-      true,
-      getContract(chainId, "NATIVE_TOKEN")
-    );
-    const indexToken = getTokenInfo(
-      infoTokens,
-      indexTokens[i],
-      true,
-      getContract(chainId, "NATIVE_TOKEN")
-    );
-    const key = getPositionKey(
-      account,
-      collateralTokens[i],
-      indexTokens[i],
-      isLong[i]
-    );
+    const collateralToken = getTokenInfo(infoTokens, collateralTokens[i], true, getContract(chainId, 'NATIVE_TOKEN'));
+    const indexToken = getTokenInfo(infoTokens, indexTokens[i], true, getContract(chainId, 'NATIVE_TOKEN'));
+    const key = getPositionKey(account, collateralTokens[i], indexTokens[i], isLong[i]);
     let contractKey;
     if (account) {
-      contractKey = getPositionContractKey(
-        account,
-        collateralTokens[i],
-        indexTokens[i],
-        isLong[i]
-      );
+      contractKey = getPositionContractKey(account, collateralTokens[i], indexTokens[i], isLong[i]);
     }
 
-    const position = {
+    const position: IPosition = {
       key,
       contractKey,
       collateralToken,
@@ -224,15 +187,14 @@ export function getPositions(
       lastIncreasedTime: positionData[i * propsLength + 6].toNumber(),
       hasProfit: positionData[i * propsLength + 7].eq(1),
       delta: positionData[i * propsLength + 8],
-      markPrice: isLong[i] ? indexToken.minPrice : indexToken.maxPrice,
+      markPrice: isLong[i] ? indexToken.minPrice : indexToken.maxPrice
     };
 
     if (
       updatedPositions &&
       updatedPositions[key] &&
       updatedPositions[key].updatedAt &&
-      updatedPositions[key].updatedAt + UPDATED_POSITION_VALID_DURATION >
-        Date.now()
+      updatedPositions[key].updatedAt + UPDATED_POSITION_VALID_DURATION > Date.now()
     ) {
       const updatedPosition = updatedPositions[key];
       position.size = updatedPosition.size;
@@ -242,32 +204,24 @@ export function getPositions(
     }
 
     const fundingFee = getFundingFee(position);
-    position.fundingFee = fundingFee || bigNumberify(0);
+    position.fundingFee = fundingFee ? fundingFee : bigNumberify(0);
     position.collateralAfterFee = position.collateral.sub(position.fundingFee);
 
-    position.closingFee = position.size
-      .mul(MARGIN_FEE_BASIS_POINTS)
-      .div(BASIS_POINTS_DIVISOR);
-    position.positionFee = position.size
-      .mul(MARGIN_FEE_BASIS_POINTS)
-      .mul(2)
-      .div(BASIS_POINTS_DIVISOR);
+    position.closingFee = position.size.mul(MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
+    position.positionFee = position.size.mul(MARGIN_FEE_BASIS_POINTS).mul(2).div(BASIS_POINTS_DIVISOR);
     position.totalFees = position.positionFee.add(position.fundingFee);
 
     position.pendingDelta = position.delta;
 
     if (position.collateral.gt(0)) {
       position.hasLowCollateral =
-        position.collateralAfterFee.lt(0) ||
-        position.size.div(position.collateralAfterFee.abs()).gt(50);
+        position.collateralAfterFee.lt(0) || position.size.div(position.collateralAfterFee.abs()).gt(50);
 
       if (position.averagePrice && position.markPrice) {
         const priceDelta = position.averagePrice.gt(position.markPrice)
           ? position.averagePrice.sub(position.markPrice)
           : position.markPrice.sub(position.averagePrice);
-        position.pendingDelta = position.size
-          .mul(priceDelta)
-          .div(position.averagePrice);
+        position.pendingDelta = position.size.mul(priceDelta).div(position.averagePrice);
 
         position.delta = position.pendingDelta;
 
@@ -278,9 +232,7 @@ export function getPositions(
         }
       }
 
-      position.deltaPercentage = position.pendingDelta
-        .mul(BASIS_POINTS_DIVISOR)
-        .div(position.collateral);
+      position.deltaPercentage = position.pendingDelta?.mul(BASIS_POINTS_DIVISOR).div(position.collateral);
 
       const { deltaStr, deltaPercentageStr } = getDeltaStr({
         delta: position.pendingDelta,
@@ -296,7 +248,7 @@ export function getPositions(
       let pendingDeltaAfterFees;
 
       if (position.hasProfit) {
-        if (position.pendingDelta.gt(position.totalFees)) {
+        if (position.pendingDelta?.gt(position.totalFees)) {
           hasProfitAfterFees = true;
           pendingDeltaAfterFees = position.pendingDelta.sub(position.totalFees);
         } else {
@@ -305,7 +257,7 @@ export function getPositions(
         }
       } else {
         hasProfitAfterFees = false;
-        pendingDeltaAfterFees = position.pendingDelta.add(position.totalFees);
+        pendingDeltaAfterFees = position.pendingDelta?.add(position.totalFees);
       }
 
       position.hasProfitAfterFees = hasProfitAfterFees;
@@ -314,10 +266,7 @@ export function getPositions(
         .mul(BASIS_POINTS_DIVISOR)
         .div(position.collateral);
 
-      const {
-        deltaStr: deltaAfterFeesStr,
-        deltaPercentageStr: deltaAfterFeesPercentageStr,
-      } = getDeltaStr({
+      const { deltaStr: deltaAfterFeesStr, deltaPercentageStr: deltaAfterFeesPercentageStr } = getDeltaStr({
         delta: position.pendingDeltaAfterFees,
         deltaPercentage: position.deltaPercentageAfterFees,
         hasProfit: hasProfitAfterFees,
@@ -332,8 +281,8 @@ export function getPositions(
       }
 
       let netValue = position.hasProfit
-        ? position.collateral.add(position.pendingDelta)
-        : position.collateral.sub(position.pendingDelta);
+        ? position.collateral.add(position.pendingDelta || 0)
+        : position.collateral.sub(position.pendingDelta || 0);
 
       netValue = netValue.sub(position.fundingFee);
 
@@ -366,7 +315,7 @@ export function getPositions(
   return { positions, positionsMap };
 }
 
-export function getPositionQuery(tokens, nativeTokenAddress) {
+export function getPositionQuery(tokens: ITokenInfo[], nativeTokenAddress: string) {
   const collateralTokens = [];
   const indexTokens = [];
   const isLong = [];
@@ -407,48 +356,54 @@ export function getPositionQuery(tokens, nativeTokenAddress) {
   return { collateralTokens, indexTokens, isLong };
 }
 
-export const Exchange = forwardRef((props, ref) => {
-  const {
-    savedIsPnlInLeverage,
-    setSavedIsPnlInLeverage,
-    savedShowPnlAfterFees,
-    savedSlippageAmount,
-    pendingTxns,
-    setPendingTxns,
-    savedShouldShowPositionLines,
-    setSavedShouldShowPositionLines,
-    connectWallet,
-    savedShouldDisableOrderValidation,
-  } = props;
-  const [showBanner, setShowBanner] = useLocalStorageSerializeKey(
-    "showBanner",
-    true
-  );
-  const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey(
-    "bannerHidden",
-    null
-  );
+interface IExchangeProps {
+  ref: any;
+  pendingTxns: any;
+  savedSlippageAmount?: number;
+  savedIsPnlInLeverage?: BigNumber;
+  savedShowPnlAfterFees?: BigNumber;
+  savedShouldShowPositionLines?: boolean;
+  savedShouldDisableOrderValidation?: boolean;
+  connectWallet: () => void;
+  setPendingTxns: (_: any) => void;
+  setSavedIsPnlInLeverage: (_: boolean) => void;
+  setSavedShouldShowPositionLines: (_: boolean) => void;
+}
 
-  const [pendingPositions, setPendingPositions] = useState({});
-  const [updatedPositions, setUpdatedPositions] = useState({});
-  const [pageTitle, setPageTitle] = useState(getPageTitle("Trade"));
+export const Exchange = forwardRef<any, IExchangeProps>((props, ref) => {
+  const {
+    pendingTxns,
+    savedSlippageAmount,
+    savedIsPnlInLeverage,
+    savedShowPnlAfterFees,
+    savedShouldShowPositionLines,
+    savedShouldDisableOrderValidation,
+    connectWallet,
+    setPendingTxns,
+    setSavedIsPnlInLeverage,
+    setSavedShouldShowPositionLines,
+  } = props;
+  const [showBanner, setShowBanner] = useLocalStorageSerializeKey('showBanner', true);
+  const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey('bannerHidden', '');
+
+  const [pendingPositions, setPendingPositions] = useState<any>();
+  const [updatedPositions, setUpdatedPositions] = useState<any>();
+  const [pageTitle, setPageTitle] = useState(getPageTitle('Trade'));
 
   const hideBanner = () => {
-    const hiddenLimit = new Date(
-      new Date().getTime() + 2 * 24 * 60 * 60 * 1000
-    );
-    setBannerHidden(hiddenLimit);
+    const hiddenLimit = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
+    setBannerHidden(hiddenLimit.toString());
     setShowBanner(false);
   };
 
   useEffect(() => {
-    if (new Date() > new Date("2021-11-30")) {
+    if (new Date() > new Date('2021-11-30')) {
       setShowBanner(false);
     } else {
       if (bannerHidden && new Date(bannerHidden) > new Date()) {
         setShowBanner(false);
       } else {
-        setBannerHidden(null);
+        setBannerHidden(undefined);
         setShowBanner(true);
       }
     }
@@ -458,25 +413,20 @@ export const Exchange = forwardRef((props, ref) => {
   const { chainId } = useChainId();
   const currentAccount = account;
 
-  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const addressesProviderAddress = getContract(chainId, "AddressesProvider");
-  const vaultAddress = getContract(chainId, "Vault");
-  const positionRouterAddress = getContract(chainId, "PositionRouter");
-  const uiDataProviderAddress = getContract(chainId, "PhamousUiDataProvider");
-  const phlpManagerAddress = getContract(chainId, "PhlpManager");
+  const nativeTokenAddress = getContract(chainId, 'NATIVE_TOKEN');
+  const addressesProviderAddress = getContract(chainId, 'AddressesProvider');
+  const vaultAddress = getContract(chainId, 'Vault');
+  const positionRouterAddress = getContract(chainId, 'PositionRouter');
+  const uiDataProviderAddress = getContract(chainId, 'PhamousUiDataProvider');
+  const phlpManagerAddress = getContract(chainId, 'PhlpManager');
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map(
-    (token) => token.address
-  );
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
 
   const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
 
-  const defaultCollateralSymbol = getConstant(
-    chainId,
-    "defaultCollateralSymbol"
-  );
-  const defaultTokenSelection = useMemo(
+  const defaultCollateralSymbol = getConstant(chainId, 'defaultCollateralSymbol') as string;
+  const defaultTokenSelection = useMemo<any>(
     () => ({
       [SWAP]: {
         from: AddressZero,
@@ -491,34 +441,30 @@ export const Exchange = forwardRef((props, ref) => {
         to: AddressZero,
       },
     }),
-    [chainId, defaultCollateralSymbol]
+    [chainId, defaultCollateralSymbol],
   );
 
   const [tokenSelection, setTokenSelection] = useLocalStorageByChainId(
     chainId,
-    "Exchange-token-selection-v2",
-    defaultTokenSelection
+    'Exchange-token-selection-v2',
+    defaultTokenSelection,
   );
-  const [swapOption, setSwapOption] = useLocalStorageByChainId(
-    chainId,
-    "Swap-option-v2",
-    LONG
-  );
+  const [swapOption, setSwapOption] = useLocalStorageByChainId(chainId, 'Swap-option-v2', LONG);
 
   const fromTokenAddress = tokenSelection[swapOption].from;
   const toTokenAddress = tokenSelection[swapOption].to;
 
   const setFromTokenAddress = useCallback(
-    (selectedSwapOption, address) => {
+    (selectedSwapOption: any, address: string) => {
       const newTokenSelection = JSON.parse(JSON.stringify(tokenSelection));
       newTokenSelection[selectedSwapOption].from = address;
       setTokenSelection(newTokenSelection);
     },
-    [tokenSelection, setTokenSelection]
+    [tokenSelection, setTokenSelection],
   );
 
   const setToTokenAddress = useCallback(
-    (selectedSwapOption, address) => {
+    (selectedSwapOption: SwapType, address: string) => {
       const newTokenSelection = JSON.parse(JSON.stringify(tokenSelection));
       newTokenSelection[selectedSwapOption].to = address;
       if (selectedSwapOption === LONG || selectedSwapOption === SHORT) {
@@ -527,10 +473,10 @@ export const Exchange = forwardRef((props, ref) => {
       }
       setTokenSelection(newTokenSelection);
     },
-    [tokenSelection, setTokenSelection]
+    [tokenSelection, setTokenSelection],
   );
 
-  const setMarket = (selectedSwapOption, toTokenAddress) => {
+  const setMarket = (selectedSwapOption: any, toTokenAddress: string) => {
     setSwapOption(selectedSwapOption);
     const newTokenSelection = JSON.parse(JSON.stringify(tokenSelection));
     newTokenSelection[selectedSwapOption].to = toTokenAddress;
@@ -548,142 +494,76 @@ export const Exchange = forwardRef((props, ref) => {
 
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR(
-    active && [
-      active,
-      chainId,
-      uiDataProviderAddress,
-      "getTokenBalances",
-      account,
-    ],
+    active ? [active, chainId, uiDataProviderAddress, 'getTokenBalances', account] : [],
     {
       fetcher: fetcher(library, PhamousUiDataProvider, [tokenAddresses]),
-    }
+    },
   );
 
   const { data: positionData, error: positionDataError } = useSWR(
-    active && [
-      active,
-      chainId,
-      uiDataProviderAddress,
-      "getPositions",
-      addressesProviderAddress,
-      account,
-    ],
+    active ? [active, chainId, uiDataProviderAddress, 'getPositions', addressesProviderAddress, account] : [],
     {
       fetcher: fetcher(library, PhamousUiDataProvider, [
         positionQuery.collateralTokens,
         positionQuery.indexTokens,
         positionQuery.isLong,
       ]),
-    }
+    },
   );
 
   const positionsDataIsLoading = active && !positionData && !positionDataError;
 
-  const { data: fundingRateInfo } = useSWR(
-    [active, chainId, uiDataProviderAddress, "getFundingRates"],
-    {
-      fetcher: fetcher(library, PhamousUiDataProvider, [
-        addressesProviderAddress,
-        nativeTokenAddress,
-        whitelistedTokenAddresses,
-      ]),
-    }
-  );
+  const { data: fundingRateInfo } = useSWR([active, chainId, uiDataProviderAddress, 'getFundingRates'], {
+    fetcher: fetcher(library, PhamousUiDataProvider, [
+      addressesProviderAddress,
+      nativeTokenAddress,
+      whitelistedTokenAddresses,
+    ]),
+  });
 
   const { data: totalTokenWeights } = useSWR(
-    [
-      `Exchange:totalTokenWeights:${active}`,
-      chainId,
-      vaultAddress,
-      "totalTokenWeights",
-    ],
+    [`Exchange:totalTokenWeights:${active}`, chainId, vaultAddress, 'totalTokenWeights'],
     {
       fetcher: fetcher(library, Vault),
-    }
+    },
   );
 
-  const { data: aums } = useSWR(
-    [`PhlpSwap:getAums:${active}`, chainId, phlpManagerAddress, "getAums"],
-    {
-      fetcher: fetcher(library, PhlpManager),
-    }
-  );
+  const { data: aums } = useSWR([`PhlpSwap:getAums:${active}`, chainId, phlpManagerAddress, 'getAums'], {
+    fetcher: fetcher(library, PhlpManager),
+  });
   let aum;
   if (aums && aums.length > 0) {
     aum = aums[0];
   }
-  const usdphSupply = aum
-    ? adjustForDecimals(aum, USD_DECIMALS, USDPH_DECIMALS)
-    : bigNumberify(0);
+  const usdphSupply = aum ? adjustForDecimals(aum, USD_DECIMALS, USDPH_DECIMALS) : bigNumberify(0);
 
-  const orderBookAddress = getContract(chainId, "OrderBook");
-  const routerAddress = getContract(chainId, "Router");
+  const orderBookAddress = getContract(chainId, 'OrderBook');
+  const routerAddress = getContract(chainId, 'Router');
   const { data: orderBookApproved } = useSWR(
-    active && [
-      active,
-      chainId,
-      routerAddress,
-      "approvedPlugins",
-      account,
-      orderBookAddress,
-    ],
+    active ? [active, chainId, routerAddress, 'approvedPlugins', account, orderBookAddress] : [],
     {
       fetcher: fetcher(library, Router),
-    }
+    },
   );
 
   const { data: positionRouterApproved } = useSWR(
-    active && [
-      active,
-      chainId,
-      routerAddress,
-      "approvedPlugins",
-      account,
-      positionRouterAddress,
-    ],
+    active ? [active, chainId, routerAddress, 'approvedPlugins', account, positionRouterAddress] : [],
     {
       fetcher: fetcher(library, Router),
-    }
+    },
   );
 
-  const { infoTokens } = useInfoTokens(
-    library,
-    chainId,
-    active,
-    tokenBalances,
-    fundingRateInfo
-  );
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
 
   useEffect(() => {
     const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
     const toToken = getTokenInfo(infoTokens, toTokenAddress);
-    const selectedToken = getChartToken(
-      swapOption,
-      fromToken,
-      toToken,
-      chainId
-    );
-    const currentTokenPriceStr = formatAmount(
-      selectedToken.maxPrice,
-      USD_DECIMALS,
-      4,
-      true
-    );
+    const selectedToken = getChartToken(swapOption, fromToken, toToken);
+    const currentTokenPriceStr = formatAmount(selectedToken?.maxPrice, USD_DECIMALS, 4, true);
     setPageTitle(
-      getPageTitle(
-        currentTokenPriceStr +
-          ` | ${selectedToken.symbol}${selectedToken.isStable ? "" : "USD"}`
-      )
+      getPageTitle(currentTokenPriceStr + ` | ${selectedToken?.symbol}${selectedToken?.isStable ? '' : 'USD'}`),
     );
-  }, [
-    tokenSelection,
-    swapOption,
-    infoTokens,
-    chainId,
-    fromTokenAddress,
-    toTokenAddress,
-  ]);
+  }, [tokenSelection, swapOption, infoTokens, chainId, fromTokenAddress, toTokenAddress]);
 
   const { positions, positionsMap } = getPositions(
     chainId,
@@ -694,22 +574,22 @@ export const Exchange = forwardRef((props, ref) => {
     savedShowPnlAfterFees,
     account,
     pendingPositions,
-    updatedPositions
+    updatedPositions,
   );
 
   useImperativeHandle(ref, () => ({
     onUpdatePosition(
-      key,
-      size,
-      collateral,
-      averagePrice,
-      entryFundingRate,
-      reserveAmount,
-      realisedPnl
+      key: string,
+      size: BigNumber,
+      collateral: BigNumber,
+      averagePrice: BigNumber,
+      entryFundingRate: BigNumber,
+      reserveAmount: BigNumber,
+      realisedPnl: BigNumber,
     ) {
       for (let i = 0; i < positions.length; i++) {
         const position = positions[i];
-        if (position.contractKey === key) {
+        if (position.contractKey === key && position.key) {
           updatedPositions[position.key] = {
             size,
             collateral,
@@ -725,18 +605,18 @@ export const Exchange = forwardRef((props, ref) => {
       }
     },
     onClosePosition(
-      key,
-      size,
-      collateral,
-      averagePrice,
-      entryFundingRate,
-      reserveAmount,
-      realisedPnl,
-      e
+      key: string, 
+      size: BigNumber, 
+      collateral: BigNumber, 
+      averagePrice: BigNumber, 
+      entryFundingRate: BigNumber, 
+      reserveAmount: BigNumber, 
+      realisedPnl: BigNumber, 
+      e: any
     ) {
       for (let i = 0; i < positions.length; i++) {
         const position = positions[i];
-        if (position.contractKey === key) {
+        if (position.contractKey === key && position.key) {
           updatedPositions[position.key] = {
             size: bigNumberify(0),
             collateral: bigNumberify(0),
@@ -753,25 +633,23 @@ export const Exchange = forwardRef((props, ref) => {
     },
 
     onIncreasePosition(
-      key,
-      account,
-      collateralToken,
-      indexToken,
-      collateralDelta,
-      sizeDelta,
-      isLong,
-      price,
-      fee,
-      e
+      key: string, 
+      account: string, 
+      collateralToken: string, 
+      indexToken: string, 
+      collateralDelta: BigNumber, 
+      sizeDelta: BigNumber, 
+      isLong: boolean, 
+      price: BigNumber, 
+      fee: BigNumber, 
+      e: any
     ) {
       if (account !== currentAccount) {
         return;
       }
 
       const indexTokenItem = getToken(chainId, indexToken);
-      const tokenSymbol = indexTokenItem.isWrapped
-        ? getConstant(chainId, "nativeTokenSymbol")
-        : indexTokenItem.symbol;
+      const tokenSymbol = indexTokenItem.isWrapped ? getConstant(chainId, 'nativeTokenSymbol') : indexTokenItem.symbol;
 
       let message;
       if (sizeDelta.eq(0)) {
@@ -781,18 +659,16 @@ export const Exchange = forwardRef((props, ref) => {
           2,
           true,
           undefined,
-          0
-        )} USD into ${tokenSymbol} ${isLong ? "Long" : "Short."}`;
+          0,
+        )} USD into ${tokenSymbol} ${isLong ? 'Long' : 'Short.'}`;
       } else {
-        message = `Increased ${tokenSymbol} ${
-          isLong ? "Long" : "Short"
-        }, +${formatAmount(
+        message = `Increased ${tokenSymbol} ${isLong ? 'Long' : 'Short'}, +${formatAmount(
           sizeDelta,
           USD_DECIMALS,
           2,
           true,
           undefined,
-          0
+          0,
         )} USD.`;
       }
 
@@ -800,25 +676,23 @@ export const Exchange = forwardRef((props, ref) => {
     },
 
     onDecreasePosition(
-      key,
-      account,
-      collateralToken,
-      indexToken,
-      collateralDelta,
-      sizeDelta,
-      isLong,
-      price,
-      fee,
-      e
+      key: string, 
+      account: string, 
+      collateralToken: string, 
+      indexToken: string, 
+      collateralDelta: BigNumber, 
+      sizeDelta: BigNumber, 
+      isLong: boolean, 
+      price: BigNumber, 
+      fee: BigNumber, 
+      e: any
     ) {
       if (account !== currentAccount) {
         return;
       }
 
       const indexTokenItem = getToken(chainId, indexToken);
-      const tokenSymbol = indexTokenItem.isWrapped
-        ? getConstant(chainId, "nativeTokenSymbol")
-        : indexTokenItem.symbol;
+      const tokenSymbol = indexTokenItem.isWrapped ? getConstant(chainId, 'nativeTokenSymbol') : indexTokenItem.symbol;
 
       let message;
       if (sizeDelta.eq(0)) {
@@ -828,18 +702,16 @@ export const Exchange = forwardRef((props, ref) => {
           2,
           true,
           undefined,
-          0
-        )} USD from ${tokenSymbol} ${isLong ? "Long" : "Short"}.`;
+          0,
+        )} USD from ${tokenSymbol} ${isLong ? 'Long' : 'Short'}.`;
       } else {
-        message = `Decreased ${tokenSymbol} ${
-          isLong ? "Long" : "Short"
-        }, -${formatAmount(
+        message = `Decreased ${tokenSymbol} ${isLong ? 'Long' : 'Short'}, -${formatAmount(
           sizeDelta,
           USD_DECIMALS,
           2,
           true,
           undefined,
-          0
+          0,
         )} USD.`;
       }
 
@@ -847,78 +719,64 @@ export const Exchange = forwardRef((props, ref) => {
     },
 
     onCancelIncreasePosition(
-      account,
-      path,
-      indexToken,
-      amountIn,
-      minOut,
-      sizeDelta,
-      isLong,
-      acceptablePrice,
-      executionFee,
-      blockGap,
-      timeGap,
-      e
+      account: string,
+      path: string,
+      indexToken: string,
+      amountIn: BigNumber,
+      minOut: BigNumber,
+      sizeDelta: BigNumber,
+      isLong: boolean,
+      acceptablePrice: BigNumber,
+      executionFee: BigNumber,
+      blockGap: BigNumber,
+      timeGap: BigNumber,
+      e: any,
     ) {
       if (account !== currentAccount) {
         return;
       }
       const indexTokenItem = getToken(chainId, indexToken);
-      const tokenSymbol = indexTokenItem.isWrapped
-        ? getConstant(chainId, "nativeTokenSymbol")
-        : indexTokenItem.symbol;
+      const tokenSymbol = indexTokenItem.isWrapped ? getConstant(chainId, 'nativeTokenSymbol') : indexTokenItem.symbol;
 
       const message = `Could not increase ${tokenSymbol} ${
-        isLong ? "Long" : "Short"
+        isLong ? 'Long' : 'Short'
       } within the allowed slippage, you can adjust the allowed slippage in the settings on the top right of the page.`;
 
       pushErrorNotification(chainId, message, e);
 
-      const key = getPositionKey(
-        account,
-        path[path.length - 1],
-        indexToken,
-        isLong
-      );
+      const key = getPositionKey(account, path[path.length - 1], indexToken, isLong);
       pendingPositions[key] = {};
       setPendingPositions({ ...pendingPositions });
     },
 
     onCancelDecreasePosition(
-      account,
-      path,
-      indexToken,
-      collateralDelta,
-      sizeDelta,
-      isLong,
-      receiver,
-      acceptablePrice,
-      minOut,
-      executionFee,
-      blockGap,
-      timeGap,
-      e
+      account: string,
+      path: string,
+      indexToken: string,
+      collateralDelta: BigNumber,
+      sizeDelta: BigNumber,
+      isLong: boolean,
+      receiver: string,
+      acceptablePrice: BigNumber,
+      minOut: BigNumber,
+      executionFee: BigNumber,
+      blockGap: BigNumber,
+      timeGap: BigNumber,
+      e: any,
     ) {
       if (account !== currentAccount) {
         return;
       }
       const indexTokenItem = getToken(chainId, indexToken);
-      const tokenSymbol = indexTokenItem.isWrapped
-        ? getConstant(chainId, "nativeTokenSymbol")
-        : indexTokenItem.symbol;
+      const tokenSymbol = indexTokenItem.isWrapped ? getConstant(chainId, 'nativeTokenSymbol') : indexTokenItem.symbol;
 
       const message = `Could not decrease ${tokenSymbol} ${
-        isLong ? "Long" : "Short"
+        isLong ? 'Long' : 'Short'
       } within the allowed slippage, you can adjust the allowed slippage in the settings on the top right of the page.`;
 
       pushErrorNotification(chainId, message, e);
 
-      const key = getPositionKey(
-        account,
-        path[path.length - 1],
-        indexToken,
-        isLong
-      );
+      const key = getPositionKey(account, path[path.length - 1], indexToken, isLong);
       pendingPositions[key] = {};
       setPendingPositions({ ...pendingPositions });
     },
@@ -927,35 +785,24 @@ export const Exchange = forwardRef((props, ref) => {
   const flagOrdersEnabled = false; // true
   // const [orders] = useAccountOrders(flagOrdersEnabled);
 
-  const [isWaitingForPluginApproval, setIsWaitingForPluginApproval] =
-    useState(false);
-  const [
-    isWaitingForPositionRouterApproval,
-    setIsWaitingForPositionRouterApproval,
-  ] = useState(false);
+  const [isWaitingForPluginApproval, setIsWaitingForPluginApproval] = useState(false);
+  const [isWaitingForPositionRouterApproval, setIsWaitingForPositionRouterApproval] = useState(false);
   const [isPluginApproving, setIsPluginApproving] = useState(false);
-  const [isPositionRouterApproving, setIsPositionRouterApproving] =
-    useState(false);
-  const [isCancelMultipleOrderProcessing, setIsCancelMultipleOrderProcessing] =
-    useState(false);
+  const [isPositionRouterApproving, setIsPositionRouterApproving] = useState(false);
+  const [isCancelMultipleOrderProcessing, setIsCancelMultipleOrderProcessing] = useState(false);
   const [cancelOrderIdList, setCancelOrderIdList] = useState([]);
 
   const onMultipleCancelClick = useCallback(
     async function () {
       setIsCancelMultipleOrderProcessing(true);
       try {
-        const tx = await cancelMultipleOrders(
-          chainId,
-          library,
-          cancelOrderIdList,
-          {
-            successMsg: "Orders cancelled.",
-            failMsg: "Cancel failed.",
-            sentMsg: "Cancel submitted.",
-            pendingTxns,
-            setPendingTxns,
-          }
-        );
+        const tx = await cancelMultipleOrders(chainId, library, cancelOrderIdList, {
+          successMsg: 'Orders cancelled.',
+          failMsg: 'Cancel failed.',
+          sentMsg: 'Cancel submitted.',
+          pendingTxns,
+          setPendingTxns,
+        });
         const receipt = await tx.wait();
         if (receipt.status === 1) {
           setCancelOrderIdList([]);
@@ -974,7 +821,7 @@ export const Exchange = forwardRef((props, ref) => {
       setCancelOrderIdList,
       cancelOrderIdList,
       setIsCancelMultipleOrderProcessing,
-    ]
+    ],
   );
 
   const approveOrderBook = () => {
@@ -983,8 +830,8 @@ export const Exchange = forwardRef((props, ref) => {
       library,
       pendingTxns,
       setPendingTxns,
-      sentMsg: "Enable orders sent.",
-      failMsg: "Enable orders failed.",
+      sentMsg: 'Enable orders sent.',
+      failMsg: 'Enable orders failed.',
     })
       .then(() => {
         setIsWaitingForPluginApproval(true);
@@ -994,7 +841,7 @@ export const Exchange = forwardRef((props, ref) => {
       });
   };
 
-  const approvePositionRouter = ({ sentMsg, failMsg }) => {
+  const approvePositionRouter = ({ sentMsg, failMsg }: { sentMsg: string; failMsg: string }) => {
     setIsPositionRouterApproving(true);
     return approvePlugin(chainId, positionRouterAddress, {
       library,
@@ -1012,12 +859,8 @@ export const Exchange = forwardRef((props, ref) => {
   };
 
   // const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
-  const LIST_SECTIONS = ["Positions"];
-  let [listSection, setListSection] = useLocalStorageByChainId(
-    chainId,
-    "List-section-v2",
-    LIST_SECTIONS[0]
-  );
+  const LIST_SECTIONS = ['Positions'];
+  let [listSection, setListSection] = useLocalStorageByChainId(chainId, 'List-section-v2', LIST_SECTIONS[0]);
   // const LIST_SECTIONS_LABELS = {
   //   Orders: orders.length ? `Orders (${orders.length})` : undefined,
   //   Positions: positions.length ? `Positions (${positions.length})` : undefined,
@@ -1031,7 +874,7 @@ export const Exchange = forwardRef((props, ref) => {
   }
 
   const renderCancelOrderButton = () => {
-    const orderText = cancelOrderIdList.length > 1 ? "orders" : "order";
+    const orderText = cancelOrderIdList.length > 1 ? 'orders' : 'order';
     if (cancelOrderIdList.length === 0) return;
     return (
       <button
@@ -1062,7 +905,7 @@ export const Exchange = forwardRef((props, ref) => {
             <Checkbox
               isChecked={savedShouldShowPositionLines}
               setIsChecked={setSavedShouldShowPositionLines}
-              className={cx("muted chart-positions", {
+              className={cx('muted chart-positions', {
                 active: savedShouldShowPositionLines,
               })}
             >
@@ -1070,24 +913,20 @@ export const Exchange = forwardRef((props, ref) => {
             </Checkbox>
           </div>
         </div>
-        {listSection === "Positions" && (
+        {listSection === 'Positions' && (
           <PositionsList
             positionsDataIsLoading={positionsDataIsLoading}
             pendingPositions={pendingPositions}
             setPendingPositions={setPendingPositions}
             setListSection={setListSection}
             setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
-            setIsWaitingForPositionRouterApproval={
-              setIsWaitingForPositionRouterApproval
-            }
+            setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
             approveOrderBook={approveOrderBook}
             approvePositionRouter={approvePositionRouter}
             isPluginApproving={isPluginApproving}
             isPositionRouterApproving={isPositionRouterApproving}
             isWaitingForPluginApproval={isWaitingForPluginApproval}
-            isWaitingForPositionRouterApproval={
-              isWaitingForPositionRouterApproval
-            }
+            isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
             orderBookApproved={orderBookApproved}
             positionRouterApproved={positionRouterApproved}
             positions={positions}
@@ -1139,7 +978,7 @@ export const Exchange = forwardRef((props, ref) => {
     );
   };
 
-  const onSelectWalletToken = (token) => {
+  const onSelectWalletToken = (token: ITokenInfo) => {
     setFromTokenAddress(swapOption, token.address);
   };
 
@@ -1173,17 +1012,13 @@ export const Exchange = forwardRef((props, ref) => {
             pendingPositions={pendingPositions}
             setPendingPositions={setPendingPositions}
             setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
-            setIsWaitingForPositionRouterApproval={
-              setIsWaitingForPositionRouterApproval
-            }
+            setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
             approveOrderBook={approveOrderBook}
             approvePositionRouter={approvePositionRouter}
             isPluginApproving={isPluginApproving}
             isPositionRouterApproving={isPositionRouterApproving}
             isWaitingForPluginApproval={isWaitingForPluginApproval}
-            isWaitingForPositionRouterApproval={
-              isWaitingForPositionRouterApproval
-            }
+            isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
             orderBookApproved={orderBookApproved}
             positionRouterApproved={positionRouterApproved}
             orders={[]} // orders={orders}
@@ -1215,17 +1050,11 @@ export const Exchange = forwardRef((props, ref) => {
             savedSlippageAmount={savedSlippageAmount}
             totalTokenWeights={totalTokenWeights}
             usdphSupply={usdphSupply}
-            savedShouldDisableOrderValidation={
-              savedShouldDisableOrderValidation
-            }
+            savedShouldDisableOrderValidation={savedShouldDisableOrderValidation}
           />
           <div className="Exchange-wallet-tokens">
             <div className="Exchange-wallet-tokens-content">
-              <ExchangeWalletTokens
-                tokens={tokens}
-                infoTokens={infoTokens}
-                onSelectToken={onSelectWalletToken}
-              />
+              <ExchangeWalletTokens tokens={tokens} infoTokens={infoTokens} onSelectToken={onSelectWalletToken} />
             </div>
           </div>
         </div>

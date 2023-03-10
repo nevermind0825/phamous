@@ -1,4 +1,8 @@
-function Icon({ className }) {
+interface IProps {
+  className: string;
+}
+
+function Icon({ className }: IProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
